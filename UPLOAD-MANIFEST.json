@@ -32,13 +32,13 @@
     },
     {
       "path": "GitHub上传状态.md",
-      "bytes": 1595,
-      "sha256": "29da41e0ebc8e6e53434deb44e34bdc7d3218f9a7526a6de09042790a54593a3"
+      "bytes": 1582,
+      "sha256": "6a690ad5c3b6ec3fb21f1d201a1aa3b0f13d373b62b00e0e6195c0dd57094297"
     },
     {
       "path": "README.md",
-      "bytes": 3393,
-      "sha256": "4e6aa4f644dda6c902805e9d4ec97f1244801821ae06f31eb91022e35ccfe340"
+      "bytes": 3347,
+      "sha256": "8b43de7e76caa0382c2553e7131c08eceb3e17dba4f5199b1fc180f2df3342c4"
     },
     {
       "path": "android-app/.gitignore",
@@ -1687,8 +1687,8 @@
     },
     {
       "path": "交接文档.md",
-      "bytes": 20588,
-      "sha256": "f1f6fc87ca1e9a60dbdb81454e9c88e2af4f7de68b1bb08c5324f69f1cda4047"
+      "bytes": 20399,
+      "sha256": "0f7085c704afb1ce72473a16615c4591ae1aacf71d02b99a884a58453531f955"
     },
     {
       "path": "交接文档_历史记录_截至2026-11-10.md",
@@ -1717,8 +1717,8 @@
     },
     {
       "path": "换窗口上下文.md",
-      "bytes": 5127,
-      "sha256": "6178c63ac7b97029e8e2c61b18fb46ecb2506783d9a7ceca7291948ab8de859c"
+      "bytes": 5083,
+      "sha256": "ab24a1f79b72a650abfb78f979a9c074a9a1f9eb9df7ee0d2cec7ad5a0a921b7"
     },
     {
       "path": "新窗口接手提示词.txt",

@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const {spawn} = require('child_process');
-const HOST='127.0.0.1', PORT=38749, ROOT=__dirname;
+const HOST='127.0.0.1', PORT=Number(process.env.READING_ROOM_PORT)||38749, ROOT=__dirname;
 const runtime=require(path.join(ROOT,'companion-runtime.cjs'));
 let lastMeasurement=null;
 const allowed=new Set(['https://reading-room-1109.tangqichen2007.chatgpt.site',`http://${HOST}:${PORT}`]);

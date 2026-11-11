@@ -62,3 +62,5 @@ html[data-motion-mode=off] *,html[data-motion-mode=off] *:before,html[data-motio
 
 .preferences-tabs{position:relative;isolation:isolate}.preferences-tab-pill{position:absolute;z-index:-1;border-radius:12px;background:#fff1e7;transform-origin:left center;pointer-events:none}
 .preferences-tabs .preferences-tab{position:relative;z-index:1}.preferences-tabs .preferences-tab[aria-selected=true],.preferences-tabs .preferences-tab[aria-selected=true]:hover{background:transparent;color:#9d613d}
+
+.ai-config .ai-test-status{font-size:12px;line-height:1.7;overflow-wrap:anywhere;margin:12px 0}.ai-config .ai-test-status[data-state=success]{color:#1a7f37}.ai-config .ai-test-status[data-state=error]{color:#b42318}.ai-config .ai-test-status[data-state=pending]{color:#57606a}#testAI{min-height:40px;touch-action:manipulation}

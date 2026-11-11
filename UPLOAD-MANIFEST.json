@@ -21,6 +21,11 @@
       "sha256": "017a54a706b530bfff81c9348f63bfdff59bd28b9db7723c0362a6d3e648c737"
     },
     {
+      "path": "API连接测试与真实验收.md",
+      "bytes": 2474,
+      "sha256": "95d564369834863735ba4cde78ec8a893008fd8b5d19d8cecd757cab8e1b699f"
+    },
+    {
       "path": "Anx功能对照与本轮实现.md",
       "bytes": 4956,
       "sha256": "876d0ad536020e37f88ebad003d22b99f81eaae509db4fff697039f6c89baf69"
@@ -37,8 +42,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 3347,
-      "sha256": "8b43de7e76caa0382c2553e7131c08eceb3e17dba4f5199b1fc180f2df3342c4"
+      "bytes": 3509,
+      "sha256": "ddf1c499b4862f1fd993727272933f51884c9754238daf36d483f88038a1d064"
     },
     {
       "path": "android-app/.gitignore",
@@ -67,8 +72,8 @@
     },
     {
       "path": "android-app/src/chat/tangqichen/onepage/MainActivity.java",
-      "bytes": 19117,
-      "sha256": "c6493f5bbcf4113f854e809b00043f806bdd9b86ee813d7f847070abd0d1dcdc"
+      "bytes": 18870,
+      "sha256": "8150353b32c5cfa727521e37af4a9cc61996ee50ff6649a87ceb9b770123af8b"
     },
     {
       "path": "android-app/tools/SignApk.java",
@@ -82,8 +87,8 @@
     },
     {
       "path": "companion-server.cjs",
-      "bytes": 12191,
-      "sha256": "41d8a50de54486b5095c407713ca430e5be06d1dfc0eda086e11ce3c86760163"
+      "bytes": 12176,
+      "sha256": "d459132c3f357e6a0e3ac44a4b8cb157fe04911b363d3ea7c5403ce6e116b6e9"
     },
     {
       "path": "dist/THIRD_PARTY_NOTICES.md",
@@ -92,8 +97,8 @@
     },
     {
       "path": "dist/ai-client.js",
-      "bytes": 12563,
-      "sha256": "928862d93c90f847a6e8844b57d7b406c1279bb4741f23f0ad2e816df7313bef"
+      "bytes": 16965,
+      "sha256": "e0534da7521aafa8b6f9c9b058bd645827341f4c64e7dcc9c5769693512052d1"
     },
     {
       "path": "dist/annotations.js",
@@ -1297,8 +1302,8 @@
     },
     {
       "path": "dist/reading-preferences.css",
-      "bytes": 15522,
-      "sha256": "096fda0b037fd06b7b0596164388003e970756674d6ecdfb9f59dc9e556d1f00"
+      "bytes": 15788,
+      "sha256": "f505dbb03fb74bf0674c8fc18c6de9b8fe17f7e2a5a9d024bab949b3abee06ec"
     },
     {
       "path": "dist/reading-preferences.js",
@@ -1349,6 +1354,11 @@
       "path": "output/android/verification-1.4.0.json",
       "bytes": 409,
       "sha256": "da6e06458dba2dc6bc67a8c340ead2b82a01b0412b2a22bd5223d2dfbe0c4373"
+    },
+    {
+      "path": "output/android/verification-1.4.1.json",
+      "bytes": 317,
+      "sha256": "48f5edab480ea668d20bf51aa077b6cd59dfb85457bbcd062dd14d21d810bb28"
     },
     {
       "path": "output/android/一页之间-1.0.0.apk",
@@ -1411,6 +1421,16 @@
       "sha256": "556dca85df05ebd0c5ec124267fa39c74134cebae286cf868be0e61bfdda167e"
     },
     {
+      "path": "output/android/一页之间-1.4.1.apk",
+      "bytes": 3167747,
+      "sha256": "9feda5af2c35d4ef1f8980905ee33cb5598dbd14397c7e1c4feb9223c335e9fe"
+    },
+    {
+      "path": "output/android/一页之间-1.4.1.sha256",
+      "bytes": 89,
+      "sha256": "84953cfef4c44ea66302806b51bf9558e13c21f49ef7dba84af8e7232a91b4ed"
+    },
+    {
       "path": "output/android/安装与构建说明.md",
       "bytes": 2577,
       "sha256": "83fbf7977d3ff8e24fa31237466c02d2b513547e20a4f4f115faf881a3953513"
@@ -1431,6 +1451,11 @@
       "sha256": "4909848dc9f6ac957363f5f474f0100b946707268d0a970aa40cbab15d433815"
     },
     {
+      "path": "output/android/安装说明-1.4.1.txt",
+      "bytes": 329,
+      "sha256": "4b6ce4473393b78784f30729d9a2cea065e399d753b38ff61f1367da1b490bb5"
+    },
+    {
       "path": "output/shared-motion/motion-preview.gif",
       "bytes": 844361,
       "sha256": "cdeee6a67b466d318156a12ae823692b966a5436cdea8fedc3ad58bd8089eda6"
@@ -1438,7 +1463,7 @@
     {
       "path": "provider-proxy.cjs",
       "bytes": 2711,
-      "sha256": "4d27459ee93bb9b6439afcc7fac63dd4c04fb62db49e9c485b83f6382a684ac9"
+      "sha256": "01f8c6280627c6c527b17bc79eb999247268eef8d9b13d995cba31a419fe16d9"
     },
     {
       "path": "tests/android-navigation.cjs",
@@ -1456,6 +1481,16 @@
       "sha256": "e50f1272bca1911934df9e49fa257998613df2e6a1f394f9afc6f41bdd42749e"
     },
     {
+      "path": "tests/api-connection-real.cjs",
+      "bytes": 2385,
+      "sha256": "5843c677bdfaf6d70c87ca472063bea7e472803c2845eb5f74314755475f7813"
+    },
+    {
+      "path": "tests/api-connection.cjs",
+      "bytes": 5292,
+      "sha256": "f56eacdabfcb45a2ee78b6ae0d73d0f5339f14f2ed5aedcdf77e9dcc2ab82d6a"
+    },
+    {
       "path": "tests/companion.cjs",
       "bytes": 3977,
       "sha256": "0c2bdc980e5537be672c3088c88b431e439904a7fc2f10c9fa9c2ecd01fc5191"
@@ -1467,8 +1502,8 @@
     },
     {
       "path": "tests/data-api.cjs",
-      "bytes": 5842,
-      "sha256": "36a836984e86dd1bed02c73bbd2c19004605959bbd574107480197c49d6d891d"
+      "bytes": 5986,
+      "sha256": "4bd37be65a3acb7a66f9ec268b7dc5275a54ec349880f9717ddf26f9266e6630"
     },
     {
       "path": "tests/docx-html.cjs",
@@ -1687,8 +1722,8 @@
     },
     {
       "path": "交接文档.md",
-      "bytes": 20399,
-      "sha256": "0f7085c704afb1ce72473a16615c4591ae1aacf71d02b99a884a58453531f955"
+      "bytes": 20668,
+      "sha256": "dc15717e74d1d1dde7978d0813a8955efa2b3a0e0fb1aa5232a0750bca5bb321"
     },
     {
       "path": "交接文档_历史记录_截至2026-11-10.md",
@@ -1717,8 +1752,8 @@
     },
     {
       "path": "换窗口上下文.md",
-      "bytes": 5083,
-      "sha256": "ab24a1f79b72a650abfb78f979a9c074a9a1f9eb9df7ee0d2cec7ad5a0a921b7"
+      "bytes": 5352,
+      "sha256": "13bb09a646bf5c40dee7769ad97aae53446b55a31969e804869a6e07b737bf89"
     },
     {
       "path": "新窗口接手提示词.txt",
@@ -1731,5 +1766,6 @@
       "sha256": "c378533ac99654020ac3f073e5cfdb03f63d7aca91f8ecc35747a6197e7e7b75"
     }
   ],
-  "repository": "https://github.com/haycel07/reading-room"
+  "repository": "https://github.com/haycel07/reading-room",
+  "lastUpdatedSourceHead": "9632d5703badc3332d502dc00950d68a645a5180"
 }

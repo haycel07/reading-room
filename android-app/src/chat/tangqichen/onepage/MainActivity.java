@@ -191,7 +191,7 @@ public final class MainActivity extends Activity {
                     connection.setConnectTimeout(20000);connection.setReadTimeout(90000);connection.setInstanceFollowRedirects(false);
                     connection.setRequestMethod("POST");connection.setRequestProperty("Content-Type","application/json");connection.setRequestProperty("Authorization","Bearer "+req.getString("sk"));connection.setDoOutput(true);
                     try(OutputStream output=connection.getOutputStream()){output.write(req.getJSONObject("body").toString().getBytes("UTF-8"));}
-                    if(connection.getResponseCode()<200 || connection.getResponseCode()>=300){response=new JSONObject();response.put("error","API请求失败（HTTP "+connection.getResponseCode()+"），请检查配置或额度。");}
+                    if(connection.getResponseCode()<200 || connection.getResponseCode()>=300){response=new JSONObject();response.put("status",connection.getResponseCode());response.put("error","API请求失败");}
                     else{ByteArrayOutputStream output=new ByteArrayOutputStream();try(InputStream stream=connection.getInputStream()){byte[] buffer=new byte[8192];int n;while((n=stream.read(buffer))!=-1){output.write(buffer,0,n);if(output.size()>2000000)throw new IOException();}}response=new JSONObject(new String(output.toByteArray(),"UTF-8"));}
                 }catch(Exception e){response=new JSONObject();try{response.put("error","无法连接API，请检查HTTPS地址、网络及密钥配置。");}catch(Exception ignored){}}
                 finally{calls.remove(id);canceled.remove(id);if(connection!=null)connection.disconnect();}

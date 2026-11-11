@@ -1,17 +1,13 @@
 # GitHub 上传状态（2026-11-11）
 
-用户已授权将阅读器项目完整上传到 GitHub。目标账号已通过连接器确认是 haycel07，但项目当前没有 GitHub 远端，也没有同名仓库。
+已成功创建公开、独立仓库：https://github.com/haycel07/reading-room 。源码、README、测试、第三方许可、交接文档及归档、启动脚本、各版自研 APK 和动效预览已提交到 main。
 
-当前未上传：连接器不提供创建仓库功能；Git Credential Manager 没有 github.com 凭据；Chrome 打开 GitHub 创建仓库页后进入登录页。没有向其他无关仓库上传，也没有修改已有仓库权限。GitHub 登录页已打开，后续需要用户完成登录，或提供已建立的目标仓库及可用推送登录。
+Android 1.4.0 Release：https://github.com/haycel07/reading-room/releases/tag/v1.4.0 ，包含 APK、SHA256 及安装说明。APK SHA256：66f3842e19494f5afce3ebf614a1bc1e0db4343074c5324133a48e6e93146b91。
 
-待上传包：output/github/reading-room-github-ready.zip。内容包括当前完整源码快照、运行必需的本机服务/启动器、交接文档及归档、测试、第三方许可、全部现有自研安卓 APK 和构建校验文件、共享动效预览。具体路径和 SHA256 见包内 UPLOAD-MANIFEST.json。
+GitHub 源码提交以独立仓库 output/github/repository 为准；最初导入基于原项目 a507f699c52e8097f8afacc9803a3b1c129d0b3d，保留原项目的 Sites 发布历史，没有改写它。GitHub main 与原项目 Sites 提交 SHA 不同。后续更新需在该独立仓库提交/推送，或在新环境直接克隆 GitHub 仓库；仅修改原项目目录不会自动同步到它。
 
-不包含真实书籍、浏览器数据库、对话/笔记、API 密钥、安卓签名私钥、DPAPI 文件、companion-work、构建缓存、Anx 官方研究 APK 或研究原始包。本机所有原文件仍保留。压缩包是源码快照，不含 .git 历史。
+使用官方 GitHub CLI 完成授权、建仓与推送，网络使用本机系统代理。授权已保存在系统凭据管理器，不包含在仓库或上传包中。用户最终决定公开，并禁止浏览器操作；这次使用命令行完成。
 
-用户最新明确要求目标仓库公开（Public），此前私有计划作废。创建后优先上传可读源码并为 APK 创建 Release；不能只把 ZIP 上传后宣称源码已完整入库。当前包只是准备材料，不能视为上传成功。
+不含真实书籍、浏览器数据库、个人阅读记录/笔记/对话、API 密钥、签名私钥、DPAPI 文件、companion-work、构建缓存或 Anx 官方研究 APK。原数据与签名仍留在本机。
 
-克隆后运行：安装 Node.js，先在项目根创建空 companion-work 目录，再运行 node companion-server.cjs，访问 http://127.0.0.1:38749/。网页/安卓的用户 API 模式不需要电脑 Codex；电脑本机 Codex 模式还需要本机已安装并登录 Codex。
-
-原 .gitignore 为此前静态站点发布而排除 companion-server.cjs/启动伴读服务.cmd。上传包中的 .gitignore 已去掉这两条排除，确保这两个运行源码文件在新仓库可被提交；项目原 .gitignore 未改。源码中的其他本机路径需要在新环境核对，不包含自动迁移的密钥或签名。
-
-用户最新要求禁止操纵浏览器，只用GitHub插件或Git完成。已核实本次插件有文件/提交/分支写入工具，但没有创建仓库接口；本机无gh与GitHub Git凭据。后续需目标公开仓库先存在，才可用插件上传。
+网页与 APK 功能、运行方法、第三方许可和验证限制见 README 与交接文档。此前设备码过期、网络失败、尚未上传的描述只代表历史；压缩包也是准备阶段快照，GitHub main 才是当前发布源码。

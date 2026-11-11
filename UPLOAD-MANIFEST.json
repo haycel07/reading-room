@@ -1,5 +1,5 @@
 {
-  "status": "prepared_not_uploaded",
+  "status": "uploaded",
   "targetAccount": "haycel07",
   "targetVisibility": "public",
   "sourceHead": "a507f699c52e8097f8afacc9803a3b1c129d0b3d",
@@ -32,13 +32,13 @@
     },
     {
       "path": "GitHub上传状态.md",
-      "bytes": 2320,
-      "sha256": "b58a1802e10290b83db273ba819d5c71816337e772a4de7f473808130bad768d"
+      "bytes": 1595,
+      "sha256": "29da41e0ebc8e6e53434deb44e34bdc7d3218f9a7526a6de09042790a54593a3"
     },
     {
       "path": "README.md",
-      "bytes": 3325,
-      "sha256": "de2baae04656a5d79c89086144f635f8871a93321e734716b6adad1ffc95e71c"
+      "bytes": 3393,
+      "sha256": "4e6aa4f644dda6c902805e9d4ec97f1244801821ae06f31eb91022e35ccfe340"
     },
     {
       "path": "android-app/.gitignore",
@@ -1687,8 +1687,8 @@
     },
     {
       "path": "交接文档.md",
-      "bytes": 20077,
-      "sha256": "532f9b6f008d391b907dabbbbf4f297d5eaecee81ab20f5eafa47e7990432531"
+      "bytes": 20588,
+      "sha256": "f1f6fc87ca1e9a60dbdb81454e9c88e2af4f7de68b1bb08c5324f69f1cda4047"
     },
     {
       "path": "交接文档_历史记录_截至2026-11-10.md",
@@ -1717,8 +1717,8 @@
     },
     {
       "path": "换窗口上下文.md",
-      "bytes": 5065,
-      "sha256": "eeef79414eb6b89527eb9eedd5b21b61ffa3fddf32b9a9eca382a6c8000a4a8b"
+      "bytes": 5127,
+      "sha256": "6178c63ac7b97029e8e2c61b18fb46ecb2506783d9a7ceca7291948ab8de859c"
     },
     {
       "path": "新窗口接手提示词.txt",
@@ -1730,5 +1730,6 @@
       "bytes": 2190,
       "sha256": "c378533ac99654020ac3f073e5cfdb03f63d7aca91f8ecc35747a6197e7e7b75"
     }
-  ]
+  ],
+  "repository": "https://github.com/haycel07/reading-room"
 }

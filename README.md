@@ -6,7 +6,7 @@
 
 ## 开始阅读
 
-**Android 8.0 及以上：**下载 [一页之间 1.4.0 APK](output/android/一页之间-1.4.0.apk)。已经安装旧版的用户可直接覆盖升级，保留原有书架与进度。安装包的 [SHA-256 校验值](output/android/一页之间-1.4.0.sha256) 可用于核对下载完整性。
+**Android 8.0 及以上：**从 [1.4.0 发布页](https://github.com/haycel07/reading-room/releases/tag/v1.4.0)下载 APK。已经安装旧版的用户可直接覆盖升级，保留原有书架与进度。安装包的 [SHA-256 校验值](output/android/一页之间-1.4.0.sha256) 可用于核对下载完整性。
 
 **电脑浏览器：**安装 Node.js，在项目根目录打开 PowerShell，运行：
 

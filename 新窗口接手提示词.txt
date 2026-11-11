@@ -1,0 +1,14 @@
+请接手我的阅读器“一页之间”，先读取下面两份文件：
+
+C:\Users\13\Downloads\biological\reading-room\交接文档.md
+C:\Users\13\Downloads\biological\reading-room\换窗口上下文.md
+
+项目目录：C:\Users\13\Downloads\biological\reading-room
+
+先按文档只读核对当前代码、Git、线上版本/权限、APK和运行状态，保留所有未提交文档改动。不要清理真实书架/进度/对话/笔记/密钥，不重导真书测试，不替换安卓原签名。
+
+当前基线是私有网页版本23，源码a507f699c52e8097f8afacc9803a3b1c129d0b3d，安卓1.4.0/versionCode6。最终样式reading-room.css/reading-preferences.css，动效ui-motion.js+本地Motion14.12.0，自动伴读prepared-reading.js。旧版本的“最新”只是历史。
+
+我的要求：不要反复问问题，可以慢，做好为止。白色圆角，阅读左栏只有目录和竖向进度；GitHub式记录，有刻度的设置；助手默认“栞”；网页/安卓自填API，界面写API密钥且不能要求电脑Codex；WebDAV不做；动效从真实书封/按钮展开并收回。保留人物设定与旧数据。
+
+没有Android实机验收，也没有真实用户密钥的服务商验收，不能说全部设备/投诉都已解决。先简短报告接手核对结果，等我给下一项任务；若本消息后已附新任务，直接在既定范围继续完成，不只写计划或追问。

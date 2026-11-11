@@ -1,0 +1,79 @@
+{
+  "date": "2026-11-09",
+  "scope": "One short fictional prompt per profile; sequential calls. Not a stable benchmark. CLI completion includes startup, network and final output. Fast trials did not win and are not enabled.",
+  "selected": "gpt-6.1-terra-low",
+  "results": [
+    {
+      "label": "previous-default",
+      "code": 0,
+      "ms": 23688,
+      "firstOutputMs": 20056,
+      "metadata": [
+        "model: gpt-6.1-sol",
+        "provider: openai",
+        "reasoning effort: none"
+      ],
+      "valid": true
+    },
+    {
+      "label": "gpt-6-luna-low",
+      "code": 0,
+      "ms": 33104,
+      "firstOutputMs": 25228,
+      "metadata": [
+        "model: gpt-6-luna",
+        "provider: openai",
+        "reasoning effort: low"
+      ],
+      "valid": true
+    },
+    {
+      "label": "gpt-5.6-luna-low",
+      "code": 0,
+      "ms": 37428,
+      "firstOutputMs": 32142,
+      "metadata": [
+        "model: gpt-5.6-luna",
+        "provider: openai",
+        "reasoning effort: low"
+      ],
+      "valid": true
+    },
+    {
+      "label": "gpt-6.1-terra-low",
+      "code": 0,
+      "ms": 20010,
+      "firstOutputMs": 16310,
+      "metadata": [
+        "model: gpt-6.1-terra",
+        "provider: openai",
+        "reasoning effort: low"
+      ],
+      "valid": true
+    },
+    {
+      "label": "gpt-6-luna-low-lean",
+      "code": 0,
+      "ms": 30679,
+      "firstOutputMs": 24191,
+      "metadata": [
+        "model: gpt-6-luna",
+        "provider: openai",
+        "reasoning effort: low"
+      ],
+      "valid": true
+    },
+    {
+      "label": "gpt-6.1-sol-fast-lean",
+      "code": 0,
+      "ms": 35104,
+      "firstOutputMs": 28886,
+      "metadata": [
+        "model: gpt-6.1-sol",
+        "provider: openai",
+        "reasoning effort: low"
+      ],
+      "valid": true
+    }
+  ]
+}

@@ -1,0 +1,1734 @@
+{
+  "status": "prepared_not_uploaded",
+  "targetAccount": "haycel07",
+  "targetVisibility": "private",
+  "sourceHead": "a507f699c52e8097f8afacc9803a3b1c129d0b3d",
+  "containsGitHistory": false,
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 77,
+      "sha256": "4e8dea2cd9b30d3e680a4ba30c39b030719f22368db469d23f25bf03bd90972a"
+    },
+    {
+      "path": ".openai/hosting.json",
+      "bytes": 106,
+      "sha256": "7f4cacc58b2c54377ed757c80815ecfef0c591ae744af7a8ecc5da07410be5ac"
+    },
+    {
+      "path": "API服务商预设与移动端适配.md",
+      "bytes": 5403,
+      "sha256": "017a54a706b530bfff81c9348f63bfdff59bd28b9db7723c0362a6d3e648c737"
+    },
+    {
+      "path": "Anx功能对照与本轮实现.md",
+      "bytes": 4956,
+      "sha256": "876d0ad536020e37f88ebad003d22b99f81eaae509db4fff697039f6c89baf69"
+    },
+    {
+      "path": "Anx发布包研究与界面改版.md",
+      "bytes": 4354,
+      "sha256": "199091d7abdeae47c21861962a4e29272a05926522dd419bf4454a427b2feff0"
+    },
+    {
+      "path": "GitHub上传状态.md",
+      "bytes": 2002,
+      "sha256": "3d3c1503e09c7386fd92f6eb3e480fdc6708688e53a5ebafc4c571400e4fa3c8"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3325,
+      "sha256": "de2baae04656a5d79c89086144f635f8871a93321e734716b6adad1ffc95e71c"
+    },
+    {
+      "path": "android-app/.gitignore",
+      "bytes": 32,
+      "sha256": "3fe80d9b0fd9ae9dc44deaf3405b4b3e17d575d510222a8f44775b210e838206"
+    },
+    {
+      "path": "android-app/AndroidManifest.xml",
+      "bytes": 943,
+      "sha256": "7c665617d7ff4c8a93c95b0244b28f8c1601e50c998af8026ad66d70bef099d6"
+    },
+    {
+      "path": "android-app/README.md",
+      "bytes": 3693,
+      "sha256": "3badf09a8a954856c423817c48b7902c8a1eabe27309ea1c035708a0a684edc6"
+    },
+    {
+      "path": "android-app/build.ps1",
+      "bytes": 8042,
+      "sha256": "9ed34127d4ce8c68bfef748f71da41009e4884cd6d6e066b2568ec3a4b1e480e"
+    },
+    {
+      "path": "android-app/res/drawable/app_icon.xml",
+      "bytes": 483,
+      "sha256": "6d8e279eb812bb8494980f5e451299f911c45eda666da9937a996504f5bee25e"
+    },
+    {
+      "path": "android-app/src/chat/tangqichen/onepage/MainActivity.java",
+      "bytes": 19117,
+      "sha256": "c6493f5bbcf4113f854e809b00043f806bdd9b86ee813d7f847070abd0d1dcdc"
+    },
+    {
+      "path": "android-app/tools/SignApk.java",
+      "bytes": 2105,
+      "sha256": "8180bb345a1cc74fd592d3970e087dc808f900084ea950c673b41bf8fade6195"
+    },
+    {
+      "path": "companion-runtime.cjs",
+      "bytes": 487,
+      "sha256": "4d97dc917f21926f7b6200d9b3ce14133c991d86b908b6b5bdc2892e8259a3b8"
+    },
+    {
+      "path": "companion-server.cjs",
+      "bytes": 12191,
+      "sha256": "41d8a50de54486b5095c407713ca430e5be06d1dfc0eda086e11ce3c86760163"
+    },
+    {
+      "path": "dist/THIRD_PARTY_NOTICES.md",
+      "bytes": 4630,
+      "sha256": "5da9197b3fdb8c8bb6e819d2ab096bb8f9421d960862986f844cff2a96313621"
+    },
+    {
+      "path": "dist/ai-client.js",
+      "bytes": 12563,
+      "sha256": "928862d93c90f847a6e8844b57d7b406c1279bb4741f23f0ad2e816df7313bef"
+    },
+    {
+      "path": "dist/annotations.js",
+      "bytes": 12133,
+      "sha256": "a0ee7282245b4670d180fa6785df118018e8f062c2b546e6acdea2d48bd565eb"
+    },
+    {
+      "path": "dist/app.js",
+      "bytes": 71351,
+      "sha256": "e322f2649388323064c1a9632df69c76fddafe872c90b695fb198dd2c7af66e1"
+    },
+    {
+      "path": "dist/assistant-identity.js",
+      "bytes": 1266,
+      "sha256": "3fd6b7364124bcd028ef07e20ed114433992b5f6e7559117307374245bf7c8c2"
+    },
+    {
+      "path": "dist/catalog.js",
+      "bytes": 5377,
+      "sha256": "0a20b3870526dafcd3f7e23a27943b1789762b94efeff5471a270442972d8a42"
+    },
+    {
+      "path": "dist/companion-settings.js",
+      "bytes": 1261,
+      "sha256": "4f94c2a9f1e6c86ff777e3e0a2ef584addd73ce2fee975fd690fa23546a4d76b"
+    },
+    {
+      "path": "dist/foliate/LICENSE",
+      "bytes": 1091,
+      "sha256": "0740957f70db5da0a21f4332abca301b4dfe038970af398db70c7990173bc74d"
+    },
+    {
+      "path": "dist/foliate/comic-book.js",
+      "bytes": 2652,
+      "sha256": "319e92634f850318f8a0e202758bd86eea9e7ba451b2dce71b2838fd15880213"
+    },
+    {
+      "path": "dist/foliate/dict.js",
+      "bytes": 8139,
+      "sha256": "a5e57237905c3b7e427e3b9f9fae4128e1bdbd0f3fe640c34ad70711d7832f5c"
+    },
+    {
+      "path": "dist/foliate/epub.js",
+      "bytes": 56207,
+      "sha256": "b79b8443ce48b7758f9c99bd2126bb823a108f485b6d202979a4544a3cefb6ce"
+    },
+    {
+      "path": "dist/foliate/epubcfi.js",
+      "bytes": 13718,
+      "sha256": "d55765941409cd20d9e77a1413b568d93036b71f64d4a014f92f7903a141f057"
+    },
+    {
+      "path": "dist/foliate/eslint.config.js",
+      "bytes": 811,
+      "sha256": "f95ea9aaafb85928687f179104768cac4e3066d63a65b4a30ee799d88bcc9219"
+    },
+    {
+      "path": "dist/foliate/fb2.js",
+      "bytes": 12449,
+      "sha256": "7185cd58364c8edf40304135cfa5741381e21aaa281e024d78dac319df74e0fa"
+    },
+    {
+      "path": "dist/foliate/fixed-layout.js",
+      "bytes": 48865,
+      "sha256": "dae6f5b24c29fd0620f1ec54e8102a90c96b13ac66fb92e8855645fe2f37dfc0"
+    },
+    {
+      "path": "dist/foliate/footnotes.js",
+      "bytes": 6479,
+      "sha256": "2eda2f1367b2f086e9e647c798a899ec2dc97332bf575dc37a2c7fc287d0da09"
+    },
+    {
+      "path": "dist/foliate/mobi.js",
+      "bytes": 48798,
+      "sha256": "30807afe9e93ef273feec355337a5155f8db594cef3b3aa83a84c9777b75c2d6"
+    },
+    {
+      "path": "dist/foliate/opds.js",
+      "bytes": 11134,
+      "sha256": "140eba61d855a3968814b8031cfb0e3be13b4f394fa78e436fb0a412b3fcf0d5"
+    },
+    {
+      "path": "dist/foliate/overlayer.js",
+      "bytes": 17826,
+      "sha256": "e7a53f74b4560a79b99140575ea342c1a90c4452ddb16164b8cc5a69931dc699"
+    },
+    {
+      "path": "dist/foliate/paginator.js",
+      "bytes": 95545,
+      "sha256": "7a43ee5dcd82d88b8977cb7fafc1e73a29cf33c3c0b71a947d08249b42940e57"
+    },
+    {
+      "path": "dist/foliate/pdf.js",
+      "bytes": 17694,
+      "sha256": "853c4baac1d9a3d9723686cc51cb9a799f3e88d607f626d724e64d9f632f74fc"
+    },
+    {
+      "path": "dist/foliate/progress.js",
+      "bytes": 8084,
+      "sha256": "9c0b1504dd74b32ed15aca0a4ceb43d4eecf85d515cf3c9526105fc272f0c561"
+    },
+    {
+      "path": "dist/foliate/quote-image.js",
+      "bytes": 3213,
+      "sha256": "4a3b78761aa87429bc045599c6a65cc112205b6447a40b4b286823496f59e97a"
+    },
+    {
+      "path": "dist/foliate/reader.js",
+      "bytes": 9122,
+      "sha256": "a2ca84e286c9cf74f7c65250f33332898abc3f020ee8ed279c7d6b7439f96852"
+    },
+    {
+      "path": "dist/foliate/rollup.config.js",
+      "bytes": 1114,
+      "sha256": "5641e44c947562f04f0265fbb23de75621de8e457a3a41150ef220f078c9acd5"
+    },
+    {
+      "path": "dist/foliate/search.js",
+      "bytes": 5781,
+      "sha256": "2904a88de33c2d28fde57409b40cfcecedcd8442089933828e21ce8489113d45"
+    },
+    {
+      "path": "dist/foliate/text-walker.js",
+      "bytes": 1574,
+      "sha256": "4c7df0f905d92dbfeb5d23df935feda8e8b3df1a820143b8119dfe68bcdd5241"
+    },
+    {
+      "path": "dist/foliate/tts.js",
+      "bytes": 14358,
+      "sha256": "2243dde6f07edabeff598253504feb3244b3993bdba787ce4f1dbf89b57cc216"
+    },
+    {
+      "path": "dist/foliate/uri-template.js",
+      "bytes": 2062,
+      "sha256": "21e8b93e79c6a07dfb24c8d5e1f855f693e0c377601d124b5a079dd61432f516"
+    },
+    {
+      "path": "dist/foliate/vendor/LICENSE.fflate",
+      "bytes": 1069,
+      "sha256": "805f6cb28bb8b6d3a0badd83c93bccd9671fa01a3b4b92b7042b0743325ac243"
+    },
+    {
+      "path": "dist/foliate/vendor/LICENSE.zip.js",
+      "bytes": 1501,
+      "sha256": "1b7ebc8d7889ed25491484ab2b102370742ca6c0b26650a0c62cc2269b579b84"
+    },
+    {
+      "path": "dist/foliate/vendor/fflate.js",
+      "bytes": 3831,
+      "sha256": "00d975952f651e0479c6382b96f670fa731f1a5311f8bb1e1b3ba81ac30fa2be"
+    },
+    {
+      "path": "dist/foliate/vendor/motion.js",
+      "bytes": 188678,
+      "sha256": "a18fc08eb11c67658b34270bb71bc4ba806c87dbc1b720d7acd38c437844eee7"
+    },
+    {
+      "path": "dist/foliate/vendor/zip.js",
+      "bytes": 55330,
+      "sha256": "08492a865a54d51730c918b71cca80a3faadca70cad3c8400968407b0687169b"
+    },
+    {
+      "path": "dist/foliate/view.js",
+      "bytes": 26858,
+      "sha256": "4abaf73626c78b10418c8ea9cda3f7c1efd971bdfaf11ecebeca39821144e29e"
+    },
+    {
+      "path": "dist/index.html",
+      "bytes": 15668,
+      "sha256": "41e1283ae2c31276ed29a97d469d6ad44a4579593941282d14ef7f94b4708ef6"
+    },
+    {
+      "path": "dist/library-data.js",
+      "bytes": 8564,
+      "sha256": "8a7f7099cbd1177bcd03eb6f6017470a690a6be2379640e02ccf95d751e90d56"
+    },
+    {
+      "path": "dist/licenses/anx-reader-MIT.txt",
+      "bytes": 1062,
+      "sha256": "e4be723ea4784612273eb4973eaf9268d5f66b187d9ac3bd21ef876d0eada2b8"
+    },
+    {
+      "path": "dist/licenses/motion-MIT.txt",
+      "bytes": 1100,
+      "sha256": "1bf0dc3f7727723e5a032ed12164a47cf92c05204cb1a3485f123c24e2833ed1"
+    },
+    {
+      "path": "dist/mammoth/LICENSE",
+      "bytes": 1307,
+      "sha256": "6663bbd049205d38a496ccacb412a151980b444627d38de218b3b809aef330f1"
+    },
+    {
+      "path": "dist/mammoth/mammoth.js",
+      "bytes": 635562,
+      "sha256": "62773d3b21c7130342148e78abf7b97dbd3103463d3ffc5a68601a2a007e1cf1"
+    },
+    {
+      "path": "dist/material.css",
+      "bytes": 22552,
+      "sha256": "7a5dcfb50d4a82fdc2bc38495c15586decf8b5d97b677f7f3cc3e41968cbfe82"
+    },
+    {
+      "path": "dist/opencc/LICENSE",
+      "bytes": 1080,
+      "sha256": "960f7fc16d8baa126802316a7df9078a383af4fb6bc60033adb28e85c08d5e5e"
+    },
+    {
+      "path": "dist/opencc/LICENSES/Apache-2.0.txt",
+      "bytes": 9165,
+      "sha256": "b534e465949558eec2597b04f5092b5e161236a68dfbfd04d547592ac3964308"
+    },
+    {
+      "path": "dist/opencc/THIRD_PARTY_LICENSES.md",
+      "bytes": 10232,
+      "sha256": "42c7dbe71c178fcca97ba945e9ac9ff360fb69bbfea4cb50556f6c65bfa59806"
+    },
+    {
+      "path": "dist/opencc/full.js",
+      "bytes": 1195200,
+      "sha256": "855e5c95f90dbe114649f09359aedfaded676cc4a37f55b075ac10199d0b3561"
+    },
+    {
+      "path": "dist/pdfjs/LICENSE",
+      "bytes": 10122,
+      "sha256": "e4a4e5181833a8562fc94b5df9e7faa4e58d7cc4782dea4217edd062c741d87c"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/78-EUC-H.bcmap",
+      "bytes": 2404,
+      "sha256": "d92a261336dc18b8c03a46eb4d462382d33f4338fa195d303256b2031434c874"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/78-EUC-V.bcmap",
+      "bytes": 173,
+      "sha256": "61670bebc4e4827b67230c054fd0d820d6e30c3584d02e386804e62bbedc032a"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/78-H.bcmap",
+      "bytes": 2379,
+      "sha256": "ece6415b853d61e1b2560165151407d35cf16e6556932b85a13ea75276b77402"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/78-RKSJ-H.bcmap",
+      "bytes": 2398,
+      "sha256": "696b1f973c97623496703809eaaa5f9b40696c77540057413f4b826a08edfa7b"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/78-RKSJ-V.bcmap",
+      "bytes": 173,
+      "sha256": "53cb6d560ab377da48cf65d6dcacb0bdb31f13fab7066c580de38c12a73a7ff9"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/78-V.bcmap",
+      "bytes": 169,
+      "sha256": "289000f02fd34872b6975503217f33abae6bee676e7d28f640473a67c8db1712"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/78ms-RKSJ-H.bcmap",
+      "bytes": 2651,
+      "sha256": "a2442595218f5f8bd8e1b42188e368587d876cfe0cc4cd87196f077c878f72e2"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/78ms-RKSJ-V.bcmap",
+      "bytes": 290,
+      "sha256": "f8ddceba96bfd9d3740bd1789ee30d1f47c78371520a8084f71f7df58f19be0b"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/83pv-RKSJ-H.bcmap",
+      "bytes": 905,
+      "sha256": "44040051ec818fe09b9703472bea72efd2759d5eeb5ff0d77c718d6bb5e6d1df"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/90ms-RKSJ-H.bcmap",
+      "bytes": 721,
+      "sha256": "c13e043e85ff715b75bb03801e8fd0fb8f3a75e4a48496faa6baaf92b5b48ba1"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/90ms-RKSJ-V.bcmap",
+      "bytes": 290,
+      "sha256": "499bb916ce1adbe4289b6e5811f4dc20eb238cdc2ffad20cf26ae56716885bab"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/90msp-RKSJ-H.bcmap",
+      "bytes": 715,
+      "sha256": "7b8b3b8bbf821702e9a4df9f3596ce292380c8c1b0925dedadbb4e4b2d80498b"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/90msp-RKSJ-V.bcmap",
+      "bytes": 291,
+      "sha256": "6296c2b5c07dca8128e96d5296d621a3268803d4fa0e5812a21e52fe2802aacb"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/90pv-RKSJ-H.bcmap",
+      "bytes": 982,
+      "sha256": "fb5103f03d3a34547e18d316e52b6d9b26e485c662999222f84d2ba54c2e4fa8"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/90pv-RKSJ-V.bcmap",
+      "bytes": 260,
+      "sha256": "7bcb5ad2ba55b9662ce379e16c2d9cc2b82d621a579807353741172e4af615c2"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Add-H.bcmap",
+      "bytes": 2419,
+      "sha256": "a2ffab28b990998181bcca9b0e914bb2207820f100ae31d5c469444892e5ad8e"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Add-RKSJ-H.bcmap",
+      "bytes": 2413,
+      "sha256": "b29f4b52e2465d0485856d5e69f1ba69927deb2848d8fd328c8035583b35bb7e"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Add-RKSJ-V.bcmap",
+      "bytes": 287,
+      "sha256": "2aa2232c283a3f5d0997c2834a36cead0b79ce2657944cfeed08140c293460ff"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Add-V.bcmap",
+      "bytes": 282,
+      "sha256": "25125d3b1be64e86b2df5b3344170b45a42bcaa0b46e43a34314ef73c166e542"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-CNS1-0.bcmap",
+      "bytes": 317,
+      "sha256": "8c65be9d51a9f269a547dc12460707aaf4031ab67ebe8a2900f4b4cc6b3e450e"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-CNS1-1.bcmap",
+      "bytes": 371,
+      "sha256": "73152bc1a59cc594b414ac6068be48e5512b96ae85920c40e32a99269fdb0c04"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-CNS1-2.bcmap",
+      "bytes": 376,
+      "sha256": "a1b8d353bdef9584c820464e8f1c9e2013d64ebf433cba0aa831dddf515818c2"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-CNS1-3.bcmap",
+      "bytes": 401,
+      "sha256": "2ffc0c75c79fafde506163d3c08c390d183251009f3fbf6ae50d1167d14b9570"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-CNS1-4.bcmap",
+      "bytes": 405,
+      "sha256": "98a1f470c878c6b9691a4d7aef776af8ac9b55f5587c9fafa00547f3bf655716"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-CNS1-5.bcmap",
+      "bytes": 406,
+      "sha256": "ddd6e29955eb8cb545f2ebd09c628c3bbda5023256eda1b728f743c75fb77829"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-CNS1-6.bcmap",
+      "bytes": 406,
+      "sha256": "317bb2db71e0e5b7b0c47b75de1da915c2e22f65f0c0861507f9ca7ba238f8a2"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-CNS1-UCS2.bcmap",
+      "bytes": 41193,
+      "sha256": "e665837f2197c6bd08cd8955ad4d6932cee2398e2e328b25b00e6bfb3bd72af9"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-GB1-0.bcmap",
+      "bytes": 217,
+      "sha256": "8b81cce8a11d510e505704953cfa4e4ab080c1a0cab991145a3512ee433946b9"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-GB1-1.bcmap",
+      "bytes": 250,
+      "sha256": "0426983081788ec7202703e71f1efa4b860f75b936994236010b39d89251a81e"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-GB1-2.bcmap",
+      "bytes": 465,
+      "sha256": "e67b37a83b160ab3831306a71a605893b24454ee81ac9b6123bf2d3984d268d5"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-GB1-3.bcmap",
+      "bytes": 470,
+      "sha256": "aa299afc3e12a28726147305f191be28c7498078c8b182ece7886ac79cd99078"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-GB1-4.bcmap",
+      "bytes": 601,
+      "sha256": "8fbd7d74c2ddb1350c1cecce54a73fde3f5453093d4bed445283ec0033d2097f"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-GB1-5.bcmap",
+      "bytes": 625,
+      "sha256": "c22cb2fcff24112fa31dab2111bdc51957006576d31aad5a25e67793ac01428c"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-GB1-UCS2.bcmap",
+      "bytes": 33974,
+      "sha256": "20507620260c0c935c35afc1e70e5888aa7125d5ec7ffc03cef1959feb2c1641"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-Japan1-0.bcmap",
+      "bytes": 225,
+      "sha256": "464f08905236f5703b1f5cf8358767c8b18e6bcc808840d081f1de2c7ab38134"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-Japan1-1.bcmap",
+      "bytes": 226,
+      "sha256": "4c823848722187d1ffe75ae3f5f9126ccd2d7895a05fad14c919fb119e037008"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-Japan1-2.bcmap",
+      "bytes": 233,
+      "sha256": "7810fb808e367e70429e90a9478fe6a3fdc3e214f25c7582ce9c2da6a242315c"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-Japan1-3.bcmap",
+      "bytes": 242,
+      "sha256": "84deb1828711ad3d390c9899c38abce1bf619d65ff7bf1a326ec95acc45f08f8"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-Japan1-4.bcmap",
+      "bytes": 337,
+      "sha256": "3f8a4f974919c2b8bae5d10175ffa2673be140481e00840542c85d48ef184067"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-Japan1-5.bcmap",
+      "bytes": 430,
+      "sha256": "1d3ce4ff28d977f8cf37a912ae4ec811f4175c3167b1ec0b2567feec3e79e1db"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-Japan1-6.bcmap",
+      "bytes": 485,
+      "sha256": "5609797b9401b30be72ef9645da62a87829f058c3be4b5c623383119f584b1d9"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-Japan1-UCS2.bcmap",
+      "bytes": 40951,
+      "sha256": "66c5d0dc4964f4093e77b194023f3a0f689324028ec8330e1e1d0570bcba7c2f"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-Korea1-0.bcmap",
+      "bytes": 241,
+      "sha256": "dfb8c3874f0e5a8c3acf597d2c12d2b63e90bc5e4f0fce990ec4c56077d80b32"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-Korea1-1.bcmap",
+      "bytes": 386,
+      "sha256": "62f277b7b1c441c007797ae707d5c37258d029ce4661a2b911e2e1ee35e6adc1"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-Korea1-2.bcmap",
+      "bytes": 391,
+      "sha256": "1d77068af462f96d7ad28ad7e7d43eef6423c685b479d7dc25ff5df38db0380d"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Adobe-Korea1-UCS2.bcmap",
+      "bytes": 23293,
+      "sha256": "857b723088be97255053562bfa41bd1075a7f7910d3bab59a0645c8bbc7060ff"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/B5-H.bcmap",
+      "bytes": 1086,
+      "sha256": "718ad0ffbef4c34f8f3f31292c462e519cd567a5511fc8b346c60010d64f4ef9"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/B5-V.bcmap",
+      "bytes": 142,
+      "sha256": "b5c37383517477620ced927b6b4ffd4f4cc6230d8051b5b46a21d6768e07f7d8"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/B5pc-H.bcmap",
+      "bytes": 1099,
+      "sha256": "bab6028aead1d6149400e904ab10cfd319082d826473ed4c582c8eeed920f17e"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/B5pc-V.bcmap",
+      "bytes": 144,
+      "sha256": "41543142b9767f3b76133899fc8453282b01ad3c653acaeea42d78c5a7d08c63"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/CNS-EUC-H.bcmap",
+      "bytes": 1780,
+      "sha256": "e8f89cd61e6486b948205da46499d659ed0aed949b7095fd3c8e95ffe2b0e7a9"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/CNS-EUC-V.bcmap",
+      "bytes": 1920,
+      "sha256": "cae422bec2ac6dbe86bf921cec942bacd2d0b733ffcca5f91b3ba14e917025a0"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/CNS1-H.bcmap",
+      "bytes": 706,
+      "sha256": "e8487971ab20cd16f3de3e8ac56ec994b72b658ad113f2818239dfd5108f501a"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/CNS1-V.bcmap",
+      "bytes": 143,
+      "sha256": "42df8076aaa7574505e7304af83a3323ec032c4177d64b1309db8c043d594a8a"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/CNS2-H.bcmap",
+      "bytes": 504,
+      "sha256": "bc6024d274d440f0625c69e25f37036ef6cb6689432ceaa160d3432a2a716ca7"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/CNS2-V.bcmap",
+      "bytes": 93,
+      "sha256": "2e4f70a8afd23a121030fc2e5b5f3816e903b11e7ba8b8c09654b31c80399c38"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/ETHK-B5-H.bcmap",
+      "bytes": 4426,
+      "sha256": "d2f10fa519336bc4efcc7b6deb9604b75429946b40d82e311cb3a97a1994c89a"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/ETHK-B5-V.bcmap",
+      "bytes": 158,
+      "sha256": "1fea3fd0d9f0f679f80505800851ef2e4131d81127e18c006938ffa2f4c8b247"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/ETen-B5-H.bcmap",
+      "bytes": 1125,
+      "sha256": "87ee6b3f5bfda5fe26fa35431264c7d73070d10dbbf398a75185d63ae322c18d"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/ETen-B5-V.bcmap",
+      "bytes": 158,
+      "sha256": "47dc0d2c21e3bde317947aec1675ceabc1d5460a60bf9c24334b8c407a17172c"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/ETenms-B5-H.bcmap",
+      "bytes": 101,
+      "sha256": "d5f5a73da4173b7da9a3a20e16f26f9cd5d12deb1553409919e0cec6fd37fdee"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/ETenms-B5-V.bcmap",
+      "bytes": 172,
+      "sha256": "18252fca90f472f479af1bddd60d6ab51c8e1b55dcf6845951426504934543e0"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/EUC-H.bcmap",
+      "bytes": 578,
+      "sha256": "f9939cd57fccdc65c5d9f4c205fd497ebdbd283643308da5663801a8c1d9c595"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/EUC-V.bcmap",
+      "bytes": 170,
+      "sha256": "1283a50a706507c4436da83ede9ad7a4440be25378f2e96f6c81a430081426a3"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Ext-H.bcmap",
+      "bytes": 2536,
+      "sha256": "4000ed4e61a1c668ef453bbd0603cfa383defa793abd46a57ed870d7f527350b"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Ext-RKSJ-H.bcmap",
+      "bytes": 2542,
+      "sha256": "e0d2f0df337660e73813238dd4a725f11f0621b90f3273857db253d0e7694caa"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Ext-RKSJ-V.bcmap",
+      "bytes": 218,
+      "sha256": "f617a22b6d67febb187990952006c91a9f5a4db21155d268c656252d0c21985d"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Ext-V.bcmap",
+      "bytes": 215,
+      "sha256": "c2087fb845a9e3acea0c2922cd40e6af67e11957bec74dcd597f1285edd490ce"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GB-EUC-H.bcmap",
+      "bytes": 549,
+      "sha256": "928bad06fd84a48f5ba7150d7716609119fb660f2aaa73eccad81ddab9b9d203"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GB-EUC-V.bcmap",
+      "bytes": 179,
+      "sha256": "a9ad88ac2479da529b16dc48abc5952332e27bc355335f91df5729a587533324"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GB-H.bcmap",
+      "bytes": 528,
+      "sha256": "1018c777a8910b5bb46d7d54a4aee9d51ca5cff8addb2b41c969d9101cb3fd1c"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GB-V.bcmap",
+      "bytes": 175,
+      "sha256": "0b96789143c0bbf9f1641ae7165b3456dccd14dabffcbb0bd654d5bf6f94f863"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GBK-EUC-H.bcmap",
+      "bytes": 14692,
+      "sha256": "2103fed28650ede096a2281104a1a8a4304dae0db414342c636867522307123b"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GBK-EUC-V.bcmap",
+      "bytes": 180,
+      "sha256": "a7fd35dd14d9dbdb955f34e6c0630618b6620dfd09d4283b2f65a65ce77fcaea"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GBK2K-H.bcmap",
+      "bytes": 19662,
+      "sha256": "3d919ae72af16c5cc6846ec87a4326a9f125e493c59d3628429d35c2c95fe8c4"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GBK2K-V.bcmap",
+      "bytes": 219,
+      "sha256": "b927fdfd595c07ce9158bf2ec13f4641b2e83b01c70989dadfabd6ed7c6ac2dc"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GBKp-EUC-H.bcmap",
+      "bytes": 14686,
+      "sha256": "d15ebd8e81fb4fe8a244f1b1e877922e03500ac69eddf5001093e502430451d2"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GBKp-EUC-V.bcmap",
+      "bytes": 181,
+      "sha256": "fdc736d46e642625dccc8ad8c59f2c69fc7db7a13f2e799c6c6b779e707bb97a"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GBT-EUC-H.bcmap",
+      "bytes": 7290,
+      "sha256": "dc5f44e48a39f3367ae28665027d8ab1d8cedb5a9dcc5068a900acd6709f60f9"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GBT-EUC-V.bcmap",
+      "bytes": 180,
+      "sha256": "a1ad24e63653b8aa388c18fa5e498f007564e43dde699a9f91ccb4645c999be8"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GBT-H.bcmap",
+      "bytes": 7269,
+      "sha256": "8afda745a505763f3ff54c8126eeb48ef376ea9ed07d9f42ff9a22c5c547ec57"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GBT-V.bcmap",
+      "bytes": 176,
+      "sha256": "cdc2ec5c3c7c7033290c9a8894878202f08674eb9b1ae7d36218430326768771"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GBTpc-EUC-H.bcmap",
+      "bytes": 7298,
+      "sha256": "7b23e2f7bfdb6c918f567b7324bf858f398bd8cd5f268d74ece19a3c91bf4f32"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GBTpc-EUC-V.bcmap",
+      "bytes": 182,
+      "sha256": "d7a1b13ead9ab511cf2cd01de6ce8b02aa8e8767e84895337d7a3b67f039f93b"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GBpc-EUC-H.bcmap",
+      "bytes": 557,
+      "sha256": "3c4a4eb82f05abe51f6650985c630e180438bfdd491318f5d20d2ec29236e1c3"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/GBpc-EUC-V.bcmap",
+      "bytes": 181,
+      "sha256": "215bdfa2842705624b4cf4cd29b8e3c720f1e192365e0305c11030a424c84d7c"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/H.bcmap",
+      "bytes": 553,
+      "sha256": "a0233e21047ec00b852125b243cbcf30abee511155b6d8159c24f944384bc9ee"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/HKdla-B5-H.bcmap",
+      "bytes": 2654,
+      "sha256": "5242bce18fb13ab4cc59b146a03eba36e4ce42667eeff09e10981a9d2aa4996b"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/HKdla-B5-V.bcmap",
+      "bytes": 148,
+      "sha256": "2e0537f786c0791d41a925f72bad2d4e7268aa6cbf15a1400a722672cec38e2c"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/HKdlb-B5-H.bcmap",
+      "bytes": 2414,
+      "sha256": "fdc8159984bf5dbe475c0d5dfcb621ecee4dea07c38c668bd77f4c679e23b9b3"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/HKdlb-B5-V.bcmap",
+      "bytes": 148,
+      "sha256": "b249eb9dcb915ab45057c5d4d7aa55ef88d0efbb092af6bae0b2d4705d139abf"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/HKgccs-B5-H.bcmap",
+      "bytes": 2292,
+      "sha256": "ab64c7fc5e9b2e97750cc4f269b0da14fd8649e49151b7598c8df86599bac591"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/HKgccs-B5-V.bcmap",
+      "bytes": 149,
+      "sha256": "02ebdf7cdffb5395fb21091cd58a013a18ae5388922822f9dc6292ef16b98956"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/HKm314-B5-H.bcmap",
+      "bytes": 1772,
+      "sha256": "bfd8bbde6b36a9da4c1c902c74121a30d9807a7079a00eeea218be6adc223cef"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/HKm314-B5-V.bcmap",
+      "bytes": 149,
+      "sha256": "2a64a815cfb6fdd480674a868762e3d161fda17543b20c9209978559f0667164"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/HKm471-B5-H.bcmap",
+      "bytes": 2171,
+      "sha256": "49d7c037758826b5b6c0fa329c35bbf25d3943197754e72ecd30c6fb04d745e6"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/HKm471-B5-V.bcmap",
+      "bytes": 149,
+      "sha256": "be24c109e78aa4fe3c1f27d30aab3ed0741e783fa1b6b6c2719741072b54b132"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/HKscs-B5-H.bcmap",
+      "bytes": 4437,
+      "sha256": "08599378f41d96b40537adef6e6edcc4a787bc63f5accf47c026df4905a13914"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/HKscs-B5-V.bcmap",
+      "bytes": 159,
+      "sha256": "d073542b7dad1c4cbf01c1af5f0cd13218d1281a491956e310c55702fc8705c4"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Hankaku.bcmap",
+      "bytes": 132,
+      "sha256": "b454701f7aecd7856769016dfd04ca64280a060f2c67a2466d50b4395d24974e"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Hiragana.bcmap",
+      "bytes": 124,
+      "sha256": "2ed669394756dd9458651cd9995ab29ab691ecb7686659003306cdf22767a414"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/KSC-EUC-H.bcmap",
+      "bytes": 1848,
+      "sha256": "6784e16dbc5861c036c23d3e55f0d4ba0975a3e464da0ee8e49bcfff0be070c4"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/KSC-EUC-V.bcmap",
+      "bytes": 164,
+      "sha256": "fdb36bad85e9924823d49db374067988e024cf80fc894711f2c9178951cbbe95"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/KSC-H.bcmap",
+      "bytes": 1831,
+      "sha256": "c1f6d61f1d3304fd539a65ae72624fa567ecc3853bf52e283958a7a2515b3eee"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/KSC-Johab-H.bcmap",
+      "bytes": 16791,
+      "sha256": "939993d213f68db763bf156217c217ae23af082b91a0eacecf3d11eb4ff8ef8c"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/KSC-Johab-V.bcmap",
+      "bytes": 166,
+      "sha256": "5d61967aac0e666def721e8b8d0fed8f95a879a14f2e76ce516c3d11c621e519"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/KSC-V.bcmap",
+      "bytes": 160,
+      "sha256": "d7da5afd9f1fe74816d79c9325f0139a4efb6438664ebfdf9a7aa92f3034360f"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/KSCms-UHC-H.bcmap",
+      "bytes": 2787,
+      "sha256": "5b70d8f6a4fa9e2283dc649f0ff95d906d56efbee50a20e8d2faec3a8fed078e"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/KSCms-UHC-HW-H.bcmap",
+      "bytes": 2789,
+      "sha256": "a5e6ba22aceb02fdedee11bfb9ed138463d89e85b87810b9f075b469d936f8ec"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/KSCms-UHC-HW-V.bcmap",
+      "bytes": 169,
+      "sha256": "890332a6a26880d463a12f2a6ff048bf9cf7e45077cfb1ca8815b89baa7bf411"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/KSCms-UHC-V.bcmap",
+      "bytes": 166,
+      "sha256": "1631b531c9a40c8cbe24c2317dba107362e49fa6e18af620414d627c111d570c"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/KSCpc-EUC-H.bcmap",
+      "bytes": 2024,
+      "sha256": "709480682c55cedbb0124b9960d78e28febeee0df2e34607d61aac6601647ec7"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/KSCpc-EUC-V.bcmap",
+      "bytes": 166,
+      "sha256": "031707887d6fc2378a36cdb6775334fd7a236c3f95048d8436abf43fe26fc49d"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Katakana.bcmap",
+      "bytes": 100,
+      "sha256": "3b6ca6642fbf8822da00d5e58a8aa275216d5c32dbf2bd73e934197fc9fc5c53"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/LICENSE",
+      "bytes": 2116,
+      "sha256": "24c20d022ae9ab5d37501df4d9818bb073c709193d4f0648cc71e937eb6967bb"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/NWP-H.bcmap",
+      "bytes": 2765,
+      "sha256": "286c6c9e335da330928a01edc3c97a3a623f1f7f3c42762b0a7dc2f651b1a78f"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/NWP-V.bcmap",
+      "bytes": 252,
+      "sha256": "3a75fb7b59adfb172710758c425d8ac6c93fd5360a64dd4afd5dd04e60ab4b4d"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/RKSJ-H.bcmap",
+      "bytes": 534,
+      "sha256": "a70de61a22a898f693f02cc011c3e3cff2e10aaa7cddb4661e456a21ae859f78"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/RKSJ-V.bcmap",
+      "bytes": 170,
+      "sha256": "68c1a64506471a524ea5cfc3b3a9f8f70031989a6bd95427b1351f33ccf50b06"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/Roman.bcmap",
+      "bytes": 96,
+      "sha256": "1c6b3ef9d9e5cb1aa329142ce9414b90f9b6d7f9182a2a9e927378dab8f0d43f"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniCNS-UCS2-H.bcmap",
+      "bytes": 48280,
+      "sha256": "779428116752f34e2490a1941d24e4634c71e3c22d053b811d2090ae2fb3c704"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniCNS-UCS2-V.bcmap",
+      "bytes": 156,
+      "sha256": "1e5cc184b850ea44abc2df8ae5674279df668e8edf5e2a1a2ea2bd77adbd280f"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniCNS-UTF16-H.bcmap",
+      "bytes": 50419,
+      "sha256": "32ff139b3c7b91d6ad25f994701f3ce7b242906022c418fd73e6493fc228bfe5"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniCNS-UTF16-V.bcmap",
+      "bytes": 156,
+      "sha256": "278eb1e68d1a236c60ef59472cf0176ee0d45f364285e76ca12419a08d46fb9a"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniCNS-UTF32-H.bcmap",
+      "bytes": 52679,
+      "sha256": "bf26eb67fe19ee5ba915799e80ca72408400aa8342fdf6a244a4f44de8f97336"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniCNS-UTF32-V.bcmap",
+      "bytes": 160,
+      "sha256": "f7da3caf83ceb1cb37936fa10700d9ba6e9c3f72c5bc9724e3ac79bff0c0179e"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniCNS-UTF8-H.bcmap",
+      "bytes": 53629,
+      "sha256": "2f2a742bcd1a84a148a4a518b9eed51a8f9c6ca5ed3bc5e2e41fff97de5dc2d8"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniCNS-UTF8-V.bcmap",
+      "bytes": 157,
+      "sha256": "b7c3f10780a8c62dd1c8ff6c30dc1e4e23b6cdc87c3a96fcd514cc98ffd3af9d"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniGB-UCS2-H.bcmap",
+      "bytes": 43366,
+      "sha256": "9201569b402e81ad8860650bd86350c4fa28e5dd5971f05fcacaf40f51de18ed"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniGB-UCS2-V.bcmap",
+      "bytes": 193,
+      "sha256": "f10282335e4d64203bc2a653a3a47d745ec76c8ae04549f4d50180c1899be216"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniGB-UTF16-H.bcmap",
+      "bytes": 44086,
+      "sha256": "386fd39581245c034da016a92d23f3df1117d169f996100050b264fc09a84e35"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniGB-UTF16-V.bcmap",
+      "bytes": 178,
+      "sha256": "0473cfbba612b92dd9918f0ff8aee9112897c48e0ffdc0eb82da3144ed8ea84a"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniGB-UTF32-H.bcmap",
+      "bytes": 45738,
+      "sha256": "f48a145dc4e3ed1dca1dde7111716a72306a2a4191ab05c6bae3a5c3a961cd2f"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniGB-UTF32-V.bcmap",
+      "bytes": 182,
+      "sha256": "106acc49b7118bdef944e32107b4f348238f3929a0a15d3b7aab7b9101535993"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniGB-UTF8-H.bcmap",
+      "bytes": 46837,
+      "sha256": "f217b439c80ee5fa1bc2cf6d1defcc319f8d84483d166a00ee199e05a68588df"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniGB-UTF8-V.bcmap",
+      "bytes": 181,
+      "sha256": "a64df947632878eacc532fa193c735c92a383b7d66e6f8374ac193af7c64fc63"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS-UCS2-H.bcmap",
+      "bytes": 25439,
+      "sha256": "ad2352f40870880fbf7f8ee5abadff743fbd025fbf9830b8ada472d1c5e4da0b"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS-UCS2-HW-H.bcmap",
+      "bytes": 119,
+      "sha256": "16e87edca954177c0881c874859d6783220925d821b5cdfb8755b61ebd93f9ce"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS-UCS2-HW-V.bcmap",
+      "bytes": 680,
+      "sha256": "1973457e2c0192819947e56068625b34fb9a72ecc8a476ce6d7eaae5f73e2e5c"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS-UCS2-V.bcmap",
+      "bytes": 664,
+      "sha256": "42a133d8e2ce9dd6d2288018e01592d2bf2435b326d39b94ea0b6e6a44ac33d3"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS-UTF16-H.bcmap",
+      "bytes": 39443,
+      "sha256": "f6a89c5688978548c83fcee990e205bc63c74274d5c69b49032a3bd4c49a05ee"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS-UTF16-V.bcmap",
+      "bytes": 643,
+      "sha256": "c67126fc7c73850855186bb0d6482ac0a365057e0b58778c4ab9f234683fef53"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS-UTF32-H.bcmap",
+      "bytes": 40539,
+      "sha256": "96195950ce0fe24443d8eb426fa6b88534ec421d7bef9046f0b2362809cfba73"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS-UTF32-V.bcmap",
+      "bytes": 677,
+      "sha256": "ed4dafda402bdd19c4d5d8bf2ab41473c0f86f384552b4c7b963d6627daedeb1"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS-UTF8-H.bcmap",
+      "bytes": 41695,
+      "sha256": "798fb0bf06ab0788d1f6a91c2db7de581612eef03c628f10e8f7ecd8f70ab448"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS-UTF8-V.bcmap",
+      "bytes": 678,
+      "sha256": "1021611424f913b2df0bfdbe94bd327c04e224ec89d8e821c6501ea3d21f4265"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS2004-UTF16-H.bcmap",
+      "bytes": 39534,
+      "sha256": "710a32d7cb43fd6bd9dbf30da5971f8c941590f74441e208d852c2be0e74cc97"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS2004-UTF16-V.bcmap",
+      "bytes": 647,
+      "sha256": "3b149aff5c5707b57fb3215d1775852c8b1f413ec0f679ea628f25cf87fe098d"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS2004-UTF32-H.bcmap",
+      "bytes": 40630,
+      "sha256": "8d2658e18741af7937d586a57c89729a6fec0d86121197c1f8518aa58b29cdfb"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS2004-UTF32-V.bcmap",
+      "bytes": 681,
+      "sha256": "6dd475782f2897648a683c48b2fa015a15b8f06856760bddc8a17a63f418bacb"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS2004-UTF8-H.bcmap",
+      "bytes": 41779,
+      "sha256": "691c614ce432b3e62486efb54e5c84c6da5afe9b51b21253bde4758feb484183"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJIS2004-UTF8-V.bcmap",
+      "bytes": 682,
+      "sha256": "40a8c7ea2d46711c5f78fc9a878a7db68b1543ba5cd60ecf14f519a2deb829b7"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJISPro-UCS2-HW-V.bcmap",
+      "bytes": 705,
+      "sha256": "6826f94d789d7bf1960668c1c5819c34c9585c1b23152fbc19ee81c7df08524b"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJISPro-UCS2-V.bcmap",
+      "bytes": 689,
+      "sha256": "493de9fd1a08f7946065d8ab58f0c3c9fe489f5a0f109f2d05a3169b4bd5789f"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJISPro-UTF8-V.bcmap",
+      "bytes": 726,
+      "sha256": "6181d382cf736c5e09492e8be9f26f31fa25b7462253f23ab16646af432cad81"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJISX0213-UTF32-H.bcmap",
+      "bytes": 40517,
+      "sha256": "692044e1fb33445668632bc9fe7386805c624864be1ddeb29d65bb0c99fc630c"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJISX0213-UTF32-V.bcmap",
+      "bytes": 684,
+      "sha256": "dd54e16ca7bffb3a886242549b2bf7d78a277087f7c60d2636f118c21a5b0646"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJISX02132004-UTF32-H.bcmap",
+      "bytes": 40608,
+      "sha256": "f80ea5a989be30ccda5a8804baef6d3b4b044d2b339bf8b31c671b2466171cf6"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniJISX02132004-UTF32-V.bcmap",
+      "bytes": 688,
+      "sha256": "94c22bd99e771c5fbe0dd8dc39850570d4db0075074aca13e272813edd7cc57f"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniKS-UCS2-H.bcmap",
+      "bytes": 25783,
+      "sha256": "a1081396ab4adb6f4a5b6c15f896963c244c1c9bcb65ce5616d06096a1b9811c"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniKS-UCS2-V.bcmap",
+      "bytes": 178,
+      "sha256": "6cab547431958fbdc1d401d06ebd4dd61a73f5509a10f974df32bcbca11a2e43"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniKS-UTF16-H.bcmap",
+      "bytes": 26327,
+      "sha256": "42d35b396286499dfae1737a07adb3a64500df37b426580bfb1d3ea872938519"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniKS-UTF16-V.bcmap",
+      "bytes": 164,
+      "sha256": "5bdb7390c80dcc136cb47d41dc7460082560969c17322ee739fe3020fb642410"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniKS-UTF32-H.bcmap",
+      "bytes": 26451,
+      "sha256": "3a01ec51ed1b828101351e337ffb8250abe11880032e5210f881170fed2588de"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniKS-UTF32-V.bcmap",
+      "bytes": 168,
+      "sha256": "dfda895eceaed081af030dbbb962b49629eea817fc3c02bae15db93d0c68acd7"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniKS-UTF8-H.bcmap",
+      "bytes": 27790,
+      "sha256": "3fac9c65145f72d7d42157a3b9c5ed6904632184e6a0888f2b828699afd2002f"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/UniKS-UTF8-V.bcmap",
+      "bytes": 169,
+      "sha256": "9ecc6cf30dd354b9778ddba163b6cc7302b087ce9f39d1ba73472d2b75ed13ca"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/V.bcmap",
+      "bytes": 166,
+      "sha256": "b9ad1c0c09ff14bca52f9a28a9767eb857ad0e8946e64ba14c7387a7eb69866a"
+    },
+    {
+      "path": "dist/pdfjs/cmaps/WP-Symbol.bcmap",
+      "bytes": 179,
+      "sha256": "543923bead225732aba30976690ee89095a19628277b5863efecc2c728d5d7bf"
+    },
+    {
+      "path": "dist/pdfjs/pdf.mjs",
+      "bytes": 646165,
+      "sha256": "2c6a1a037da73d25edd6dbd3f0d1650443e0604d82e92e131615dd4480760d44"
+    },
+    {
+      "path": "dist/pdfjs/pdf.worker.mjs",
+      "bytes": 2252155,
+      "sha256": "d003fad741d16e29352550e800b558504893a84fc96ed83a98371b454d6c8da3"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/FoxitDingbats.pfb",
+      "bytes": 29513,
+      "sha256": "845c752392b6c914fb989c75a08b7792b88f542d2499042ef2889f8c814a16ed"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/FoxitFixed.pfb",
+      "bytes": 17597,
+      "sha256": "b6c8fe53f134b8b6d4578cd2d544df4cee9624c4efa8d51a560fb40ea296101b"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/FoxitFixedBold.pfb",
+      "bytes": 18055,
+      "sha256": "f1b7159702973f54fc86254ea38bcf3712b2a736eb3a0995751e9f4bb45ad603"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/FoxitFixedBoldItalic.pfb",
+      "bytes": 19151,
+      "sha256": "8a000945843bd31add06aee63bf9fd41b7578b4f3242a4b7cd46349ad9d24d4d"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/FoxitFixedItalic.pfb",
+      "bytes": 18746,
+      "sha256": "5007faf8320fa1fcc08b8894b356ad976f60b992ba29ee5272578bbdebaf3876"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/FoxitSerif.pfb",
+      "bytes": 19469,
+      "sha256": "4f57d2b9d884af8f907bf22df6019b52d86cbf6214fdbd02b1ae05472a543f35"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/FoxitSerifBold.pfb",
+      "bytes": 19395,
+      "sha256": "0bdf4b04e964139818d51eda03d566ba999fc3ba2421b1c6c51f9dc969022e80"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/FoxitSerifBoldItalic.pfb",
+      "bytes": 20733,
+      "sha256": "a406cac82583bf98175cb62c87ed5e95c45fbb34eece63a10b0a13e793cb2e10"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/FoxitSerifItalic.pfb",
+      "bytes": 21227,
+      "sha256": "610ae0687198045c4db5d1a6650fd5e92536631706382eb8b72e38df578d0ae9"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/FoxitSymbol.pfb",
+      "bytes": 16729,
+      "sha256": "47967d055530e7357088a08403115425643ec2cdfd6201ba8af0fbd7116c1539"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/LICENSE_FOXIT",
+      "bytes": 1580,
+      "sha256": "77f43e2de90fdc20a82bb3280981c1de1109d7d84657f14ab2ef17e03271b7fa"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/LICENSE_LIBERATION",
+      "bytes": 4516,
+      "sha256": "1cfc9eab5a504c8d3496a2dd8f3efc7c5367e0910a038d9e678659473953c76a"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/LiberationSans-Bold.ttf",
+      "bytes": 137052,
+      "sha256": "361c61b82d575c5c35fd9157fda8b0194bcfcd0d88ea8521a4fb5dd53d33dddc"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/LiberationSans-BoldItalic.ttf",
+      "bytes": 135124,
+      "sha256": "a224075ac17495ad0a3af3bc0a419ac0704a8b3fd1095456201fb9b095fc281d"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/LiberationSans-Italic.ttf",
+      "bytes": 162036,
+      "sha256": "832b4406dbef23628800d3aaad21048534ac84d7e3ad955be83b8172ed8ef512"
+    },
+    {
+      "path": "dist/pdfjs/standard_fonts/LiberationSans-Regular.ttf",
+      "bytes": 139512,
+      "sha256": "f8ace1f892b2bd9dc1792ba7f097fa7588f84fed48321480e04de5390828221f"
+    },
+    {
+      "path": "dist/pdfjs/text-layer.css",
+      "bytes": 3812,
+      "sha256": "06d190d919240a0edc09a61cbb17bd656cd0deed32203e26e122bee8ea64330e"
+    },
+    {
+      "path": "dist/prepared-reading.js",
+      "bytes": 13125,
+      "sha256": "d23e64ecf8e90279e67e94665b941132402d64afd6a40483ed1c61ab07b2d8d2"
+    },
+    {
+      "path": "dist/proactive.js",
+      "bytes": 3608,
+      "sha256": "51d2a84a1e59382207ce16dcb74719bcd03f882cfdd36fcabe4b6fff2870a3ff"
+    },
+    {
+      "path": "dist/reader-features.js",
+      "bytes": 26525,
+      "sha256": "29d228684232dfafa8fd6f6f204d38b74e09eb877cdc63951d843623acffba0f"
+    },
+    {
+      "path": "dist/reader-shell.js",
+      "bytes": 3764,
+      "sha256": "435e8b5f3006a72eed0c45c79d3ecc0d4bf39efbbda0b31569dbeaf5d34a0cc5"
+    },
+    {
+      "path": "dist/reader-v2.css",
+      "bytes": 16565,
+      "sha256": "088a38710c99655469c7faeca8c9409ed391317865979b5bc14f322469a103aa"
+    },
+    {
+      "path": "dist/reading-calendar.js",
+      "bytes": 7923,
+      "sha256": "9463977146fb8ad11f119c688e62cf59e317d3386334d4b680010f8b041f846c"
+    },
+    {
+      "path": "dist/reading-context.js",
+      "bytes": 4458,
+      "sha256": "23e44f78b52edc0c9497a84d9d9a9babc9961fd82727689e44e7471b7ad60a1e"
+    },
+    {
+      "path": "dist/reading-preferences.css",
+      "bytes": 15522,
+      "sha256": "096fda0b037fd06b7b0596164388003e970756674d6ecdfb9f59dc9e556d1f00"
+    },
+    {
+      "path": "dist/reading-preferences.js",
+      "bytes": 25741,
+      "sha256": "01d9987a71cba02453b36235b89a0937ffaae34b5456f7f6adacf7be70563271"
+    },
+    {
+      "path": "dist/reading-room.css",
+      "bytes": 48082,
+      "sha256": "862cb363ceda0231d4d93645fd20e8cdbe9f29676f4bab82f434f68decec941f"
+    },
+    {
+      "path": "dist/style.css",
+      "bytes": 20182,
+      "sha256": "c4529f61ada3bb51826b958e0e7dcf6a707391e4f472104540a2dd5419e3ad8c"
+    },
+    {
+      "path": "dist/terminal-ui.css",
+      "bytes": 19683,
+      "sha256": "bac9a23e7c12c4da158502e6329b63c7846e8986e7d25c211489b986c8a38c8e"
+    },
+    {
+      "path": "dist/ui-motion.js",
+      "bytes": 23490,
+      "sha256": "09a9c016e14726c51148286a6cf0cec0d8d9b348b89e8be414e15cbe1e10b4a8"
+    },
+    {
+      "path": "output/android/app-assets-sha256.json",
+      "bytes": 37427,
+      "sha256": "ba537115b6a15d7f503719a6f46a72739047472352fbf16a8dd1840d20eba0e5"
+    },
+    {
+      "path": "output/android/final-verification.json",
+      "bytes": 509,
+      "sha256": "d2673f31d0e5f46536bd4614f158f05e6ad24fbf1ffc52a6a88989f2c2658b56"
+    },
+    {
+      "path": "output/android/verification-1.2.1.json",
+      "bytes": 386,
+      "sha256": "38aba24f17e7581457a6a075893a239d69cd88273b7807a2cd4c32bd1acd44be"
+    },
+    {
+      "path": "output/android/verification-1.3.0.json",
+      "bytes": 384,
+      "sha256": "cf3602b3d1f74eeec6aa419750cdf7ded18eaf9723f425ceaca6a89448c21ebd"
+    },
+    {
+      "path": "output/android/verification-1.4.0.json",
+      "bytes": 409,
+      "sha256": "da6e06458dba2dc6bc67a8c340ead2b82a01b0412b2a22bd5223d2dfbe0c4373"
+    },
+    {
+      "path": "output/android/一页之间-1.0.0.apk",
+      "bytes": 2523317,
+      "sha256": "9c62f262fde64a63e25c1387f034c769b468c8ede5c88b6412f5d37349acd136"
+    },
+    {
+      "path": "output/android/一页之间-1.0.0.apk.sha256",
+      "bytes": 90,
+      "sha256": "b73aae4398f583b6b3397a7eb9b5bdf13f4752784284899bf19964f29ae41df4"
+    },
+    {
+      "path": "output/android/一页之间-1.1.0.apk",
+      "bytes": 3060521,
+      "sha256": "2064e87f8244076ad405be0525f49db0c91105acd5e0bcf32cff1042ce183b5b"
+    },
+    {
+      "path": "output/android/一页之间-1.1.0.apk.sha256",
+      "bytes": 90,
+      "sha256": "0d9f8d378f76e9a068632bc5bd986a512837766dff9f3fecce745ae5836bef59"
+    },
+    {
+      "path": "output/android/一页之间-1.2.0.apk",
+      "bytes": 3093852,
+      "sha256": "1909832ce4d0a0dcb858282591c5a875a4b0e765f89209b59f9aaf73779ee364"
+    },
+    {
+      "path": "output/android/一页之间-1.2.0.sha256",
+      "bytes": 90,
+      "sha256": "38b45b72ed12e8e132d939fea3ab29e40ac4118340211f6634a369f253d540ac"
+    },
+    {
+      "path": "output/android/一页之间-1.2.1.apk",
+      "bytes": 3093852,
+      "sha256": "2bb2fbea10bfe84d25617f89ded139bcf259c5c0c1614edd2426d0e721e0faef"
+    },
+    {
+      "path": "output/android/一页之间-1.2.1.sha256",
+      "bytes": 90,
+      "sha256": "59fc26a272b8430d01e27b7f3875ec71244dbf145e0d0c465280c936a9be0c6f"
+    },
+    {
+      "path": "output/android/一页之间-1.3.0.apk",
+      "bytes": 3097948,
+      "sha256": "95e5bbae09a71722a94890c7183baeaa13da79a9e8050b7eb4d4169b2f5aaa85"
+    },
+    {
+      "path": "output/android/一页之间-1.3.0.sha256",
+      "bytes": 90,
+      "sha256": "67ca5e76558b96a067459a8c24c180e44e13bce788755b9308358e441329232a"
+    },
+    {
+      "path": "output/android/一页之间-1.4.0.apk",
+      "bytes": 3167747,
+      "sha256": "66f3842e19494f5afce3ebf614a1bc1e0db4343074c5324133a48e6e93146b91"
+    },
+    {
+      "path": "output/android/一页之间-1.4.0.sha256",
+      "bytes": 90,
+      "sha256": "556dca85df05ebd0c5ec124267fa39c74134cebae286cf868be0e61bfdda167e"
+    },
+    {
+      "path": "output/android/安装与构建说明.md",
+      "bytes": 2577,
+      "sha256": "83fbf7977d3ff8e24fa31237466c02d2b513547e20a4f4f115faf881a3953513"
+    },
+    {
+      "path": "output/android/安装说明-1.2.0.txt",
+      "bytes": 876,
+      "sha256": "44f8517f85bd56271cd56b483e9b4f7937b02c4ab4826e312e6a4c89b249e8ab"
+    },
+    {
+      "path": "output/android/安装说明-1.3.0.txt",
+      "bytes": 570,
+      "sha256": "0d2e199df053edd35360479cf933b1973bd2b0f298287a1a011a37ee6fa223f2"
+    },
+    {
+      "path": "output/android/安装说明-1.4.0.txt",
+      "bytes": 665,
+      "sha256": "4909848dc9f6ac957363f5f474f0100b946707268d0a970aa40cbab15d433815"
+    },
+    {
+      "path": "output/shared-motion/motion-preview.gif",
+      "bytes": 844361,
+      "sha256": "cdeee6a67b466d318156a12ae823692b966a5436cdea8fedc3ad58bd8089eda6"
+    },
+    {
+      "path": "provider-proxy.cjs",
+      "bytes": 2711,
+      "sha256": "4d27459ee93bb9b6439afcc7fac63dd4c04fb62db49e9c485b83f6382a684ac9"
+    },
+    {
+      "path": "tests/android-navigation.cjs",
+      "bytes": 2466,
+      "sha256": "97b1931206e962454d48452ea0e1d985a268af2b7d6b8888fa00cc59d1334242"
+    },
+    {
+      "path": "tests/annotations.cjs",
+      "bytes": 11184,
+      "sha256": "ef7da921b31e1bde9db6ef8b3f5b3db2bcdc69266d270c0e7bee21aa9d5619f1"
+    },
+    {
+      "path": "tests/anx-features.cjs",
+      "bytes": 9458,
+      "sha256": "e50f1272bca1911934df9e49fa257998613df2e6a1f394f9afc6f41bdd42749e"
+    },
+    {
+      "path": "tests/companion.cjs",
+      "bytes": 3977,
+      "sha256": "0c2bdc980e5537be672c3088c88b431e439904a7fc2f10c9fa9c2ecd01fc5191"
+    },
+    {
+      "path": "tests/continuous-reading.cjs",
+      "bytes": 3360,
+      "sha256": "bfbff8bd5b04a723702fe75a7e09f22ecc74fa03a27c0709fa606f57d88a5522"
+    },
+    {
+      "path": "tests/data-api.cjs",
+      "bytes": 5842,
+      "sha256": "36a836984e86dd1bed02c73bbd2c19004605959bbd574107480197c49d6d891d"
+    },
+    {
+      "path": "tests/docx-html.cjs",
+      "bytes": 1327,
+      "sha256": "0333d5478cfc53f897d0a713d23f4c9b38a5610bfc18562880d51b52174ca063"
+    },
+    {
+      "path": "tests/explanation-real.cjs",
+      "bytes": 2249,
+      "sha256": "bfac2832189cdcc07a6467e2c8751be41d86fa8c32f255e6491c36e7d0b9f873"
+    },
+    {
+      "path": "tests/fixture-docx.png",
+      "bytes": 102,
+      "sha256": "160f3996ca50f5289b7e8fae2e64b4b29056a9a9140c90b9d94716ae0901a2a7"
+    },
+    {
+      "path": "tests/fixture-nested.epub",
+      "bytes": 48085,
+      "sha256": "43e5eaebb751eab8d00825c9806ed1b1c7066b9a3856cd5e5f630774b5c767ca"
+    },
+    {
+      "path": "tests/fixture-regions.epub",
+      "bytes": 2835,
+      "sha256": "7d508aee1ade6c48c628b6afae5da1a4ae9d165c75da1cd0e9ffad903f635878"
+    },
+    {
+      "path": "tests/fixture-regions.pdf",
+      "bytes": 2936,
+      "sha256": "ac97645f1627c9559c9ccd42a171daaac7ef3a62f6e4410780beaabcaa46fc19"
+    },
+    {
+      "path": "tests/fixture.cbz",
+      "bytes": 207,
+      "sha256": "c6efbc7b10dd1a3ab9742e4456aa09667cf2494c5e22636574c5d9f0c63238e7"
+    },
+    {
+      "path": "tests/fixture.docx",
+      "bytes": 35899,
+      "sha256": "37585bd6abccac09512a34c2649125aaf38ca6c754548df3aefc291dfc280ebc"
+    },
+    {
+      "path": "tests/fixture.epub",
+      "bytes": 2266,
+      "sha256": "3f393718d8d5798fda92199ab4af7db5e3f8020199c86b466bbfc51fc239c14f"
+    },
+    {
+      "path": "tests/fixture.fb2",
+      "bytes": 381,
+      "sha256": "cf425f5bebab9fe3f38e23370351b1e76fc6619a9428224647672d5817aa4499"
+    },
+    {
+      "path": "tests/fixture.fbz",
+      "bytes": 346,
+      "sha256": "d940b77c3dcad131ad90159fb3fd5cc75da4886875fb61bbc364852e08bd348d"
+    },
+    {
+      "path": "tests/fixture.html",
+      "bytes": 158,
+      "sha256": "bc954cfdd4f1fa89b4353c18ab368f776bc6a4b0a242af2e5e3f10c4b1f39584"
+    },
+    {
+      "path": "tests/fixture.pdf",
+      "bytes": 1819,
+      "sha256": "257acac561da3221b096b3c3c7d26903633bb70749f7d35f103528673bb17f01"
+    },
+    {
+      "path": "tests/formats.cjs",
+      "bytes": 3282,
+      "sha256": "e9c2202f9ac105ffd2a8f28c8bc28dbefe49fbb331379b700d2a1e81fbdf1785"
+    },
+    {
+      "path": "tests/marker.cjs",
+      "bytes": 2211,
+      "sha256": "b84c1cd3f23469f4caed152774edf633bbd394dfd9cbd46eb4ec02781fc09ea6"
+    },
+    {
+      "path": "tests/material-ui.cjs",
+      "bytes": 5459,
+      "sha256": "d0210e5c48c5a3287dec4dfc7e3ee05c526742c492e7be16edc4eef2503a5787"
+    },
+    {
+      "path": "tests/mobile-platform.cjs",
+      "bytes": 8945,
+      "sha256": "d680ed92422df27d4c85111939c17289d53a31199fb8f35544b2307f98ec2dc9"
+    },
+    {
+      "path": "tests/mobile.cjs",
+      "bytes": 1350,
+      "sha256": "64b49cef7c9dd1efc509132626165efd65326a285a72fa457623360c0b5c1edf"
+    },
+    {
+      "path": "tests/model-latency-results.json",
+      "bytes": 1808,
+      "sha256": "3c94e03a492c19434aaf00ecaaaa00d88f5266d8526ae6aa8f7fda903141348c"
+    },
+    {
+      "path": "tests/model-latency.cjs",
+      "bytes": 2695,
+      "sha256": "ee15f193bd18eb9264dc2784ad766b621bd3a1014bb978e0505b48a7771fea48"
+    },
+    {
+      "path": "tests/preparation-lag.cjs",
+      "bytes": 5100,
+      "sha256": "c6afa809b7f8253559f69f643f876e9e84c15846f4411510745f777e2ba24e08"
+    },
+    {
+      "path": "tests/preparation-resume-real.cjs",
+      "bytes": 3391,
+      "sha256": "24ef535e5698fef98ace79a4f95184db147bec7ef8a58bacdea1a22bd01b6865"
+    },
+    {
+      "path": "tests/preparation-resume.cjs",
+      "bytes": 4449,
+      "sha256": "d74e52c7a9ab3f47b4af07b01d2a6fdaac31ef5737ff380fd8df02548d36f0cf"
+    },
+    {
+      "path": "tests/prepared-formats.cjs",
+      "bytes": 3976,
+      "sha256": "c7fb3f8ab947d1d6ea9d9898b8da3385d24cd3aa5ba89b4e419632d17a62f15a"
+    },
+    {
+      "path": "tests/prepared.cjs",
+      "bytes": 10091,
+      "sha256": "dc745f05c7b1108fae310800dcdd4d1ba3331dc96505c6e74ae9d21ec11c0e8c"
+    },
+    {
+      "path": "tests/proactive-real.cjs",
+      "bytes": 2956,
+      "sha256": "9edc86d49cc00d28dd0b39916b29b5d28445d235990d8382e6a99948bbefb4ac"
+    },
+    {
+      "path": "tests/proactive-server.cjs",
+      "bytes": 3743,
+      "sha256": "b450a4f53f79ca48e2a6ab96c1c7c8cc6bdc41a5b5b7c0a7e3d7b7864a657221"
+    },
+    {
+      "path": "tests/proactive.cjs",
+      "bytes": 102,
+      "sha256": "70c24b4c967f0914c318e23625ff5b76c1ffc15e55f5bc703af85336d510485c"
+    },
+    {
+      "path": "tests/reader-helpers.cjs",
+      "bytes": 1107,
+      "sha256": "a48dfeaa56858026f5e1e40a41f08d617e70163915e475e3697f8437eed652c5"
+    },
+    {
+      "path": "tests/reader-shell.cjs",
+      "bytes": 11293,
+      "sha256": "775c9ebf1da8945a9eb9facd9defefa7bde3339da2d53d6b0be4c4380fc862b6"
+    },
+    {
+      "path": "tests/reader-v2.cjs",
+      "bytes": 3512,
+      "sha256": "b037b4d573c4de06a64768503d9db8adafe6cfb87efb1de5edf3e04ebeab0e47"
+    },
+    {
+      "path": "tests/reading-preferences.cjs",
+      "bytes": 11861,
+      "sha256": "e3ca302aa0f99a52ae31ddc8fee4100462758fd466aeb605d0136d92f860f309"
+    },
+    {
+      "path": "tests/selection.cjs",
+      "bytes": 4403,
+      "sha256": "bd60cd9292dd0c8fd51847a382b03bd8982043885b1435cbd3bfb5ec9b472d5c"
+    },
+    {
+      "path": "tests/settings.cjs",
+      "bytes": 1971,
+      "sha256": "ffbe3b35cf03ab44203854ffb5f1af8a87d84a345f36facd8f99c0760a9f8c78"
+    },
+    {
+      "path": "tests/shared-motion.cjs",
+      "bytes": 7687,
+      "sha256": "8ca59e1a65cdd3609775fa649466fb273ab7f7e3144c05d1dc7c996003722b79"
+    },
+    {
+      "path": "tests/style-position.cjs",
+      "bytes": 2677,
+      "sha256": "738d60d5a4929efe93513511fa22f022e1fd06101cfc92bb037a061c5554d0e1"
+    },
+    {
+      "path": "tests/summaries.cjs",
+      "bytes": 7127,
+      "sha256": "9ebb9f8c2b0dae3bd64d63b4a739a67ab70c3a6a32b13cf49a4bfa77d0c954db"
+    },
+    {
+      "path": "tests/summary-real.cjs",
+      "bytes": 2904,
+      "sha256": "17ebdd4efe011fa6443d5e3b0e6542c1a00631f27776c97cea7fbe6f1fd45b0c"
+    },
+    {
+      "path": "tests/ui-mobile-final.png",
+      "bytes": 21948,
+      "sha256": "6da5d0e1c1a67efaac294982ab376dea826b77c9a564b796e4bed39267e9d7ba"
+    },
+    {
+      "path": "tools/vendor_motion.py",
+      "bytes": 1302,
+      "sha256": "461d345772e4d393a507c2a16fda992b2d46b2cf0440b8f3559affcbe1bca241"
+    },
+    {
+      "path": "交接归档/README.md",
+      "bytes": 433,
+      "sha256": "91ab2b0ed98a9dce1fcea9c11fbb23eeb78f963d8c0a29dd265f986399ea480b"
+    },
+    {
+      "path": "交接归档/交接文档_2026-11-11整理前.md",
+      "bytes": 36761,
+      "sha256": "f5d02e486051b029bf9d407388fc72d5aab36e79b1e30b4effc3c9171c183e9a"
+    },
+    {
+      "path": "交接归档/新窗口接手提示词_2026-11-11整理前.txt",
+      "bytes": 9793,
+      "sha256": "3c6a8e012bbfea2bf054a98e32a19d7088b64d9165b7a5726d60a6ab37a33d3c"
+    },
+    {
+      "path": "交接文档.md",
+      "bytes": 20077,
+      "sha256": "532f9b6f008d391b907dabbbbf4f297d5eaecee81ab20f5eafa47e7990432531"
+    },
+    {
+      "path": "交接文档_历史记录_截至2026-11-10.md",
+      "bytes": 43268,
+      "sha256": "3898ea5fb033b59318455eaa0a1c78d3f51d55d21cdaac921d49450b4947d506"
+    },
+    {
+      "path": "伴读触发条件与提示词示例.md",
+      "bytes": 7450,
+      "sha256": "4bb3dfe6498bb08288a9743df4321d9b56f87ac5d14ce723f2311e26062b03d8"
+    },
+    {
+      "path": "共享元素动效改版与验证.md",
+      "bytes": 4936,
+      "sha256": "8177086d2bae31daddf735ba53d2761783c3fb1cacb469cbfa72a71f0b7bf87f"
+    },
+    {
+      "path": "启动伴读服务.cmd",
+      "bytes": 105,
+      "sha256": "3d8041db2f3591b5f31027f2393d2703e2659a268c85a0359111cda86b7d4c0a"
+    },
+    {
+      "path": "小页提示词.txt",
+      "bytes": 1034,
+      "sha256": "eaa489ef61f41bb0f27778f0d5a16bb6820843dc9beda34bbb3ead77de0cbccf"
+    },
+    {
+      "path": "换窗口上下文.md",
+      "bytes": 5065,
+      "sha256": "eeef79414eb6b89527eb9eedd5b21b61ffa3fddf32b9a9eca382a6c8000a4a8b"
+    },
+    {
+      "path": "新窗口接手提示词.txt",
+      "bytes": 1434,
+      "sha256": "c6a92ed02bee49184f54ea1ac9b5b5dbe213e4566bab3dbd09a6526fb5498490"
+    },
+    {
+      "path": "示例书/小页主动陪读_虚构试读.txt",
+      "bytes": 2190,
+      "sha256": "c378533ac99654020ac3f073e5cfdb03f63d7aca91f8ecc35747a6197e7e7b75"
+    }
+  ]
+}

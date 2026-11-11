@@ -1,0 +1,4 @@
+build/
+*.p12
+*.keystore
+*.dpapi

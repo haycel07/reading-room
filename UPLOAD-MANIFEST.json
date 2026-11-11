@@ -1,7 +1,7 @@
 {
   "status": "prepared_not_uploaded",
   "targetAccount": "haycel07",
-  "targetVisibility": "private",
+  "targetVisibility": "public",
   "sourceHead": "a507f699c52e8097f8afacc9803a3b1c129d0b3d",
   "containsGitHistory": false,
   "files": [
@@ -32,8 +32,8 @@
     },
     {
       "path": "GitHub上传状态.md",
-      "bytes": 2002,
-      "sha256": "3d3c1503e09c7386fd92f6eb3e480fdc6708688e53a5ebafc4c571400e4fa3c8"
+      "bytes": 2320,
+      "sha256": "b58a1802e10290b83db273ba819d5c71816337e772a4de7f473808130bad768d"
     },
     {
       "path": "README.md",

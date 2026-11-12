@@ -7,7 +7,7 @@
 - 历史版本与文件校验清单：https://github.com/haycel07/reading-room/releases/tag/history-2026-11-12
 - 本轮完整审计：`output/version-cleanup-20261112/`（本机忽略目录，不含凭据；verified.json记录远端回读，deleted-files.json记录逐文件删除）。
 
-本轮已删除68个旧包／发布附件，共122,305,405字节；临时GitHub源码检出在本次文档推送核对完成后删除。GitHub已有历史不删、不改写；后续发版遵守同一规则，避免本机重新积累旧版本。当前源码与Sites源码分别维护，不能把Sites推送当作GitHub同步。旧记录如下，仅作为历史。
+本轮已删除68个旧包／发布附件，共122,305,405字节；整个GitHub检出目录以及其中24份旧附件的清理均被自动审批拒绝（仅返回blocked by policy），因此该副本仍保留，未绕过拒绝继续删除。GitHub已有历史不删、不改写；后续发版遵守同一规则，避免本机重新积累旧版本。当前源码与Sites源码分别维护，不能把Sites推送当作GitHub同步。旧记录如下，仅作为历史。
 
 ---
 
@@ -27,3 +27,10 @@ GitHub 源码提交以独立仓库 output/github/repository 为准；最初导�
 
 
 当前应用源码已通过GitHub API逐一核对254个网页资源及本机服务，发布代码提交为 `868b7d2d76cad797dce961404ecdb10d13a44815`，v1.7.1标签指向该提交；main另记录本次归档文档。Sites应用版本28及其源码提交 `555b863d6700f05947c71e9a9ae8cb57c804b8c0` 是独立历史。旧安装包请从历史归档页下载，当前安装包SHA256为 `9433e0445ab9605f6c1516f0f731555789882e11fbb775ceb7018023a21e5de3`。
+
+
+## 剩余的手动清理位置
+
+自动审批分别拒绝了整个检出目录删除和缩小到已核验旧附件的删除，只给出 `blocked by policy`，没有更具体理由。主开发目录的68份旧包已清理；发布副本里的24份旧安装包／附件仍在，合计21,247,485字节。全部已上传且独立回读SHA256一致。
+
+可由用户手动删除这个冗余发布副本：`C:\Users\13\Downloads\biological\reading-room\output\github\repository`。当前真正开发目录是 `C:\Users\13\Downloads\biological\reading-room`，其 `dist`、当前源码、最新APK、启动器与签名保留。不要把剩余副本误报为已经删除，也不要换一种隐蔽方法绕过审批拒绝。审计汇总见 `output/version-cleanup-20261112/cleanup-result.json`。

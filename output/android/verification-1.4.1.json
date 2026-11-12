@@ -1,9 +1,0 @@
-{
-  "versionName": "1.4.1",
-  "versionCode": 7,
-  "sha256": "9feda5af2c35d4ef1f8980905ee33cb5598dbd14397c7e1c4feb9223c335e9fe",
-  "matchesFinalDist": true,
-  "signerCertificateSHA256": "638620ea11f4f1ce0df43d37fb98ec856dfbb5951f065f4fc44771de6fa84d26",
-  "deviceTested": false,
-  "realDeepSeekWebAndLocalTest": true
-}

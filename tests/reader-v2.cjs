@@ -1,8 +1,8 @@
-const {chromium}=require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require('playwright');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const out=path.join(__dirname,'../output/ui-v2');fs.mkdirSync(out,{recursive:true});
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:require('./reader-helpers.cjs').browserExecutable()});try{
- for(const width of [1440,390]){const page=await browser.newPage({viewport:{width,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:38749/');
+ for(const width of [1440,390]){const page=await browser.newPage({viewport:{width,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto((process.env.READER_TEST_URL || 'http://127.0.0.1:38749') + '/');
  const text=['第1章 雨里的书店(1)','第1章 雨里的书店(2)','第2章 远处来信','第1章 雨里的书店(1)'].map(h=>h+'\n'+('这是一本虚构的书。雨在窗外落下，阿棠在书店里翻开一本关于远行的日记。\n'.repeat(60))).join('\n');
  await page.locator('#file').setInputFiles({name:'雨里的书店.txt',mimeType:'text/plain',buffer:Buffer.from(text)});await page.waitForFunction(()=>document.querySelectorAll('.txt-heading').length===4);assert.equal(await page.locator('#txt').textContent(),text,'目录索引不改变原文顺序');
  if(width===390)await page.locator('#mobileShelf').click();assert.equal(await page.locator('#tocList details').count(),2,'重名章只按连续段分组');await page.locator('#tocSearch').fill('远处');assert.equal(await page.locator('#tocList button:visible').count(),1);await page.locator('#tocList button:visible').click();await page.waitForTimeout(200);assert((await page.locator('#tocList button.current').innerText()).includes('远处'));await page.screenshot({path:path.join(out,'reading-'+width+'.png')});

@@ -1,3 +1,4 @@
+// Device-local provider configuration and bounded transports; never log credentials.
 import {taskInstruction,isSummaryTask,outputBudget,conversationInstruction,PERSONAS} from './companion-protocol.js';
 import {assistantName} from './assistant-identity.js';
 const KEY='onepage-ai-config';
@@ -79,7 +80,7 @@ export function apiErrorMessage(status){
  const messages={400:'请求参数或模型名称有误，请核对服务商支持的模型。',401:'API 密钥无效或已失效，请检查密钥。',402:'账户余额或可用额度不足，请到服务商账户检查。',403:'当前密钥无权访问该模型或服务，请检查权限与地域。',404:'API 地址或模型不存在，请核对地址和模型名称。',408:'服务响应超时，请稍后重试。',429:'请求过于频繁或额度受限，请稍后重试并检查账户限制。'};
  return (messages[status]|| (status>=500?'服务商暂时不可用，请稍后重试。':'API 请求未成功，请检查配置与网络。'))+'（HTTP '+status+'）';
 }
-export async function requestAPI(req,{signal}={}){
+async function requestAPITransport(req,{signal}={}){
  let data;
  if(signal?.aborted)throw new DOMException('Aborted','AbortError');
  if(window.OnePageAI){data=await new Promise((resolve,reject)=>{const id=crypto.randomUUID();window.__onepageAI??={};let timer;const cleanup=()=>{delete window.__onepageAI[id];clearTimeout(timer);signal?.removeEventListener('abort',abort)},done=value=>{cleanup();resolve(value)},abort=()=>{window.OnePageAI.cancel(id);cleanup();reject(new DOMException('Aborted','AbortError'))};timer=setTimeout(()=>{window.OnePageAI.cancel(id);done({error:'API响应超时',status:504})},95000);window.__onepageAI[id]=done;signal?.addEventListener('abort',abort,{once:true});try{window.OnePageAI.request(id,JSON.stringify(req))}catch{cleanup();reject(Error('无法启动安卓 API 连接，请重新打开应用'))}})}
@@ -88,13 +89,22 @@ export async function requestAPI(req,{signal}={}){
   try{response=await fetch(local?'/api/provider':req.endpoint,{method:'POST',headers:local?{'Content-Type':'application/json'}:{'Content-Type':'application/json','Authorization':'Bearer '+req.sk},body:JSON.stringify(local?req:req.body),signal,redirect:'error'})}
   catch(e){if(e.name==='AbortError')throw e;return result(null,'无法连接 API。请检查地址、网络及服务的跨域许可。网页版不会将密钥发送到其他代理。',502)}
   if(!response.ok)return result(null,apiErrorMessage(response.status),response.status);
-  try{data=await response.json()}catch{return result(null,'API 返回不是有效 JSON，请检查 API 地址。',502)}
+  try{data=await response.json()}catch(e){if(e.name==='AbortError')throw e;return result(null,'API 返回不是有效 JSON，请检查 API 地址。',502)}
  }
  if(data?.error){const status=Number(data.status)||Number(String(data.error).match(/HTTP\s+(\d{3})/)?.[1])||502;return result(null,apiErrorMessage(status),status)}
  if(data?.choices?.[0]?.finish_reason==='length'&&(req.body.max_tokens||req.body.max_completion_tokens))return result(null,'回复达到本次输出上限，未保存不完整结果；请重试。',502);
  let text=data?.choices?.[0]?.message?.content;if(Array.isArray(text))text=text.map(x=>x.text||'').join('');
  if(typeof text!=='string'||!text.trim())return result(null,'API 未返回有效文字，无法确认模型可用。',502);
  return result(text,null,200,safeUsage(data.usage));
+}
+// Bound the whole request, including response-body decoding. Caller abort remains distinct.
+export async function requestAPI(req,{signal,timeoutMs=95000}={}){
+ const controller=new AbortController();let expired=false,timer;
+ const abort=()=>controller.abort();signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
+ const work=requestAPITransport(req,{signal:controller.signal});
+ const deadline=new Promise((resolve)=>{timer=setTimeout(()=>{expired=true;controller.abort();resolve(result(null,'API响应超时，请重试。',504))},timeoutMs)});
+ try{return await Promise.race([work,deadline])}catch(e){if(expired)return result(null,'API响应超时，请重试。',504);throw e}
+ finally{clearTimeout(timer);signal?.removeEventListener('abort',abort)}
 }
 export async function testAIConnection(config,{signal}={}){
  const c=validateAIConfig(config),base=c.endpoint.replace(/\/+$/,'');
@@ -107,7 +117,7 @@ export async function testAIConnection(config,{signal}={}){
 }
 export async function companionFetch(payload,{signal}={}){
  payload={...payload,assistantName:assistantName()};
- const c=apiConfig();if(c.mode!=='api')return fetch('http://127.0.0.1:38749/api/companion',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal});
+ const c=apiConfig();if(c.mode!=='api')return fetch(location.hostname==='127.0.0.1'?'/api/companion':'http://127.0.0.1:38749/api/companion',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal});
  if(!apiEnabled())return result(null,'请先在阅读设置中填写API地址、模型名称和 API 密钥',400);
  const response=await requestAPI(providerRequest(payload,c),{signal});if(!response.ok)return response;
  let {reply,usage}=await response.json();if(['prepared-comment','region-summary'].includes(payload.task))reply=reply.trim().replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'');return result(reply,null,200,usage);

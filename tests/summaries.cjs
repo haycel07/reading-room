@@ -1,5 +1,5 @@
 const {ready,scrollNear}=require('./reader-helpers.cjs');
-const {chromium}=require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require('playwright');
 const assert=require('node:assert/strict');
 (async()=>{
  const browser=await chromium.launch({headless:true,executablePath:require('./reader-helpers.cjs').browserExecutable()});
@@ -13,7 +13,7 @@ const assert=require('node:assert/strict');
    if(body.task==='summary'&&fail)return route.fulfill({status:502,contentType:'application/json',body:JSON.stringify({error:'测试概括失败'})});
    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({reply:body.task==='summary'?'概括：'+body.text.slice(0,80):'测试伴读回复'})});
  });
- await page.goto('http://127.0.0.1:38749/');
+ await page.goto((process.env.READER_TEST_URL || 'http://127.0.0.1:38749') + '/');
  const text=Array.from({length:14},(_,i)=>`第${i+1}章 测试${i+1}\n`+(`本章事件${i+1}。小舟经过第${i+1}座桥。\n`.repeat(300))).join('')+'未读秘密结尾';
  async function importBook(name,content){if(await page.locator('#reading').isVisible())await page.reload();await page.waitForFunction(()=>typeof document.querySelector('#file')?.onchange==='function');await require('./reader-helpers.cjs').importIntoReader(page,{name,mimeType:'text/plain',buffer:Buffer.from(content)});await page.waitForFunction(expected=>document.querySelector('#title').textContent===expected&&document.querySelector('#reading').getAttribute('aria-busy')==='false',name);await ready(page);}
  async function mark(n){await scrollNear(page,n)}

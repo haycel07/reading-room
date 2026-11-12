@@ -1,12 +1,12 @@
 // Exercise the exact Back-handler script shipped in MainActivity, in an isolated web context.
 // This verifies navigation decisions, not Android/WebView integration on a device.
 const fs=require('node:fs'),assert=require('node:assert/strict');
-const {chromium}=require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require('playwright');
 const java=fs.readFileSync(require('node:path').join(__dirname,'../android-app/src/chat/tangqichen/onepage/MainActivity.java'),'utf8');
 const match=java.match(/web\.evaluateJavascript\(("(?:[^"\\]|\\.)*"), handled ->/);
 assert(match,'Native Back script must be found');const back=JSON.parse(match[1]);
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:require('./reader-helpers.cjs').browserExecutable()});try{
- const page=await browser.newPage({viewport:{width:390,height:850}});await page.goto('http://127.0.0.1:38749/');
+ const page=await browser.newPage({viewport:{width:390,height:850}});await page.goto((process.env.READER_TEST_URL || 'http://127.0.0.1:38749') + '/');
  await require('./reader-helpers.cjs').importIntoReader(page,{name:'安卓返回键测试.txt',mimeType:'text/plain',buffer:Buffer.from('第一章 返回路径\n'+('这是完全虚构的测试文本。\n'.repeat(100)))});
  await page.waitForFunction(()=>document.body.classList.contains('is-reading')&&document.querySelector('#txt').textContent.length>100);
  await page.locator('#dockToc').click();assert(await page.evaluate(back));assert(!await page.locator('.sidebar').evaluate(el=>el.classList.contains('open')));assert(await page.locator('#reading').isVisible());

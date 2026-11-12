@@ -1,25 +1,2 @@
-const {chromium}=require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
-const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const out=path.join(process.env.TEMP,'reading-material-qa');fs.mkdirSync(out,{recursive:true});
-(async()=>{const browser=await chromium.launch({headless:true,executablePath:require('./reader-helpers.cjs').browserExecutable()});try{
- for(const width of [1440,1280,1024,390]){
-  const page=await browser.newPage({viewport:{width,height:width===390?844:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.route('**/api/companion',r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({reply:'这家书店的猫，工作是看天气，工资是晒太阳。这个岗位的福利还挺让人心动。'})}));
-  await page.goto('http://127.0.0.1:38749/');await page.screenshot({path:path.join(out,'welcome-'+width+'.png'),fullPage:true});
-  await page.locator('#file').setInputFiles(path.join(__dirname,'../示例书/小页主动陪读_虚构试读.txt'));await page.waitForFunction(()=>document.querySelector('#txt').textContent.length>0);
-  assert.equal(await page.evaluate(()=>getComputedStyle(document.documentElement).getPropertyValue('--read').trim()),'#ffffff');
-  await page.locator('#toggleSettings').click();assert.equal(await page.locator('#toggleSettings').getAttribute('aria-expanded'),'true');assert.equal(await page.locator('#settings').getAttribute('aria-hidden'),'false');
-  await page.locator('#closeSettings').focus();await page.keyboard.press('Escape');await page.locator('#settings').waitFor({state:'hidden',timeout:1500});assert(await page.locator('#settings').isHidden());assert.equal(await page.locator('#toggleSettings').getAttribute('aria-expanded'),'false');assert.equal(await page.evaluate(()=>document.activeElement.id),'toggleSettings');
-  // Canceling an animation must never hide a newly reopened panel.
-  await page.evaluate(async()=>{const {setPanel}=await import('/ui-motion.js');setPanel('settings',true);setPanel('settings',false);setPanel('settings',true)});await page.waitForTimeout(320);assert(await page.locator('#settings').isVisible());assert.equal(await page.locator('#settings').evaluate(e=>e.inert),false);assert.equal(await page.locator('.motion-exit').count(),0);await page.screenshot({path:path.join(out,'settings-'+width+'.png'),fullPage:true});await page.locator('#closeSettings').click();await page.waitForTimeout(220);
-  if(width===390){await page.locator('#mobileShelf').click();assert.equal(await page.locator('main').evaluate(e=>e.inert),true);await page.waitForTimeout(320);await page.screenshot({path:path.join(out,'drawer-'+width+'.png')});await page.keyboard.press('Shift+Tab');assert.equal(await page.evaluate(()=>document.activeElement.closest('.sidebar')!==null),true);await page.locator('#shelfScrim').click({position:{x:360,y:400}});await page.waitForTimeout(320);assert.equal(await page.locator('main').evaluate(e=>e.inert),false);assert.equal(await page.locator('.sidebar').evaluate(e=>e.inert),true);}
-  await page.locator('#companionToggle').click();await page.waitForTimeout(450);await page.locator('#chatInput').fill('你觉得这个开头怎么样？');await page.locator('#chatSend').click();await page.waitForFunction(()=>!document.querySelector('#chatSend').disabled);await page.waitForTimeout(300);
-  const geometry=await page.evaluate(()=>{const read=document.querySelector('#readerWrap').getBoundingClientRect(),chat=document.querySelector('#companion').getBoundingClientRect();return {overflow:document.documentElement.scrollWidth>innerWidth,read:{left:read.left,right:read.right,top:read.top,bottom:read.bottom},chat:{left:chat.left,right:chat.right,top:chat.top,bottom:chat.bottom}}});assert(!geometry.overflow,'横向溢出 '+width);if(width<1100)assert(geometry.chat.top>=geometry.read.bottom,'手机和平板伴读不得覆盖正文');if(width>=1100)assert(geometry.read.right<=geometry.chat.left,'桌面分栏不得重叠');
-  await page.screenshot({path:path.join(out,'companion-'+width+'.png'),fullPage:true});await page.locator('#previewScope').click();await page.waitForFunction(()=>!document.querySelector('#chatSend').disabled);assert(await page.locator('#scopePanel').isVisible());await page.locator('#readerWrap').evaluate(e=>e.scrollTop=e.scrollHeight);await page.waitForTimeout(20);assert(await page.locator('#scopePanel').isHidden(),'位置变化立即隐藏旧预览');
-  await page.locator('#companionClose').click();await page.waitForTimeout(220);
-  // Reduced-motion mode disables WAAPI and CSS motion, including ripples.
-  await page.emulateMedia({reducedMotion:'reduce'});await page.locator('#toggleSettings').click();assert.equal(await page.locator('#settings').evaluate(e=>e.getAnimations().length),0);await page.locator('#closeSettings').click();assert(await page.locator('#settings').isHidden());assert.equal(await page.locator('.touch-ripple').count(),0);assert.equal(await page.evaluate(()=>document.getAnimations().filter(a=>a.playState==='running').length),0);
-  assert.equal(errors.length,0,errors.join(';'));await page.close();
- }
- console.log('PASS Material 界面 1440/1280/1024/390px、快速开关、焦点恢复、书架遮罩、预览即时隐藏、减少动态效果；截图 '+out);
-}finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});
+// Historical entry point: the old Material DOM was replaced by the Anx shell.
+require('./anx-runtime-ui.cjs');

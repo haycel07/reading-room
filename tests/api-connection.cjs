@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const {chromium}=require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require('playwright');
 const root=path.join(__dirname,'../dist');
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:require('./reader-helpers.cjs').browserExecutable()});try{
 for(const transport of ['web','local','native']){
@@ -17,7 +17,7 @@ for(const transport of ['web','local','native']){
  });
  async function api(route){const q=route.request().postDataJSON(),body=q.body||q;await page.evaluate(b=>window.__testRequests.push(b),body);const c=await page.evaluate(()=>window.__case);if(c.delay)await new Promise(r=>setTimeout(r,c.delay));try{await route.fulfill({status:transport==='local'?200:c.status,contentType:'application/json',body:JSON.stringify(c.status===200?{choices:[{message:{content:c.reply}}]}:{error:'never expose provider diagnostics',status:c.status})})}catch{}}
  if(transport==='web')await page.route('https://api.deepseek.com/**',api);
- await page.goto(origin);await page.locator('#toggleSettings').click();await page.getByRole('tab',{name:'AI 服务',exact:true}).click();
+ await page.goto(origin);await page.locator('#appRail [data-page=preferences]').click();await page.locator('.settings-list button').filter({hasText:'AI 服务'}).click();await page.getByRole('tab',{name:'AI 服务',exact:true}).click();
  if(transport==='local')await page.locator('#aiMode').selectOption('api');
  await page.locator('#testAI').click();assert.match(await page.locator('#aiTestStatus').innerText(),/密钥/);
  await page.locator('#aiKey').fill('fictional-test-key');await page.locator('#testAI').click();await page.waitForFunction(()=>document.querySelector('#aiTestStatus').dataset.state==='success');

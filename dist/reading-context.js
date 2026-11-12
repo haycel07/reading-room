@@ -1,5 +1,5 @@
 // Offsets are UTF-16 positions in the extracted, already-read prefix only.
-export const POLICY = {version: 1, threshold: 24000, recent: 12000, chunk: 12000, summary: 1600, budget: 16000};
+export const POLICY = {version: 1, threshold: 24000, recent: 12000, chunk: 6000, summary: 1600, budget: 16000};
 const heading = /^(?:第[零〇一二三四五六七八九十百千万两0-9]+[章节回卷部篇集].{0,45}|(?:序章|序言|前言|楔子|引子|后记|尾声|番外|附录)(?:[\s：:·—-].{0,35})?|chapter\s+\d+\b.{0,45})$/i;
 
 export function planContext(text, boundaries = []) {
@@ -62,16 +62,23 @@ export async function composeContext({text, bookId, boundaries, get, put, summar
   }
   // Extremely long books need bounded grouped overviews too. All ranges remain
   // represented; leaf summaries remain cached, and are usable after a rollback.
+  const prefix='【较早已读内容的概括｜可能损失细节，不是原文引文】\n';
+  const raw='\n\n【以下为连续原文｜已读字符 '+(plan.rawStart+1)+'—'+text.length+'】\n'+text.slice(plan.rawStart);
+  const summaryBudget=Math.min(POLICY.budget,POLICY.threshold-prefix.length-raw.length);
+  if(summaryBudget<POLICY.summary+240)throw Error('上下文预算不足，本次未发送；请重试。');
   let levels = 0;
-  while (summaries.map(render).join('\n\n').length > POLICY.budget) {
+  while (summaries.map(render).join('\n\n').length > summaryBudget) {
+    if(++levels>12)throw Error('前文概括无法收敛到输入预算，本次未发送。');
     const grouped = [];
     for (let i=0;i<summaries.length;i+=6) {
       const group = summaries.slice(i,i+6), first=group[0], last=group.at(-1);
       const meta = {start:first.start,end:last.end,label:`${first.label} 至 ${last.label}`.slice(0,170)};
       grouped.push({...meta,summary:await summaryOf(group.map(render).join('\n\n'),meta,'overview')});
     }
-    summaries = grouped; levels++;
+    summaries = grouped;
   }
   check();
-  return {text:'【较早已读内容的概括｜可能损失细节，不是原文引文】\n'+summaries.map(render).join('\n\n')+'\n\n【以下为连续原文｜已读字符 '+(plan.rawStart+1)+'—'+text.length+'】\n'+text.slice(plan.rawStart), originalLength:text.length, summarized:true, summaryCount:plan.segments.length, rawStart:plan.rawStart, generated, reused, levels};
+  const composed=prefix+summaries.map(render).join('\n\n')+raw;
+  if(composed.length>POLICY.threshold)throw Error('上下文超过输入预算，本次未发送。');
+  return {text:composed,originalLength:text.length,summarized:true,summaryCount:plan.segments.length,rawStart:plan.rawStart,generated,reused,levels};
 }

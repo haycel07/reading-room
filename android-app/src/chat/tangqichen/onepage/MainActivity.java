@@ -23,6 +23,10 @@ import java.util.*;
 import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
+import android.os.Handler;
+import android.os.Looper;
+import android.speech.tts.UtteranceProgressListener;
 import org.json.JSONObject;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
@@ -33,7 +37,13 @@ public final class MainActivity extends Activity {
     private static final int PICK_FILE = 41, SAVE_FILE = 42;
     private byte[] pendingExport;
     private TextToSpeech tts;
-    private boolean ttsReady;
+    private volatile boolean ttsReady;
+    private WebMessagePort nativePort;
+    private final Semaphore aiSlots=new Semaphore(2);
+    private final Set<String> pendingCalls=Collections.newSetFromMap(new ConcurrentHashMap<String,Boolean>());
+    private final Handler speechHandler=new Handler(Looper.getMainLooper());
+    private final Runnable sleepSpeech=()->stopSpeech();
+    private String finalUtterance;
     private volatile boolean destroyed;
     private final Set<String> canceled = Collections.newSetFromMap(new ConcurrentHashMap<String,Boolean>());
     private final Map<String,HttpsURLConnection> calls = new ConcurrentHashMap<>();
@@ -70,14 +80,30 @@ public final class MainActivity extends Activity {
         settings.setSupportMultipleWindows(false);
         settings.setMediaPlaybackRequiresUserGesture(true);
         WebView.setWebContentsDebuggingEnabled(false);
-        web.addJavascriptInterface(new FileBridge(), "OnePageFiles");
-        web.addJavascriptInterface(new AIBridge(), "OnePageAI");
-        web.addJavascriptInterface(new SpeechBridge(), "OnePageSpeech");
-        web.addJavascriptInterface(new ReadingBridge(), "OnePageReading");
-        tts = new TextToSpeech(this, status -> { ttsReady = status == TextToSpeech.SUCCESS; });
+
+
+
+
+        tts = new TextToSpeech(this, status -> {
+            ttsReady = status == TextToSpeech.SUCCESS;
+            if(ttsReady)tts.setOnUtteranceProgressListener(new UtteranceProgressListener(){
+                @Override public void onStart(String id){speechState("playing");}
+                @Override public void onDone(String id){runOnUiThread(()->{if(id.equals(finalUtterance)){speechHandler.removeCallbacks(sleepSpeech);speechState("done");}});}
+                @Override public void onError(String id){speechState("error");}
+            });
+        });
         web.setWebViewClient(new WebViewClient() {
+            @Override public void onPageStarted(WebView view,String url,android.graphics.Bitmap icon){if(nativePort!=null){nativePort.close();nativePort=null;}}
+            @Override public void onPageFinished(WebView view,String url){
+                if(!trustedPage()||!url.equals(ORIGIN+"/assets/index.html"))return;
+                if(nativePort!=null)nativePort.close();
+                WebMessagePort[] channel=web.createWebMessageChannel();nativePort=channel[0];
+                nativePort.setWebMessageCallback(new WebMessagePort.WebMessageCallback(){@Override public void onMessage(WebMessagePort port,WebMessage message){if(trustedPage())dispatchNative(message.getData());}});
+                web.postWebMessage(new WebMessage("onepage-native-port",new WebMessagePort[]{channel[1]}),Uri.parse(ORIGIN));
+            }
             @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
                 Uri uri = request.getUrl();
+                if ("blob".equals(uri.getScheme()) || "data".equals(uri.getScheme())) return null;
                 if (!ORIGIN.equals(uri.getScheme() + "://" + uri.getHost())) return error(403, "Blocked");
                 if (!"GET".equals(request.getMethod())) return error(404, "Not found");
                 String path = uri.getPath();
@@ -144,9 +170,9 @@ public final class MainActivity extends Activity {
             byte[] bytes = pendingExport; pendingExport = null;
             if (result == RESULT_OK && data != null && data.getData() != null && bytes != null) {
                 new Thread(() -> { try (OutputStream stream = getContentResolver().openOutputStream(data.getData())) {
-                    if (stream != null) stream.write(bytes);
+                    if(stream==null)throw new IOException();stream.write(bytes);
                     runOnUiThread(() -> Toast.makeText(this,"已保存文件",Toast.LENGTH_SHORT).show());
-                } catch (IOException e) { runOnUiThread(() -> Toast.makeText(this,"保存失败，请重试",Toast.LENGTH_LONG).show()); } }).start();
+                } catch (Exception e) { runOnUiThread(() -> Toast.makeText(this,"保存失败，请重试",Toast.LENGTH_LONG).show()); } }).start();
             }
             return;
         }
@@ -156,55 +182,82 @@ public final class MainActivity extends Activity {
         }
     }
     @Override protected void onSaveInstanceState(Bundle state) { web.saveState(state); super.onSaveInstanceState(state); }
-    @Override protected void onPause() { web.onPause(); super.onPause(); }
+    @Override protected void onPause() { stopSpeech();web.onPause(); super.onPause(); }
     @Override protected void onResume() { super.onResume(); if (web != null) web.onResume(); }
     @Override public void onBackPressed() {
         web.evaluateJavascript("(()=>{const open=document.querySelector('dialog[open]');if(open){open.close();return true}const shelf=document.querySelector('.sidebar.open');if(shelf){document.getElementById('closeShelf').click();return true}const panels=['settings','companion','localNotice'];for(const id of panels){const el=document.getElementById(id);if(el&&!el.classList.contains('hidden')){const close=document.getElementById({settings:'closeSettings',companion:'companionClose',localNotice:'localNoticeClose'}[id]);if(close){close.click();return true}}}if(document.fullscreenElement){document.exitFullscreen();return true}if(document.documentElement.classList.contains('native-fullscreen')){OnePageReading.fullscreen(false);document.documentElement.classList.remove('native-fullscreen');return true}const library=document.getElementById('libraryHome');const reading=document.getElementById('reading');if(library&&reading&&!reading.classList.contains('hidden')){library.click();return true}return false})()", handled -> {
             if (!"true".equals(handled)) { if (web.canGoBack()) web.goBack(); else finish(); }
         });
     }
-    @Override protected void onDestroy() { destroyed=true;for(HttpsURLConnection c:calls.values())c.disconnect();if(tts!=null){tts.stop();tts.shutdown();}if (fileCallback != null) fileCallback.onReceiveValue(null); web.destroy(); super.onDestroy(); }
+    @Override protected void onDestroy() { destroyed=true;if(nativePort!=null)nativePort.close();speechHandler.removeCallbacks(sleepSpeech);for(HttpsURLConnection c:calls.values())c.disconnect();if(tts!=null){tts.stop();tts.shutdown();}if (fileCallback != null) fileCallback.onReceiveValue(null); web.destroy(); super.onDestroy(); }
 
+    private void aiReply(String id,String json){if(trustedPage())web.evaluateJavascript("window.__onepageAI&&window.__onepageAI["+JSONObject.quote(id)+"]&&window.__onepageAI["+JSONObject.quote(id)+"]("+json+")",null);}
+    private void speechState(String state){runOnUiThread(()->{if(trustedPage())web.evaluateJavascript("document.dispatchEvent(new CustomEvent('onepage-speech-state',{detail:"+JSONObject.quote(state)+"}))",null);});}
+    private void stopSpeech(){finalUtterance=null;speechHandler.removeCallbacks(sleepSpeech);if(tts!=null)tts.stop();speechState("stopped");}
+    private void dispatchNative(String input){
+        if(input==null||input.length()>112001000)return;
+        try{
+            JSONObject m=new JSONObject(input);org.json.JSONArray a=m.getJSONArray("args");String key=m.getString("bridge")+"."+m.getString("action");
+            switch(key){
+                case "ai.request":new AIBridge().request(a.getString(0),a.getString(1));break;
+                case "ai.cancel":new AIBridge().cancel(a.getString(0));break;
+                case "files.save":new FileBridge().save(a.optString(0,null),a.optString(1,null),a.optString(2,null));break;
+                case "speech.speak":new SpeechBridge().speak(a.getString(0),(float)a.getDouble(1),(float)a.getDouble(2));break;
+                case "speech.stop":new SpeechBridge().stop();break;
+                case "speech.sleep":new SpeechBridge().sleep(a.getInt(0));break;
+                case "reading.keepAwake":new ReadingBridge().keepAwake(a.getBoolean(0));break;
+                case "reading.fullscreen":new ReadingBridge().fullscreen(a.getBoolean(0));break;
+                case "reading.readClipboard":new ReadingBridge().readClipboard(a.getString(0));break;
+                default:throw new IllegalArgumentException();
+            }
+        }catch(Exception e){Toast.makeText(this,"操作未完成，请重试",Toast.LENGTH_SHORT).show();}
+    }
     private boolean trustedPage() { return !destroyed && web != null && web.getUrl() != null && web.getUrl().startsWith(ORIGIN + "/assets/"); }
     private final class FileBridge {
-        @JavascriptInterface public void save(String name, String mimeType, String base64) {
-            if (base64 == null || base64.length() > 112000000) return;
-            final byte[] bytes; try { bytes=android.util.Base64.decode(base64,android.util.Base64.DEFAULT); } catch(Exception e){ return; }
+        public void save(String name, String mimeType, String base64) {
+            if (name==null||name.trim().isEmpty()||name.length()>240||base64 == null || base64.length() > 112000000) {runOnUiThread(()->Toast.makeText(MainActivity.this,"导出参数无效，请重试",Toast.LENGTH_LONG).show());return;}
+            final byte[] bytes; try { bytes=android.util.Base64.decode(base64,android.util.Base64.DEFAULT); } catch(Exception e){ runOnUiThread(()->Toast.makeText(MainActivity.this,"导出内容无效，请重试",Toast.LENGTH_LONG).show());return; }
             runOnUiThread(() -> {if (!trustedPage() || pendingExport != null) return;pendingExport=bytes;
+                try {
                 Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT);intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType(mimeType != null ? mimeType : "application/octet-stream");
                 intent.putExtra(Intent.EXTRA_TITLE,name.replaceAll("[\\/:*?<>|]","_"));
-                try{startActivityForResult(intent,SAVE_FILE);}catch(ActivityNotFoundException e){pendingExport=null;Toast.makeText(MainActivity.this,"系统保存窗口不可用",Toast.LENGTH_LONG).show();}
+                startActivityForResult(intent,SAVE_FILE);
+                }catch(Exception e){pendingExport=null;Toast.makeText(MainActivity.this,"无法打开保存窗口，请重试",Toast.LENGTH_LONG).show();}
             });
         }
     }
     private final class AIBridge {
-        @JavascriptInterface public void request(String id,String input) {
+        public void request(String id,String input) {
             if (id == null || !id.matches("[a-zA-Z0-9-]{1,80}") || input == null || input.length()>500000) return;
-            runOnUiThread(() -> {if(!trustedPage())return;new Thread(() -> {
-                if(canceled.remove(id))return;
+            runOnUiThread(() -> {if(!trustedPage())return;
+                if(pendingCalls.contains(id))return;
+                if(!aiSlots.tryAcquire()){aiReply(id,"{\"error\":\"请求过于频繁\",\"status\":429}");return;}
+                pendingCalls.add(id);new Thread(() -> {
                 JSONObject response;HttpsURLConnection connection=null;
                 try {
+                    if(canceled.contains(id))throw new IOException();
                     JSONObject req=new JSONObject(input);URL endpoint=new URL(req.getString("endpoint"));
-                    if(!"https".equals(endpoint.getProtocol()) || endpoint.getUserInfo()!=null || endpoint.getRef()!=null)throw new IOException();
-                    connection=(HttpsURLConnection)endpoint.openConnection();calls.put(id,connection);if(canceled.contains(id))throw new IOException();
+                    java.net.InetAddress[] resolved=PublicNetwork.verify(endpoint,java.net.InetAddress::getAllByName);
+                    String key=req.getString("sk");if(key.isEmpty()||key.length()>4096||key.indexOf('\r')>=0||key.indexOf('\n')>=0)throw new IOException();
+                    connection=(HttpsURLConnection)endpoint.openConnection();connection.setSSLSocketFactory(PublicNetwork.sockets(resolved));calls.put(id,connection);if(canceled.contains(id))throw new IOException();
                     connection.setConnectTimeout(20000);connection.setReadTimeout(90000);connection.setInstanceFollowRedirects(false);
                     connection.setRequestMethod("POST");connection.setRequestProperty("Content-Type","application/json");connection.setRequestProperty("Authorization","Bearer "+req.getString("sk"));connection.setDoOutput(true);
                     try(OutputStream output=connection.getOutputStream()){output.write(req.getJSONObject("body").toString().getBytes("UTF-8"));}
                     if(connection.getResponseCode()<200 || connection.getResponseCode()>=300){response=new JSONObject();response.put("status",connection.getResponseCode());response.put("error","API请求失败");}
                     else{ByteArrayOutputStream output=new ByteArrayOutputStream();try(InputStream stream=connection.getInputStream()){byte[] buffer=new byte[8192];int n;while((n=stream.read(buffer))!=-1){output.write(buffer,0,n);if(output.size()>2000000)throw new IOException();}}response=new JSONObject(new String(output.toByteArray(),"UTF-8"));}
                 }catch(Exception e){response=new JSONObject();try{response.put("error","无法连接API，请检查HTTPS地址、网络及密钥配置。");}catch(Exception ignored){}}
-                finally{calls.remove(id);canceled.remove(id);if(connection!=null)connection.disconnect();}
+                finally{calls.remove(id);canceled.remove(id);pendingCalls.remove(id);aiSlots.release();if(connection!=null)connection.disconnect();}
                 final String js="window.__onepageAI&&window.__onepageAI["+JSONObject.quote(id)+"]&&window.__onepageAI["+JSONObject.quote(id)+"]("+response.toString()+")";
                 runOnUiThread(() -> {if(trustedPage())web.evaluateJavascript(js,null);});
             }).start();});
         }
-        @JavascriptInterface public void cancel(String id) {if(id==null||!id.matches("[a-zA-Z0-9-]{1,80}"))return;canceled.add(id);HttpsURLConnection c=calls.remove(id);if(c!=null)c.disconnect();}
+        public void cancel(String id) {if(id==null||!id.matches("[a-zA-Z0-9-]{1,80}"))return;if(pendingCalls.contains(id))canceled.add(id);HttpsURLConnection c=calls.remove(id);if(c!=null)c.disconnect();}
     }
     private final class ReadingBridge {
-        @JavascriptInterface public void keepAwake(boolean active) {runOnUiThread(() -> {if(!trustedPage())return;if(active)getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);else getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);});}
-        @JavascriptInterface public void fullscreen(boolean active) {runOnUiThread(() -> {if(trustedPage())setReadingFullscreen(active);});}
-        @JavascriptInterface public void readClipboard(String id){
+        public void keepAwake(boolean active) {runOnUiThread(() -> {if(!trustedPage())return;if(active)getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);else getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);});}
+        public void fullscreen(boolean active) {runOnUiThread(() -> {if(trustedPage())setReadingFullscreen(active);});}
+        public void readClipboard(String id){
             if(id==null||!id.matches("[a-zA-Z0-9-]{1,80}"))return;
             runOnUiThread(()->{if(!trustedPage()||!web.hasWindowFocus())return;JSONObject result=new JSONObject();try{ClipboardManager manager=(ClipboardManager)getSystemService(CLIPBOARD_SERVICE);ClipData clip=manager.getPrimaryClip();CharSequence text=clip!=null&&clip.getItemCount()>0?clip.getItemAt(0).getText():null;if(text==null||text.length()==0)result.put("error","剪贴板里没有文字");else if(text.length()>8192)result.put("error","剪贴板文字过长，请仅复制密钥");else result.put("text",text.toString());}catch(Exception e){try{result.put("error","无法读取剪贴板，请长按输入框粘贴");}catch(Exception ignored){}}
                 String callback="window.__onepageClipboard&&window.__onepageClipboard["+JSONObject.quote(id)+"]&&window.__onepageClipboard["+JSONObject.quote(id)+"]("+result.toString()+")";web.evaluateJavascript(callback,null);
@@ -212,15 +265,16 @@ public final class MainActivity extends Activity {
         }
     }
     private final class SpeechBridge {
-        @JavascriptInterface public void speak(String text,float rate,float pitch) {
+        public void speak(String text,float rate,float pitch) {
             if(text==null || text.length()>12000)return;
             runOnUiThread(() -> {if(!trustedPage() || !ttsReady){Toast.makeText(MainActivity.this,"请先安装本地语音包",Toast.LENGTH_LONG).show();return;}
                 Voice selected=null;Set<Voice> voices=tts.getVoices();if(voices!=null)for(Voice v:voices){if(!v.isNetworkConnectionRequired() && v.getLocale().getLanguage().equals("zh")){selected=v;break;}}
                 if(selected==null){Toast.makeText(MainActivity.this,"系统没有离线中文音色，请先安装",Toast.LENGTH_LONG).show();return;}
-                tts.stop();tts.setVoice(selected);tts.setSpeechRate(Math.max(.5f,Math.min(2f,rate)));tts.setPitch(Math.max(.5f,Math.min(1.5f,pitch)));
-                int i=0;while(i<text.length()){int end=Math.min(text.length(),i+3000);if(end<text.length()&&Character.isHighSurrogate(text.charAt(end-1)))end--;tts.speak(text.substring(i,end),i==0?TextToSpeech.QUEUE_FLUSH:TextToSpeech.QUEUE_ADD,null,"onepage-"+i);i=end;}
+                stopSpeech();tts.setVoice(selected);tts.setSpeechRate(Math.max(.5f,Math.min(2f,rate)));tts.setPitch(Math.max(.5f,Math.min(1.5f,pitch)));
+                finalUtterance="onepage-"+((text.length()-1)/3000*3000);int i=0;while(i<text.length()){int end=Math.min(text.length(),i+3000);if(end<text.length()&&Character.isHighSurrogate(text.charAt(end-1)))end--;finalUtterance="onepage-"+i;tts.speak(text.substring(i,end),i==0?TextToSpeech.QUEUE_FLUSH:TextToSpeech.QUEUE_ADD,null,"onepage-"+i);i=end;}
             });
         }
-        @JavascriptInterface public void stop(){runOnUiThread(() -> {if(tts!=null)tts.stop();});}
+        public void stop(){runOnUiThread(()->stopSpeech());}
+        public void sleep(int minutes){runOnUiThread(()->{speechHandler.removeCallbacks(sleepSpeech);if(minutes>0&&minutes<=60)speechHandler.postDelayed(sleepSpeech,minutes*60000L);});}
     }
 }

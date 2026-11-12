@@ -272,7 +272,7 @@ export function initReadingPreferences(hooks = {}) {
   const sourceProactive = $('proactiveEnabled');
   if (sourceProactive) {
     const wrapper = document.createElement('label');wrapper.className = 'preferences-switch';
-    const text = document.createElement('span');text.innerHTML = '<b>开启主动伴读</b><small>先准备短评，读到对应位置时显示。</small>';
+    const text = document.createElement('span');text.innerHTML = '<b>开启主动伴读</b><small>将提前发送当前区及下一区文字（含未读部分）到所选AI服务；读到允许位置后才显示短评。</small>';
     const mirror = document.createElement('input');mirror.type = 'checkbox';mirror.id = 'preferencesCompanionEnabled';
     mirror.checked = sourceProactive.checked;
     mirror.addEventListener('change', () => { sourceProactive.checked = mirror.checked;sourceProactive.dispatchEvent(new Event('change', { bubbles: true }));mirror.checked = sourceProactive.checked; });

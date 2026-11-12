@@ -1,6 +1,6 @@
 const {ready,scrollNear}=require('./reader-helpers.cjs');
 // Real local Codex calls. Isolated browser; fictional text only.
-const {chromium}=require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require('playwright');
 const assert=require('node:assert/strict');
 (async()=>{
  const browser=await chromium.launch({headless:true,executablePath:require('./reader-helpers.cjs').browserExecutable()});
@@ -8,7 +8,7 @@ const assert=require('node:assert/strict');
  const page=await browser.newPage({viewport:{width:1400,height:900}}),responses=[],errors=[];
  page.on('pageerror',e=>errors.push(e.message));
  page.on('response',async r=>{if(r.url().endsWith('/api/companion'))responses.push({status:r.status(),task:r.request().postDataJSON().task||'chat'})});
- await page.goto('http://127.0.0.1:38749/');
+ await page.goto((process.env.READER_TEST_URL || 'http://127.0.0.1:38749') + '/');
  const first='第一章 借伞\n阿棠把唯一的蓝伞借给了陌生人，自己留在旧书店等雨停。\n'+('窗外还在下雨，阿棠继续看书。\n'.repeat(600));
  const second='第二章 等雨\n'+('阿棠在书页边记下天气，店里很安静，雨滴落在窗台。\n'.repeat(650));
  const third='第三章 新的脚步声\n门外响起脚步声，阿棠抬起头，还不知道是谁。\n'+('阿棠看着店门，雨声盖住了街上的声音。\n'.repeat(1050));

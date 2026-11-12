@@ -1,11 +1,11 @@
-const { chromium } = require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const { chromium } = require('playwright');
 const assert = require('assert');
 (async () => {
  const browser = await chromium.launch({headless:true,executablePath:require('./reader-helpers.cjs').browserExecutable()});
  const page=await browser.newPage({viewport:{width:1200,height:760}}), requests=[], errors=[];
  page.on('pageerror',e=>errors.push(e.message));
  await page.route('**/api/companion',async r=>{const payload=r.request().postDataJSON();requests.push(payload);await r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({reply:'测试回复 '+requests.length})})});
- await page.goto('http://127.0.0.1:38749/');
+ await page.goto((process.env.READER_TEST_URL || 'http://127.0.0.1:38749') + '/');
  const text='第一章 开始\n开头标记\n'+Array.from({length:180},(_,i)=>`第${i}行 还没看完的故事继续。`).join('\n')+'\n终点标记';
  await require('./reader-helpers.cjs').importIntoReader(page,{name:'book.txt',mimeType:'text/plain',buffer:Buffer.from(text)});await require('./reader-helpers.cjs').readerControls(page);await page.locator('#companionToggle').click();
  await page.locator('#previewScope').click();assert((await page.locator('#scopeText').innerText()).includes('开头标记'));assert(!(await page.locator('#scopeText').innerText()).includes('终点标记'));await page.locator('#scopeClose').click();

@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const {chromium}=require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require('playwright');
 const out=path.join(__dirname,'../output/mobile-platform');fs.mkdirSync(out,{recursive:true});
 const origin='https://reader-fixture.test';
 async function fixture(browser,{width=390,height=844,native=false,legacy=false}={}){

@@ -21,7 +21,8 @@ async function readerControls(page){
  await page.locator('#readerDock').waitFor({state:'visible'});
 }
 async function importIntoReader(page,files){
- await page.locator('#appRail').waitFor();
+ await page.locator('#appRail').waitFor({state:'attached'});
+ if(await page.locator('#reading').isVisible())await page.locator('#backToLibrary').click();
  await page.locator('#file').setInputFiles(files);
  await page.locator('#confirmImport').click();
  await page.waitForFunction(()=>document.getElementById('confirmImport').textContent==='好');

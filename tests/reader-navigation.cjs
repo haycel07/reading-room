@@ -1,5 +1,5 @@
 // Critical navigation must work on entry, before any tap reveals secondary tools.
-const {chromium}=require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require('playwright');
 const {browserExecutable,ready,readerControls}=require('./reader-helpers.cjs');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const output=path.join(__dirname,'../output/reader-navigation-qa');fs.mkdirSync(output,{recursive:true});
@@ -16,7 +16,7 @@ async function settings(page){await page.locator('#toggleSettings').click();awai
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:browserExecutable()});try{
  for(const [width,height]of [[1440,900],[390,844],[320,568],[844,390],[768,1024]])for(const format of ['txt','pdf','epub']){
   const context=await browser.newContext({viewport:{width,height}}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto('http://127.0.0.1:38749/');await page.locator('#appRail').waitFor();
+  await page.goto((process.env.READER_TEST_URL || 'http://127.0.0.1:38749') + '/');await page.locator('#appRail').waitFor();
   const file=format==='txt'?{name:'虚构的很长书名用来验证窄屏导航不会挤掉退出和设置.txt',mimeType:'text/plain',buffer:Buffer.from('第一章 雨天\n'+'她留在虚构的书店看雨，听见雨点落在玻璃上的声音。\n'.repeat(250))}:path.join(__dirname,'fixture.'+format);
   await page.locator('#file').setInputFiles(file);await page.locator('#confirmImport').click();await page.waitForFunction(()=>document.getElementById('confirmImport').textContent==='好');assert((await page.locator('#importStatus').innerText()).startsWith('已导入 1 本书'));await page.locator('#confirmImport').click();await page.locator('.library-book').first().click();await ready(page);
   await essential(page);assert(!await page.locator('body').evaluate(e=>e.classList.contains('reader-controls')),'entry must not require showing controls');await settings(page);

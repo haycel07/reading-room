@@ -1,8 +1,8 @@
 const assert=require('node:assert/strict');
-const {chromium}=require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require('playwright');
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:require('./reader-helpers.cjs').browserExecutable()});try{
  const page=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('http://127.0.0.1:38749/');
+ await page.goto((process.env.READER_TEST_URL || 'http://127.0.0.1:38749') + '/');
  const book=(name,text)=>({name,mimeType:'text/plain',buffer:Buffer.from(text)});
  await require('./reader-helpers.cjs').importIntoReader(page,book('布局原书.txt','第一章 第一场雨\n'+'虚构原文，排版改变后不应丢失位置。\n'.repeat(2000)));
  await page.waitForFunction(()=>document.querySelector('#txt').textContent.length>2000&&document.querySelector('#reading').getAttribute('aria-busy')==='false');

@@ -1,7 +1,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { chromium } = require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const { chromium } = require('playwright');
 const root = path.join(__dirname, '..');
 const fixture = `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="/reading-preferences.css"><style>.hidden{display:none!important}body{margin:0;font:14px sans-serif}.settings{position:fixed;right:12px;top:12px;bottom:12px;z-index:5}.reading{max-width:1200px;padding:12px}.reader-wrap{height:600px;overflow:auto}.txt{font-size:20px;line-height:1.9;margin:auto}.meta{height:20px}#readingProgressRail{height:200px;width:8px;background:#ddd}.toc-list button{display:block}#readerTools .feature-row{display:flex}</style></head><body class="is-reading">
 <button id="toggleSettings">阅读设置</button><button id="editCompanion">伴读设定</button><button class="open-ai-settings">AI设置</button><input id="proactiveEnabled" type="checkbox">

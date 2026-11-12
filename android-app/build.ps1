@@ -1,8 +1,14 @@
-﻿param([int]$VersionCode = 1, [string]$VersionName = '1.0.0')
+﻿param([int]$VersionCode = 0, [string]$VersionName = '')
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 $appRoot = $PSScriptRoot
 $projectRoot = Split-Path $appRoot -Parent
+$releaseConfig = Get-Content -LiteralPath (Join-Path $projectRoot 'package.json') -Raw | ConvertFrom-Json
+if ($VersionCode -eq 0) { $VersionCode = [int]$releaseConfig.onepageVersionCode }
+if (!$VersionName) { $VersionName = $releaseConfig.version }
+if ($VersionCode -ne $releaseConfig.onepageVersionCode -or $VersionName -ne $releaseConfig.version) { throw 'Version arguments must match package.json' }
+if ($VersionCode -lt 1 -or $VersionName -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid package version' }
+
 $toolRoot = Join-Path $env:LOCALAPPDATA 'OnePageBuild'
 # Store-packaged desktop tools may have virtualized LOCALAPPDATA. Reuse the
 # original signing identity in place; never silently create a different signer.
@@ -67,11 +73,14 @@ $dex = Join-Path $buildRoot 'dex'
 New-Item -ItemType Directory -Force -Path $classes,$dex | Out-Null
 $manifest = Join-Path $buildRoot 'AndroidManifest.xml'
 $xml = [IO.File]::ReadAllText((Join-Path $appRoot 'AndroidManifest.xml')).Replace('android:versionCode="1"', ('android:versionCode="'+$VersionCode+'"')).Replace('android:versionName="1.0.0"', ('android:versionName="'+$VersionName+'"'))
+$parsedManifest = [xml]$xml
+$androidNamespace = 'http://schemas.android.com/apk/res/android'
+if ($parsedManifest.manifest.GetAttribute('versionCode',$androidNamespace) -ne [string]$VersionCode -or $parsedManifest.manifest.GetAttribute('versionName',$androidNamespace) -ne $VersionName) { throw 'Manifest version injection failed; no APK was built' }
 [IO.File]::WriteAllText($manifest,$xml,[Text.UTF8Encoding]::new($false))
 Run $aapt @('compile','--dir',(Join-Path $appRoot 'res'),'-o',(Join-Path $buildRoot 'resources.zip'))
 $unsigned = Join-Path $buildRoot 'unsigned.apk'
 Run $aapt @('link','-I',$androidJar,'--manifest',$manifest,'-o',$unsigned,'--min-sdk-version','26','--target-sdk-version','35',(Join-Path $buildRoot 'resources.zip'))
-Run $javac @('--release','8','-encoding','UTF-8','-cp',$androidJar,'-d',$classes,(Join-Path $appRoot 'src\chat\tangqichen\onepage\MainActivity.java'))
+Run $javac @('--release','8','-encoding','UTF-8','-cp',$androidJar,'-d',$classes,(Join-Path $appRoot 'src\chat\tangqichen\onepage\MainActivity.java'),(Join-Path $appRoot 'src\chat\tangqichen\onepage\PublicNetwork.java'))
 $classJar = Join-Path $buildRoot 'classes.jar'
 Run $jar @('cf',$classJar,'-C',$classes,'chat')
 Run $java @('-cp',(Join-Path $toolRoot 'r8.jar'),'com.android.tools.r8.D8','--release','--lib',$androidJar,'--min-api','26','--output',$dex,$classJar)

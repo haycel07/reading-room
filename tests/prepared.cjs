@@ -1,6 +1,6 @@
 const {commentFixture,unlabel}=require('./prepared-fixture.cjs');
 const assert=require('node:assert/strict'),fs=require('node:fs');
-const {chromium}=require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const {chromium}=require('playwright');
 const {ready,scrollNear}=require('./reader-helpers.cjs');
 const sample=Array.from({length:310},(_,i)=>'片段'+String(i).padStart(3,'0')+'：阿棠在雨中的旧书店翻书，窗边放着蓝伞。他留意纸上的批注，却还没有问店主。\n').join('')+'最后的秘密：月亮邮差。';
 async function unit(){
@@ -25,7 +25,7 @@ async function unit(){
 async function browser(){const b=await chromium.launch({headless:true,executablePath:require('./reader-helpers.cjs').browserExecutable()});try{
  const p=await b.newPage({viewport:{width:1440,height:760}}),requests=[],errors=[];let hold,release,fail=false;p.on('pageerror',e=>errors.push(e.message));
  await p.route('**/api/companion',async r=>{const body=r.request().postDataJSON();requests.push(body);if(hold&&body.task==='prepared-comment')await hold;try{await r.fulfill({status:fail?502:200,contentType:'application/json',body:JSON.stringify(fail?{error:'模拟准备失败'}:{reply:body.task==='prepared-comment'?JSON.stringify(commentFixture(body,{text:'这把伞先替阿棠出门了。第'+body.regionIndex+'区'})):body.task==='region-summary'?JSON.stringify({summary:'本区概述'+body.regionIndex,memory:'累计概括'+body.regionIndex}):'接着聊'})})}catch{}});
- await p.goto('http://127.0.0.1:38749/');async function book(name){await require('./reader-helpers.cjs').importIntoReader(p,{name,mimeType:'text/plain',buffer:Buffer.from(sample)});await ready(p);await p.locator('#txt').evaluate(e=>e.style.fontSize='28px');await scrollNear(p,0)}
+ await p.goto((process.env.READER_TEST_URL || 'http://127.0.0.1:38749') + '/');async function book(name){await require('./reader-helpers.cjs').importIntoReader(p,{name,mimeType:'text/plain',buffer:Buffer.from(sample)});await ready(p);await p.locator('#txt').evaluate(e=>e.style.fontSize='28px');await scrollNear(p,0)}
  await book('提前准备.txt');assert.equal(requests.length,0);assert.equal(await p.locator('#markerEnabled,#markerRange').count(),0);await require('./reader-helpers.cjs').readerControls(p);await p.locator('#proactiveEnabled').check();
  await p.waitForFunction(()=>document.querySelector('#proactiveStatus').textContent.includes('第 1 /')&&document.querySelector('#proactiveStatus').textContent.includes('2 / 2 处已看过'));await p.waitForTimeout(200);assert.equal(requests.length,3,'未读到一半，只准备当前区');assert(await p.locator('#initiativeCard').isHidden());
  const regions=await p.evaluate(async text=>{const {splitRegions,commentPoints}=await import('/prepared-reading.js');return splitRegions(text).map(r=>({...r,points:commentPoints(text,r)}))},sample);

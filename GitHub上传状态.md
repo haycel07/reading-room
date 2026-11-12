@@ -1,5 +1,16 @@
 # GitHub 上传及旧版本清理（2026-11-12）
 
+## 2026-11-12 阅读导航修复交付（当前）
+
+- 阅读页“书架／设置”始终保留；已实机复核Anx Windows，次要工具仍按正文中部点击呼出。
+- Sites第29版发布成功，应用源码 `08165135fe3adb6a3724d02c4a29f7fc998cab22`，私有URL https://reading-room-1109.tangqichen2007.chatgpt.site ，保留原owner-only访问范围。后续本地HEAD可能包含交付记录提交；此应用版本不受文档提交影响。
+- GitHub应用源码／v1.7.2标签：`3fd0a8dd9a196748159bc01b84adb2037c9e4c96`；254个网页资源与本机逐一一致。main后续只补交付记录，不改此标签。
+- 当前安装包：https://github.com/haycel07/reading-room/releases/tag/v1.7.2 ，本机 `output/android/一页之间-1.7.2.apk`，versionCode12。原签名v2/v3通过，内置254资源一致；SHA256 `bf68a64ae55e6697fa1b2efa8539ce5f99e18b4185d9423f2b1bc86ac6cff80c`。远端APK及校验文件已独立下载回读一致。
+- 已删除主目录旧1.7.1 APK和上一版临时部署包，共两项；分别已在v1.7.1及历史归档发布并独立回读核验。本次审计 `output/reader-navigation-qa/`。此前审批拒绝删除的GitHub检出副本保持原样，不重试该删除。
+- TXT/PDF/EPUB×五种尺寸、滚动／划词／设置／返回／刷新／横竖屏、伴读气泡及相关上下文回归通过。手机为浏览器布局与安卓返回脚本测试，没有安卓真机或本轮真实AI调用。
+
+---
+
 本轮已按用户要求更新公开源码并归档旧版本：68个本地旧包／附件已在GitHub归档，全部独立下载回读SHA256一致后，现已删除对应本地文件。当前开发目录 `reading-room/dist` 与最新 `output/android/一页之间-1.7.1.apk` 保留；签名、服务、真实书籍和浏览器数据不清理。
 
 - 当前源码：https://github.com/haycel07/reading-room/tree/main/dist

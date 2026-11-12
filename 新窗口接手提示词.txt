@@ -1,3 +1,5 @@
+已交付：Sites29／源码08165135fe3adb6a3724d02c4a29f7fc998cab22；GitHub v1.7.2／源码3fd0a8dd9a196748159bc01b84adb2037c9e4c96，APK独立下载核验一致，主目录旧1.7.1及前一部署包已归档后清理。后续本地HEAD仅补交付文档，网页资源不变。
+
 最新修复（2026-11-12）：阅读页“书架／设置”必须始终可见，正文轻点只开关次要工具。Anx Windows已实机复核，原版中间点击呼出工具，但用户要求常驻关键入口。打开设置清除划词，延迟划词菜单不得挡住设置或导航。新增tests/reader-navigation.cjs覆盖三格式五尺寸，截图output/reader-navigation-qa。当前APK1.7.2/code12，原签名，254资源一致；Sites/GitHub最终状态实时核对。不要把下面旧的全工具栏隐藏方案恢复回来。
 
 清理执行结果：68份本地旧包／附件已上传、独立回读核验后删除。output/github/repository发布副本的整目录及其24份旧附件清理均被自动审批拒绝（blocked by policy），该副本仍在，不能声称全部清空；用户可手动删除这个子目录。主开发目录、dist、最新1.7.1 APK、签名及真实数据保留。完整状态见GitHub上传状态.md和output/version-cleanup-20261112/cleanup-result.json。

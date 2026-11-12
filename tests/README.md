@@ -18,6 +18,10 @@ npm run test:android
 
 单个浏览器测试可用 `READER_TEST_URL` 指向手动启动的 `npm start`（默认38751），然后 `node tests/某套件.cjs`。API测试的虚拟域名由测试拦截，不实际调用服务商。
 
+## 阅读配色与新手流程
+
+默认22套中新增`reading-appearance.cjs`和`onboarding.cjs`。使用1440、390、320宽度隔离上下文，覆盖旧偏好迁移、快捷／完整面板同步、系统／手动主题、自定义对比度及备份恢复、EPUB原字体和PDF非反转；首次试读零自动AI、同名原书保护、多文件导入取消／部分失败／直接打开，以及跳过／重开指南。`style-position.cjs`还验证连续改字号后立即返回和切书不破坏原书的进度及精确锚点。
+
 ## 真实调用不在默认测试中
 
 `*real*.cjs`、`model-latency.cjs`、`content-request-sample.cjs` 等为人工诊断工具，可能调用真实本机Codex或服务商、消耗额度、生成结果文件。执行前必须确认当前任务授权、端点与账户，使用虚构书；密钥只从stdin输入，不写入文件或日志。`npm run test:live` 会主动拒绝自动执行。不能用文件名通配符批量运行所有测试。

@@ -1,4 +1,5 @@
 // User-triggered local export/import. Existing records are never overwritten on restore.
+import {validPair} from './reading-appearance.js';
 export function downloadFile(name,mime,data){
  const blob=data instanceof Blob?data:new Blob([data],{type:mime});
  if(location.hostname==='appassets.androidplatform.net'){
@@ -11,7 +12,7 @@ export function downloadFile(name,mime,data){
 const database=(name,store)=>new Promise((resolve,reject)=>{const q=indexedDB.open(name);q.onupgradeneeded=()=>{q.result.createObjectStore(store,{keyPath:'id'});if(store==='marks')q.transaction.objectStore(store).createIndex('bookId','bookId')};q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error)});
 const records=(db,store)=>new Promise((resolve,reject)=>{const t=db.transaction(store),q=t.objectStore(store).getAll();q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error)});
 const commit=(db,store,values,remove=false)=>new Promise((resolve,reject)=>{const t=db.transaction(store,'readwrite');for(const v of values)remove?t.objectStore(store).delete(v.id):t.objectStore(store).add(v);t.oncomplete=resolve;t.onerror=t.onabort=()=>reject(t.error)});
-const prefsKeys=['reading-prefs','reading-initiative-enabled','companion-custom-prompt','companion-pace','companion-persona','reader-enhancements','reading-interface-prefs','companion-display-name'];
+const prefsKeys=['reading-prefs','reading-color-prefs','reading-initiative-enabled','companion-custom-prompt','companion-pace','companion-persona','reader-enhancements','reading-interface-prefs','companion-display-name'];
 const toBase64=blob=>new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]);r.onerror=()=>reject(r.error);r.readAsDataURL(blob)});
 export async function createBackup(db){
  const books=await records(db,'books');let bytes=0;for(const b of books)bytes+=b.data.size;
@@ -25,7 +26,9 @@ export function validateBackup(data){
  for(const m of data.marks)if(!m||typeof m.id!=='string'||!ids.has(m.bookId)||typeof m.quote!=='string'||!Number.isInteger(m.start)||!Number.isInteger(m.end)||m.start<0||m.end<m.start||!['txt','pdf','ebook'].includes(m.type))throw Error('备份笔记记录有误');
  for(const c of data.conversations)if(!c||!ids.has(c.id)||!Array.isArray(c.entries)||c.entries.some(e=>!e||typeof e.reply!=='string'||typeof e.question!=='string'))throw Error('备份对话记录有误');
  if(data.preferences){for(const key of prefsKeys)if(data.preferences[key]!==undefined&&typeof data.preferences[key]!=='string')throw Error('备份设置记录有误');
-  if(data.preferences['reading-prefs']){let p;try{p=JSON.parse(data.preferences['reading-prefs'])}catch{throw Error('阅读设置不是有效JSON')}if(!p||!['white','cream','dark','sage','sepia'].includes(p.theme)||!Number.isFinite(Number(p.size))||Number(p.size)<14||Number(p.size)>32||!Number.isFinite(Number(p.line))||Number(p.line)<1.4||Number(p.line)>2.6)throw Error('阅读设置超出支持范围');}
+  let colors;
+  if(data.preferences['reading-color-prefs']){try{colors=JSON.parse(data.preferences['reading-color-prefs'])}catch{throw Error('配色设置不是有效JSON')}if(!colors||!['manual','system'].includes(colors.mode)||!validPair(colors.custom))throw Error('备份中的配色无效或文字对比度不足');}
+  if(data.preferences['reading-prefs']){let p;try{p=JSON.parse(data.preferences['reading-prefs'])}catch{throw Error('阅读设置不是有效JSON')}if(!p||!['white','cream','dark','sage','sepia','custom'].includes(p.theme)||p.theme==='custom'&&!colors||!Number.isFinite(Number(p.size))||Number(p.size)<14||Number(p.size)>32||!Number.isFinite(Number(p.line))||Number(p.line)<1.4||Number(p.line)>2.6)throw Error('阅读设置超出支持范围');}
  }
  return data;
 }

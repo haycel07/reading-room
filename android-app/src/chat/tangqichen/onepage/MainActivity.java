@@ -134,6 +134,7 @@ public final class MainActivity extends Activity {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("*/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, params.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 try { startActivityForResult(intent, PICK_FILE); }
                 catch (ActivityNotFoundException exception) {
@@ -177,7 +178,13 @@ public final class MainActivity extends Activity {
             return;
         }
         if (request == PICK_FILE && fileCallback != null) {
-            fileCallback.onReceiveValue(result == RESULT_OK && data != null && data.getData() != null ? new Uri[]{data.getData()} : null);
+            List<Uri> selected = new ArrayList<>();
+            if(result == RESULT_OK && data != null){
+                ClipData clips = data.getClipData();
+                if(clips != null){for(int i=0;i<clips.getItemCount();i++)selected.add(clips.getItemAt(i).getUri());}
+                else if(data.getData()!=null)selected.add(data.getData());
+            }
+            fileCallback.onReceiveValue(selected.isEmpty()?null:selected.toArray(new Uri[0]));
             fileCallback = null;
         }
     }

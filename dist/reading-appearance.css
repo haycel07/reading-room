@@ -1,0 +1,146 @@
+/* One reading palette for paper, text and reading controls. Library stays independent. */
+:root {
+  --reading-accent: #3b6088;
+  --reading-surface: color-mix(in srgb, var(--read) 97%, var(--readink));
+  --reading-raised: color-mix(in srgb, var(--read) 93%, var(--readink));
+  --reading-border: color-mix(in srgb, var(--readink) 18%, var(--read));
+  --reading-muted: color-mix(in srgb, var(--readink) 76%, var(--read));
+  --reading-selected: color-mix(in srgb, var(--reading-accent) 16%, var(--read));
+}
+body.anx-layout.is-reading {
+  --ink: var(--readink);
+  --muted: var(--reading-muted);
+  --line: var(--reading-border);
+  --md-primary: var(--reading-accent);
+  --anx-blue: var(--reading-accent);
+  --md-on-surface: var(--readink);
+  --md-on-variant: var(--reading-muted);
+  --md-surface-low: var(--reading-surface);
+  --md-surface-high: var(--reading-raised);
+  --md-primary-container: var(--reading-selected);
+  --md-on-container: var(--readink);
+  background: var(--read);
+}
+html[data-reading-scheme="dark"] body.is-reading { color-scheme: dark; }
+body.anx-layout.is-reading :is(header, #readerDock, #quickStyle, #readingProgressRail, #readingSidebar, #settings, #companion, #selectionTools, #initiativeCard, .initiative-control, .reader-dialog) {
+  color: var(--readink);
+  background: var(--reading-surface);
+  border-color: var(--reading-border);
+}
+body.anx-layout.is-reading :is(#settings, #companion, #readingSidebar, #quickStyle, #readerDock, .reader-dialog) :is(button, input, select, textarea) {
+  color: var(--readink);
+  border-color: var(--reading-border);
+}
+body.anx-layout.is-reading :is(#settings, #companion, .reader-dialog) :is(input:not([type="range"]):not([type="checkbox"]):not([type="radio"]):not([type="color"]), select, textarea) {
+  background: var(--read);
+}
+body.anx-layout.is-reading :is(#settings, #companion, #readingSidebar, #quickStyle, #readingProgressRail, #initiativeCard, .reader-dialog) :is(h2, h3, h4, label, b, strong, summary, .bubble, .note-quote) {
+  color: var(--readink) !important;
+}
+body.anx-layout.is-reading :is(#settings, #companion, #quickStyle, #readingProgressRail, #initiativeCard, .reader-dialog) :is(p, small, output, .feature-hint):not(#aiTestStatus):not(#readingColorStatus) {
+  color: var(--reading-muted) !important;
+}
+body.anx-layout.is-reading :is(#chatSend, #saveAI, #saveCompanionSettings, #applyReadingColors) { background: var(--reading-accent); color: var(--reading-on-accent) !important; }
+body.anx-layout.is-reading .chat-log .user { background: var(--reading-selected); color: var(--readink); }
+html[data-reading-scheme="dark"] body.anx-layout.is-reading #aiTestStatus[data-state="success"] { color: #8ed4ad; }
+html[data-reading-scheme="dark"] body.anx-layout.is-reading #aiTestStatus[data-state="error"] { color: #f1aaa7; }
+body.anx-layout.is-reading :is(#closeSettings, #companionClose, #scopeClose, #initiativeDismiss) { background: var(--reading-raised); color: var(--readink) !important; }
+body.anx-layout.is-reading header :is(button, #companionToggle) { background: transparent; color: var(--readink); }
+body.anx-layout.is-reading :is(#toggleSettings, #backToLibrary) span { color: var(--readink); }
+body.anx-layout.is-reading #settings .range-readout { background: var(--reading-raised); border-color: var(--reading-border); color: var(--readink); }
+body.anx-layout.is-reading #settings .range-readout :is(output,span) { background: transparent; color: var(--readink) !important; }
+body.anx-layout.is-reading :is(#settings, #companion, #readingSidebar) :is(.settings-head, .companion-head, .toc-heading, .catalog-tools, .preferences-tabs) {
+  background: var(--reading-surface);
+  border-color: var(--reading-border);
+}
+body.anx-layout.is-reading :is(.preferences-tab-pill, .chat-log .assistant, .reply-context, .comment-quote, .note-quote, .scope-panel) {
+  background: var(--reading-raised);
+  border-color: var(--reading-border);
+  color: var(--readink);
+}
+body.anx-layout.is-reading :is(#settings, #readingSidebar, #quickStyle) button:is(.active, [aria-selected="true"], .current),
+body.anx-layout.is-reading #readerDock button:hover {
+  color: var(--reading-accent);
+  background: var(--reading-selected);
+}
+body.anx-layout.is-reading :is(#settings, #companion, #readingSidebar, #quickStyle) :is(button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--reading-accent);
+  outline-offset: 3px;
+}
+body.anx-layout.is-reading #settings :is(.range-ruler, .range-readout, .preferences-range-value, .range-unit) { color: var(--reading-muted); }
+body.anx-layout.is-reading #settings input[type="range"] { accent-color: var(--reading-accent); }
+body.anx-layout.is-reading #settings .range-control input[type="range"]::-webkit-slider-thumb { background: var(--reading-accent); box-shadow: 0 0 0 1px var(--reading-border); }
+body.anx-layout.is-reading .toc-list :is(button, summary),
+body.anx-layout.is-reading #selectionTools button,
+body.anx-layout.is-reading #initiativeText { color: var(--readink); border-color: var(--reading-border); }
+body.anx-layout.is-reading .toc-list button.current { color: var(--reading-accent); background: var(--reading-selected); }
+body.anx-layout.is-reading .txt { text-rendering: optimizeLegibility; }
+.txt .txt-heading { display: block; margin: 1.5em 0 .65em; line-height: 1.45; font-weight: 600; white-space: normal; }
+.txt .txt-heading:first-child { margin-top: 0; }
+.txt.structured :is(p, li) { line-height: var(--leading); }
+.txt.structured :is(h1,h2,h3,h4,h5,h6) { line-height: 1.45; margin: 1.5em 0 .7em; }
+.txt.structured :is(blockquote, pre) { padding: .8em 1em; border-left: 3px solid var(--reading-border); background: var(--reading-raised); }
+.txt ::selection { background: var(--reading-selected); color: var(--readink); }
+
+/* Paired colors are visible in both full settings and the quick palette. */
+#settings .themes {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 9px;
+  padding: 5px;
+}
+#settings .themes .theme, #quickStyle .quick-themes .theme {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1px;
+  width: 100%;
+  height: 64px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 7px;
+  border-radius: 12px;
+  background: var(--swatch-paper) !important;
+  color: var(--swatch-ink) !important;
+  border: 1px solid #7b839c45;
+}
+#settings .themes .theme b, #settings .themes .theme span,
+#quickStyle .quick-themes .theme b { color: var(--swatch-ink) !important; }
+body.anx-layout.is-reading #settings .themes .theme b,
+body.anx-layout.is-reading #quickStyle .quick-themes .theme b { color: var(--swatch-ink) !important; }
+#settings .themes .theme b { font: 24px/1.2 Georgia, serif; }
+#settings .themes .theme span { font-size: 11px; line-height: 1.4; font-family: inherit; }
+#settings .themes .theme.active, #quickStyle .quick-themes .theme.active { outline: 2px solid var(--reading-accent); outline-offset: 2px; }
+#quickStyle .quick-themes { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 7px; }
+#quickStyle .quick-themes .theme { height: 44px; }
+.reading-appearance-preview {
+  max-height: 150px;
+  overflow: hidden;
+  border: 1px solid var(--reading-border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+#settings .reading-appearance-preview small { display: block; margin-bottom: 8px; font: 11px/1.5 "Segoe UI", "Microsoft YaHei", sans-serif; opacity: .75; color: inherit; }
+#settings .reading-appearance-preview p { margin: 0; font: var(--reader-weight,400) var(--size,20px)/var(--leading,1.9) var(--custom-reader-font,var(--reader-font,serif)); letter-spacing: var(--letter-space,0); color: inherit; }
+body.anx-layout.is-reading #settings .reading-appearance-preview :is(p,small) { color: inherit !important; }
+body.anx-layout:not(.is-reading) #settings .theme.active { outline-color: #3b6088; }
+.appearance-follow { display: flex; gap: 9px; align-items: center; min-height: 44px; font-size: 12px; margin: 10px 0 4px; }
+.appearance-follow input { width: 17px; height: 17px; accent-color: var(--reading-accent); }
+#settings .appearance-follow { justify-content: flex-start; }
+.custom-reading-colors { margin: 5px 0 12px; }
+.custom-reading-colors summary { min-height: 44px; display: flex; align-items: center; font-size: 12px; cursor: pointer; }
+.color-pair-inputs { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.color-pair-inputs label { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.color-pair-inputs input[type="color"] { width: 44px; height: 44px; padding: 3px; border: 1px solid var(--reading-border); border-radius: 10px; background: transparent; }
+.color-pair-inputs button { min-height: 44px; border-radius: 10px; padding: 8px 14px; }
+#readingColorStatus, .appearance-scope { font-size: 11px; line-height: 1.7; margin: 8px 0 0; }
+@media(max-width:750px) {
+  #settings .themes { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  #settings .themes .theme { height: 58px; }
+  .reading-appearance-preview { padding: 12px 14px; }
+}
+@media(max-width:360px) {
+  #quickStyle .quick-themes { grid-template-columns: repeat(3,minmax(0,1fr)); }
+}

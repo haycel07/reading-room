@@ -1,11 +1,13 @@
 {
   "name": "onepage-reading-room",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "private": true,
   "type": "module",
   "description": "一页之间：本地优先的网页与 Android 伴读阅读器",
-  "onepageVersionCode": 13,
-  "engines": {"node": ">=22"},
+  "onepageVersionCode": 14,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "test": "node tools/run-tests.cjs",
     "test:all": "node tools/run-tests.cjs --all",
@@ -15,5 +17,7 @@
     "test:android": "node tools/run-tests.cjs --android",
     "start": "node tools/preview-server.cjs"
   },
-  "devDependencies": {"playwright": "1.62.1"}
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
 }

@@ -1,4 +1,5 @@
 import { setPanel } from "./ui-motion.js";
+import { initReaderOnboarding } from "./reader-onboarding.js";
 import { downloadFile, noteExport } from "./library-data.js";
 const $ = (id) => document.getElementById(id);
 const paths = {
@@ -190,9 +191,10 @@ export function initAnxInterface(h) {
       ["AI 服务", "ai", "ai", "服务商、模型与 API 密钥"],
       ["听书", "voice", "headphones", "本地音色、语速与定时"],
       ["备份与恢复", null, "folder", "书籍、阅读进度与笔记"],
+      ["使用指南", "guide", "book", "导入书籍、阅读操作与本机数据"],
     ]) {
       const b = button(name, glyph, () =>
-        category ? h.preferences.open(category) : $("dataToolsToggle").click(),
+        category === "guide" ? onboarding.showGuide() : category ? h.preferences.open(category) : $("dataToolsToggle").click(),
       );
       const text = document.createElement("span");
       const strong = document.createElement("b");
@@ -415,89 +417,11 @@ export function initAnxInterface(h) {
   syncFilters();
   $("librarySearch").placeholder = "搜索书籍";
   $("librarySearch").setAttribute("aria-label", "搜索书籍");
-  $("libraryEmpty").querySelector("span").textContent = "( ˘ ᵕ ˘ )";
-  $("libraryEmpty").querySelector("h2").textContent = "书架上没有书";
-  $("libraryEmpty").querySelector("p").textContent =
-    "点击右上角 ＋，添加喜欢的书。";
-  // Staged multi-file import, followed by an explicit completion step.
-  const importer = document.createElement("dialog");
-  importer.id = "importDialog";
-  importer.className = "reader-dialog import-dialog";
-  importer.innerHTML =
-    '<h2 id="importTitle"></h2><p class="page-hint">支持 EPUB、PDF、TXT、DOCX 等阅读格式</p><div id="importList"></div><p id="importStatus" role="status"></p><div class="import-actions"><button id="cancelImport" type="button">取消</button><button id="confirmImport" type="button">导入</button></div>';
-  document.body.append(importer);
-  let pending = [],
-    importing = false,
-    done = false;
-  $("file").multiple = true;
-  $("file").onchange = (e) => {
-    pending = [...e.target.files];
-    e.target.value = "";
-    if (!pending.length) return;
-    done = false;
-    importing = false;
-    $("importTitle").textContent = "选择了 " + pending.length + " 本书";
-    $("importStatus").textContent = "";
-    $("confirmImport").textContent = "导入 " + pending.length + " 本书";
-    $("confirmImport").disabled = false;
-    $("cancelImport").classList.remove("hidden");
-    $("importList").replaceChildren();
-    for (const f of pending) {
-      const row = document.createElement("label");
-      const input = document.createElement("input");
-      input.type = "checkbox";
-      input.checked = true;
-      const name = document.createElement("span");
-      name.textContent = f.name;
-      row.append(input, name);
-      $("importList").append(row);
-    }
-    importer.showModal();
-  };
-  $("cancelImport").onclick = () => importer.close();
-  importer.addEventListener("cancel", (e) => {
-    if (importing) e.preventDefault();
+  const onboarding = initReaderOnboarding({
+    ...h,
+    navigate,
+    beforeOpen: () => {leavePage();active("library");},
   });
-  $("confirmImport").onclick = async () => {
-    if (done) {
-      importer.close();
-      navigate("library");
-      return;
-    }
-    const files = pending.filter(
-      (_, i) => $("importList").children[i].querySelector("input").checked,
-    );
-    if (!files.length) {
-      $("importStatus").textContent = "请选择至少一本书";
-      return;
-    }
-    importing = true;
-    $("confirmImport").disabled = true;
-    $("cancelImport").classList.add("hidden");
-    importer.querySelectorAll("input").forEach((i) => (i.disabled = true));
-    let success = 0;
-    const errors = [];
-    for (const file of files) {
-      $("importStatus").textContent =
-        "正在导入 " + (success + errors.length + 1) + " / " + files.length;
-      try {
-        await h.importFile(file);
-        success++;
-      } catch (e) {
-        errors.push(file.name + "：" + e.message);
-      }
-    }
-    importing = false;
-    done = true;
-    $("importStatus").textContent =
-      "已导入 " +
-      success +
-      " 本书" +
-      (errors.length ? "。" + errors.join("；") : "");
-    $("confirmImport").disabled = false;
-    $("confirmImport").textContent = "好";
-    h.refresh();
-  };
   // Right-click on desktop and long-press on touch expose book actions.
   const sheet = document.createElement("dialog");
   sheet.id = "bookActions";

@@ -3,7 +3,7 @@ const {spawn} = require('node:child_process');
 const path = require('node:path');
 const {createPreviewServer} = require('./preview-server.cjs');
 const unit = ['content-selection','token-budget','proactive-server','request-timeout','context-budget'];
-const browser = ['companion','token-api','reader-navigation','anx-runtime-ui','companion-bubble','continuous-reading','content-selection-browser','prepared-formats','android-navigation','style-position','shared-motion','api-connection','data-api','annotations','review-security'];
+const browser = ['onboarding','reading-appearance','companion','token-api','reader-navigation','anx-runtime-ui','companion-bubble','continuous-reading','content-selection-browser','prepared-formats','android-navigation','style-position','shared-motion','api-connection','data-api','annotations','review-security'];
 const extended = ['prepared','preparation-resume','summaries','anx-library-notes','anx-features','reading-preferences','mobile-platform'];
 async function main() {
   if(process.argv.includes('--live')) throw Error('Live tests are never automatic. See tests/README.md and run an individual test with explicit authorization.');

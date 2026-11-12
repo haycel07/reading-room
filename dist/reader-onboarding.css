@@ -1,0 +1,156 @@
+/* First-use surfaces belong to the light library, independently of reading paper. */
+.anx-layout .library-empty.reader-first-library {
+  max-width: 900px;
+  margin: 32px auto 20px;
+  padding: 30px 24px;
+  text-align: left;
+  color: var(--ink, #283443);
+}
+.reader-first-library.is-first-reading {
+  display: grid;
+  grid-template-columns: 94px minmax(0, 1fr);
+  align-items: start;
+  gap: 30px;
+}
+.reader-first-library .first-reading-copy { min-width: 0; }
+.anx-layout .reader-first-library h2 {
+  margin: 0 0 12px;
+  color: var(--ink, #283443);
+  font-size: clamp(25px, 3vw, 32px);
+  line-height: 1.4;
+  font-weight: 500;
+}
+.anx-layout .reader-first-library p {
+  margin: 0 0 22px;
+  color: var(--muted, #657588);
+  font-size: 14px;
+  line-height: 1.8;
+}
+.first-book-illustration {
+  width: 80px;
+  height: 110px;
+  border: 1px solid var(--line, #dce3ed);
+  border-left: 5px solid var(--md-primary, #3b6088);
+  border-radius: 3px 10px 10px 3px;
+  background: #f6f9fc;
+  box-shadow: 5px 5px 0 #edf1f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.first-book-illustration span {
+  font: 21px/1.5 "Songti SC", SimSun, serif;
+  letter-spacing: 4px;
+  color: var(--md-primary, #3b6088);
+  writing-mode: vertical-rl;
+}
+.first-reading-actions, .first-reading-links, .reading-guide-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.first-reading-actions button, .reading-guide-actions button,
+.first-reading-links button, .import-dialog .import-actions button {
+  font-family: inherit;
+  min-height: 44px;
+  border-radius: 12px;
+  padding: 10px 18px;
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+.first-reading-actions button, #guideDone, #openImportedBook {
+  border: 1px solid var(--line, #dce3ed);
+  background: #fff;
+  color: var(--md-primary, #3b6088);
+}
+#firstImport, .reading-guide #guideDone {
+  border-color: var(--md-primary, #3b6088);
+  background: var(--md-primary, #3b6088);
+  color: #fff;
+}
+.first-reading-links { margin: 10px 0 8px; gap: 3px; }
+.first-reading-links button {
+  padding: 7px 10px;
+  border: 0;
+  background: transparent;
+  color: var(--md-primary, #3b6088);
+}
+#skipReadingGuide { color: var(--muted, #657588); }
+#firstReadingTips {
+  list-style: none;
+  padding: 0;
+  margin: 14px 0 22px;
+  border-top: 1px solid var(--line, #e4e9ef);
+}
+#firstReadingTips li {
+  display: grid;
+  grid-template-columns: 145px minmax(0, 1fr);
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line, #e4e9ef);
+  line-height: 1.7;
+}
+#firstReadingTips b { font-size: 13px; font-weight: 500; }
+#firstReadingTips span, .first-reading-storage {
+  font-size: 12px;
+  color: var(--muted, #657588);
+  line-height: 1.8;
+}
+.reading-guide {
+  width: min(620px, calc(100vw - 24px));
+  max-height: calc(100dvh - 28px);
+  padding: 26px;
+  color: var(--ink, #283443);
+}
+.reading-guide h2 { margin: 0; font-size: 23px; font-weight: 500; line-height: 1.5; }
+.reading-guide-steps { margin: 10px 0 20px; padding: 0 0 0 22px; }
+.reading-guide-steps li { padding-left: 7px; margin: 0 0 23px; }
+.reading-guide-steps li::marker { color: var(--md-primary, #3b6088); font-size: 13px; }
+.reading-guide-steps h3 { font-size: 15px; line-height: 1.7; font-weight: 500; margin: 0 0 5px; }
+.reading-guide-steps p, .guide-storage-note {
+  font-size: 13px;
+  line-height: 1.85;
+  color: var(--muted, #657588);
+  margin: 0;
+}
+.guide-storage-note { padding-top: 16px; border-top: 1px solid var(--line, #e4e9ef); }
+.reading-guide-actions { justify-content: flex-end; margin-top: 22px; }
+.reading-guide-actions button:not(#guideDone) { background: transparent; border: 0; color: var(--md-primary, #3b6088); }
+.reading-guide .reader-dialog-head > button { min-width: 44px; min-height: 44px; flex-shrink: 0; }
+.import-dialog { width: min(520px, calc(100vw - 24px)); }
+.import-dialog .import-selection { color: var(--muted, #657588); font-size: 12px; line-height: 1.7; margin: 14px 0 0; }
+.import-dialog #importList { max-height: min(38dvh, 340px); margin: 12px 0 16px; }
+.import-dialog #importList .import-item { align-items: flex-start; border-bottom: 1px solid var(--line, #e4e9ef); gap: 12px; padding: 13px 0; }
+.import-dialog .import-item input { margin-top: 4px; }
+.import-item-detail { min-width: 0; display: flex; flex: 1; flex-direction: column; gap: 4px; }
+.import-item-detail strong { font-size: 13px; line-height: 1.6; font-weight: 500; overflow-wrap: anywhere; }
+.import-item-detail small { color: var(--muted, #657588); font-size: 11px; line-height: 1.7; }
+.import-dialog [data-state="success"] .import-item-state { color: #287349; }
+.import-dialog [data-state="failed"] .import-item-state { color: #ad3a35; }
+.import-dialog [data-state="importing"] .import-item-state { color: var(--md-primary, #3b6088); }
+.import-item-detail .import-duplicate-note { color: #806238; }
+.import-dialog #importStatus { font-size: 12px; line-height: 1.8; color: var(--ink, #283443); }
+.import-dialog .import-actions { flex-wrap: wrap; gap: 8px; }
+.import-dialog #confirmImport { background: var(--md-primary, #3b6088); }
+.reader-first-library button:focus-visible, .reading-guide button:focus-visible,
+.import-dialog button:focus-visible, .import-item input:focus-visible { outline: 2px solid var(--md-primary, #3b6088); outline-offset: 3px; }
+.reader-first-library button:disabled, .import-dialog button:disabled { opacity: .55; cursor: default; }
+@media (max-width: 600px) {
+  .anx-layout .library-empty.reader-first-library { padding: 18px 2px 20px; margin-top: 18px; }
+  .reader-first-library.is-first-reading { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .first-book-illustration { width: 56px; height: 72px; margin-bottom: 0; }
+  .first-book-illustration span { font-size: 17px; letter-spacing: 2px; }
+  .anx-layout .reader-first-library h2 { font-size: 25px; margin-bottom: 8px; }
+  .anx-layout .reader-first-library p { font-size: 13px; margin-bottom: 18px; }
+  .first-reading-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .first-reading-actions button { padding: 10px 8px; }
+  #firstReadingTips li { grid-template-columns: minmax(0, 1fr); gap: 3px; padding: 11px 0; }
+  .reading-guide { padding: 22px 18px; }
+  .reading-guide h2 { font-size: 21px; }
+  .reading-guide-steps { padding-left: 18px; }
+  .reading-guide-steps li { padding-left: 3px; }
+  .reading-guide-actions { gap: 3px; }
+  .reading-guide-actions button { padding: 10px 12px; }
+}

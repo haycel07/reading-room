@@ -2,8 +2,8 @@
 // Interaction structure studied from Anx Reader v1.14.0; this implementation is original.
 const STORAGE_KEY = 'reading-interface-prefs';
 const DEFAULTS = Object.freeze({
-  textWidth: 790, firstIndent: 0, topSpace: 40, bottomSpace: 90,
-  headingScale: 1.15, catalogSize: 13, catalogDensity: 'regular',
+  textWidth: 790, firstIndent: 0, topSpace: 32, bottomSpace: 72,
+  headingScale: 1.3, catalogSize: 13, catalogDensity: 'regular',
   motion: 'standard', showMeta: true, showProgress: true,
   ebookFlow: 'paginated', ebookColumns: '2', keepAwake: false, keyboardNavigation: true,
   voiceRate: '1', voicePitch: '1', voiceSleep: '0', voiceName: ''

@@ -166,7 +166,7 @@ export function initReaderShell({
   }
   for (const theme of document.querySelectorAll(".themes button")) {
     const b = theme.cloneNode(true);
-    b.textContent = "A";
+    b.innerHTML = '<b aria-hidden="true">A</b>';
     b.onclick = () => {
       theme.click();
       quick

@@ -3,7 +3,7 @@ const {chromium}=require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtim
 const out=path.join(__dirname,'../output/shared-motion');fs.mkdirSync(out,{recursive:true});
 const near=(a,b,t=6)=>Math.abs(a-b)<t;
 const idle=async(page,id)=>page.waitForFunction(id=>{const e=document.getElementById(id);return !e.dataset.motionState},id);
-(async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
+(async()=>{const browser=await chromium.launch({headless:true,executablePath:require('./reader-helpers.cjs').browserExecutable()});try{
  for(const [width,height]of [[320,740],[390,844],[844,390],[768,1024],[1440,1000]]){
   const page=await browser.newPage({viewport:{width,height}}),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:38749/');assert.equal(await page.evaluate(()=>typeof Motion.animate),'function');
   await page.evaluate(()=>new Promise((resolve,reject)=>{const request=indexedDB.open('between-pages',3);request.onerror=reject;request.onsuccess=()=>{const db=request.result,tx=db.transaction('books','readwrite');for(let i=0;i<12;i++)tx.objectStore('books').put({id:'motion-demo-'+i,name:'虚构书-'+i+'.txt',type:'txt',format:'TXT',data:new Blob(['第一章 风中的书页\n'+'这只是用来检查动效的虚构原文。\n'.repeat(180)],{type:'text/plain'}),added:Date.now()+i,progress:0});tx.oncomplete=()=>{db.close();resolve()};tx.onerror=reject}}));await page.reload();await page.locator('.library-book').first().waitFor();

@@ -1,0 +1,23 @@
+{
+  "scope": "one fictional 5000-unit region, deterministic mock outputs, text field only",
+  "baselineInputCharacters": 11031,
+  "optimizedInputCharacters": 6439,
+  "inputCharacterReductionPercent": 42,
+  "openingRequests": {
+    "before": 6,
+    "after": 3
+  },
+  "actualBilledTokens": "not measured; provider usage is required",
+  "outputTargets": {
+    "carry": 320,
+    "regionSummary": 240,
+    "rollingMemory": 900
+  },
+  "manualChat": {
+    "scope": "40000-unit fictional source, mock summaries 1000 units each",
+    "baselineRepeatInputCharacters": 40000,
+    "optimizedRepeatInputCharacters": 18097,
+    "firstPreparationSummaryInputCharacters": 24000,
+    "repeatSummaryRequests": 0
+  }
+}

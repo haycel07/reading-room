@@ -3,7 +3,7 @@ const {ready,scrollNear}=require('./reader-helpers.cjs');
 const {chromium}=require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
 const assert=require('node:assert/strict');
 (async()=>{
- const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
+ const browser=await chromium.launch({headless:true,executablePath:require('./reader-helpers.cjs').browserExecutable()});
  try{
  const page=await browser.newPage({viewport:{width:1400,height:900}}),responses=[],errors=[];
  page.on('pageerror',e=>errors.push(e.message));

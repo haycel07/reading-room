@@ -1,6 +1,6 @@
-# 一页之间 Android 1.4.0
+# 一页之间 Android 1.6.0
 
-最低 Android 8.0（API26），target35。应用ID `chat.tangqichen.onepage`。新版APK `output/android/一页之间-1.4.0.apk`，沿用同一私有签名，可直接覆盖升级保留数据，不要先卸载。
+最低 Android 8.0（API26），target35。应用ID `chat.tangqichen.onepage`。新版APK `output/android/一页之间-1.6.0.apk`，沿用同一私有签名，可直接覆盖升级保留数据，不要先卸载。
 
 ## 阅读与数据
 
@@ -22,7 +22,7 @@
 
 ```powershell
 cd C:\Users\13\Downloads\biological\reading-room
-powershell -ExecutionPolicy Bypass -File android-app\build.ps1 -VersionCode 6 -VersionName 1.4.0
+powershell -ExecutionPolicy Bypass -File android-app\build.ps1 -VersionCode 9 -VersionName 1.6.0
 ```
 
 构建工具来自官方源，固定哈希校验；不安装Android Studio、不改全局PATH、不自动接受SDK软件包协议。构建复制当前dist，并校验v2/v3签名。Windows PowerShell5的压缩程序集已显式加载。
@@ -34,3 +34,11 @@ powershell -ExecutionPolicy Bypass -File android-app\build.ps1 -VersionCode 6 -V
 没有连接Android实机或模拟器。编译和签名通过不能证明系统文件选择/保存、不同WebView、AI真实接口或语音听感已经验收。网页验证使用1440/1280/1024/390px隔离环境、虚构文本和替身API，没有使用真实API 密钥。
 
 更完整的功能对照见项目根目录 `Anx功能对照与本轮实现.md`。
+
+## 1.5.0：伴读输入预算
+
+前缀概括加新增原文，避免同一小区反复发送相同文字；读过半区再预备下一区。概述不附人物设定和聊天历史，DeepSeek官方端点后台任务关闭思考，普通聊天不覆盖原思考选择。长文聊天保留连续最近至少12000字符，较早范围用可复用概括覆盖。完整触发条件与请求样例见项目根目录“伴读触发条件与提示词示例.md”。沿用原签名、包名，versionCode8；构建/签名/资源比对不等于安卓实机验收。
+
+## 1.6.0：内容选句伴读
+
+每区一两条是上限，模型从编号原句里选具体细节，也可跳过。新评论支持引句返回、单独回复引用；PDF标明回到原页。消费记录与风格缓存分离，改名/换模型/换频率不重弹已消费位置。修复跨区普通聊天原文骤减，长文保留至少12000单位最近原文。原签名、原包名，真实手机未验收；详细证据见项目《栞伴读改造与验证.md》。

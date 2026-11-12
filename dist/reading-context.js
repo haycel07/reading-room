@@ -1,5 +1,5 @@
 // Offsets are UTF-16 positions in the extracted, already-read prefix only.
-export const POLICY = {version: 1, threshold: 40000, recent: 24000, chunk: 12000, summary: 1600, budget: 16000};
+export const POLICY = {version: 1, threshold: 24000, recent: 12000, chunk: 12000, summary: 1600, budget: 16000};
 const heading = /^(?:第[零〇一二三四五六七八九十百千万两0-9]+[章节回卷部篇集].{0,45}|(?:序章|序言|前言|楔子|引子|后记|尾声|番外|附录)(?:[\s：:·—-].{0,35})?|chapter\s+\d+\b.{0,45})$/i;
 
 export function planContext(text, boundaries = []) {

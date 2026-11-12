@@ -1,6 +1,6 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {chromium}=require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
-(async()=>{if(!process.argv.includes('--real'))throw Error('Pass --real and supply a key over stdin to authorize live calls.');const key=fs.readFileSync(0,'utf8').trim();if(!key)throw Error('Missing key on stdin');const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
+(async()=>{if(!process.argv.includes('--real'))throw Error('Pass --real and supply a key over stdin to authorize live calls.');const key=fs.readFileSync(0,'utf8').trim();if(!key)throw Error('Missing key on stdin');const browser=await chromium.launch({headless:true,executablePath:require('./reader-helpers.cjs').browserExecutable()});try{
 for(const origin of ['https://reading-room-1109.tangqichen2007.chatgpt.site',(process.env.READER_TEST_URL||'http://127.0.0.1:38749')]){
  const context=await browser.newContext({viewport:{width:390,height:844}});const page=await context.newPage();
  await page.route(origin+'/**',async route=>{const url=new URL(route.request().url());if(url.pathname==='/api/provider')return route.continue();const p=path.join(__dirname,'../dist',url.pathname==='/'?'index.html':url.pathname);await route.fulfill({status:200,contentType:/\.(m?js)$/.test(p)?'text/javascript':p.endsWith('.css')?'text/css':'text/html',body:fs.readFileSync(p)})});

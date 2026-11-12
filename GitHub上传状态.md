@@ -1,3 +1,16 @@
+# GitHub 上传及旧版本清理（2026-11-12）
+
+本轮按用户要求更新当前公开源码并归档本机旧版本：上传、回读SHA256核对后再删除本地副本。当前开发目录 `reading-room/dist` 与最新 `output/android/一页之间-1.7.1.apk` 保留；签名、服务、真实书籍和浏览器数据不清理。
+
+- 当前源码：https://github.com/haycel07/reading-room/tree/main/dist
+- 当前安卓发布：https://github.com/haycel07/reading-room/releases/tag/v1.7.1
+- 历史版本与文件校验清单：https://github.com/haycel07/reading-room/releases/tag/history-2026-11-12
+- 本轮完整审计：`output/version-cleanup-20261112/`（本机忽略目录，不含凭据；完成后会记录独立下载和逐文件删除结果）。
+
+本轮涉及68个旧包／发布附件，约117MiB；另在推送核对完成后删除临时GitHub源码检出。GitHub已有历史不删、不改写；后续发版遵守同一规则，避免本机重新积累旧版本。当前源码与Sites源码分别维护，不能把Sites推送当作GitHub同步。旧记录如下，仅作为历史。
+
+---
+
 # GitHub 上传状态（2026-11-11）
 
 已成功创建公开、独立仓库：https://github.com/haycel07/reading-room 。源码、README、测试、第三方许可、交接文档及归档、启动脚本、各版自研 APK 和动效预览已提交到 main。

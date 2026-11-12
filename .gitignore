@@ -1,5 +1,7 @@
 
 companion-work/
+companion-server.cjs
+启动伴读服务.cmd
 
 # Local screenshots and Android delivery artifacts
 output/

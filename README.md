@@ -6,7 +6,7 @@
 
 ## 开始阅读
 
-**Android 8.0 及以上：**从 [1.4.1 发布页](https://github.com/haycel07/reading-room/releases/tag/v1.4.1)下载 APK。已经安装旧版的用户可直接覆盖升级，保留原有书架与进度。安装包的 [SHA-256 校验值](output/android/一页之间-1.4.1.sha256) 可用于核对下载完整性。
+**Android 8.0 及以上：**从 [1.7.1 发布页](https://github.com/haycel07/reading-room/releases/tag/v1.7.1)下载 APK。已经安装旧版的用户可直接覆盖升级，保留原有书架与进度。安装包的 [SHA-256 校验值](https://github.com/haycel07/reading-room/releases/download/v1.7.1/onepage-1.7.1.sha256) 可用于核对下载完整性。
 
 **电脑浏览器：**安装 Node.js，在项目根目录打开 PowerShell，运行：
 
@@ -19,7 +19,7 @@ node companion-server.cjs
 
 ## 阅读与整理
 
-- **导书与定位：**支持 EPUB、PDF、TXT、Markdown、HTML、DOCX 以及部分 MOBI 系格式。阅读左栏提供章节目录和竖向进度条；返回书架后可以从上次的位置继续。
+- **导书与定位：**支持 EPUB、PDF、TXT、Markdown、HTML、DOCX 以及部分 MOBI 系格式。阅读采用目录抽屉、底部胶囊工具、快捷样式和跳转后退；返回书架后可以从上次的位置继续。
 - **摘录与回顾：**给选段划线、加笔记或书签；笔记可导出为 Markdown、TXT 或 CSV。书架可按分组、收藏和阅读状态整理，阅读日历可以按日查看读过的书和时长。
 - **阅读设置：**调整字号、行距、版面和动效。Android 可用系统离线语音朗读；可用音色取决于设备已安装的语音包。
 
@@ -43,4 +43,7 @@ node companion-server.cjs
 | [交接文档](交接文档.md) | 代码入口、构建与签名、已验证事项和遗留问题 |
 | [第三方许可](dist/THIRD_PARTY_NOTICES.md) | 解析器、字体、动效和文字转换组件的来源与许可 |
 
-1.4.1 已核对 APK 签名和内置网页资源；尚未完成 Android 实机验收，也未用真实用户密钥逐一验证各家服务商。发布可覆盖旧版的 APK 需要原签名，仓库不包含签名私钥。
+1.7.1 已核对 APK 签名和内置网页资源；尚未完成 Android 实机验收，也未用真实用户密钥逐一验证各家服务商。发布可覆盖旧版的 APK 需要原签名，仓库不包含签名私钥。
+
+
+当前伴读短评以小气泡显示：横屏右侧、竖屏顶部，不预留底栏；点击气泡后进入对应聊天。历史安装包和网页归档在 [历史版本归档](https://github.com/haycel07/reading-room/releases/tag/history-2026-11-12)，下载后可按清单核验SHA256。本地开发只保留当前源码和最新安装包；旧包上传、回读校验后删除本地副本。

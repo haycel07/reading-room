@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-12",
+  "result": "PASS",
+  "scope": "fictional repetitive book, first region, real local Codex only",
+  "calls": [
+    {
+      "task": "prepared-comment",
+      "inputCharacters": 2120,
+      "carryCharacters": 39,
+      "elapsedMs": 32287
+    },
+    {
+      "task": "prepared-comment",
+      "inputCharacters": 1959,
+      "carryCharacters": 41,
+      "elapsedMs": 31626
+    },
+    {
+      "task": "region-summary",
+      "inputCharacters": 1075,
+      "memoryCharacters": 41,
+      "elapsedMs": 28479
+    }
+  ],
+  "providerBilledTokens": "not exposed by local CLI; no billing reduction claim"
+}

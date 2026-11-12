@@ -1,7 +1,7 @@
 const {chromium}=require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const out=path.join(process.env.TEMP,'reading-material-qa');fs.mkdirSync(out,{recursive:true});
-(async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
+(async()=>{const browser=await chromium.launch({headless:true,executablePath:require('./reader-helpers.cjs').browserExecutable()});try{
  for(const width of [1440,1280,1024,390]){
   const page=await browser.newPage({viewport:{width,height:width===390?844:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/api/companion',r=>r.fulfill({status:200,contentType:'application/json',body:JSON.stringify({reply:'这家书店的猫，工作是看天气，工资是晒太阳。这个岗位的福利还挺让人心动。'})}));

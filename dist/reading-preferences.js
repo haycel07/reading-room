@@ -5,7 +5,7 @@ const DEFAULTS = Object.freeze({
   textWidth: 790, firstIndent: 0, topSpace: 40, bottomSpace: 90,
   headingScale: 1.15, catalogSize: 13, catalogDensity: 'regular',
   motion: 'standard', showMeta: true, showProgress: true,
-  ebookFlow: 'paginated', ebookColumns: '1', keepAwake: false, keyboardNavigation: true,
+  ebookFlow: 'paginated', ebookColumns: '2', keepAwake: false, keyboardNavigation: true,
   voiceRate: '1', voicePitch: '1', voiceSleep: '0', voiceName: ''
 });
 const CATEGORIES = [
@@ -253,7 +253,7 @@ export function initReadingPreferences(hooks = {}) {
   $('ebookReadingFlow').addEventListener('change', syncColumns);syncColumns();
   choice('reading', 'motion', 'readerMotion', '界面动效', [['standard', '标准'], ['gentle', '轻柔'], ['off', '关闭']], '系统启用“减少动态效果”时，始终关闭动效。');
   toggle('reading', 'showMeta', 'showReaderMeta', '显示文件信息', '阅读页显示格式、编码和存储位置。');
-  toggle('reading', 'showProgress', 'showReaderProgress', '显示阅读进度', '控制目录旁的竖向进度条与进度数字。');
+  toggle('reading', 'showProgress', 'showReaderProgress', '显示阅读进度', '显示页脚进度与工具栏中的阅读位置导航。');
   toggle('reading', 'keyboardNavigation', 'readerKeyboardNavigation', '键盘翻屏', '阅读时使用左右方向键或 Page Up / Page Down，输入和弹窗中不触发。');
   const awake = toggle('reading', 'keepAwake', 'readerKeepAwake', '阅读时保持屏幕常亮', '只在页面可见且正在阅读时申请，离开阅读页后释放。');
   if (hooks.setWakeLock) awake.addEventListener('change', () => Promise.resolve(hooks.setWakeLock(awake.checked)).catch(() => hooks.notify?.('此设备暂时无法保持屏幕常亮')));

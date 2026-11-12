@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const {chromium}=require('C:/Users/13/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
 const root=path.join(__dirname,'../dist');
-(async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
+(async()=>{const browser=await chromium.launch({headless:true,executablePath:require('./reader-helpers.cjs').browserExecutable()});try{
 for(const transport of ['web','local','native']){
  const origin=transport==='local'?'http://127.0.0.1:38749':'https://reader-fixture.test';
  const context=await browser.newContext({viewport:{width:320,height:740}}),page=await context.newPage(),errors=[];

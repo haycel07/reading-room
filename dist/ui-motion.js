@@ -68,11 +68,12 @@ function initViewport(){
 
 export function setPanel(id,visible,{immediate=false,restore=true}={}) {
  if(visible&&['settings','companion','scopePanel','localNotice'].includes(id))cancelBookOpening();
- if(id==='tocPanel'&&document.body.classList.contains('is-reading')){if(!visible&&mobile.matches)setShelfOpen(false);visible=true;immediate=true;restore=false}
+ if(id==='tocPanel'&&document.body.classList.contains('is-reading')){immediate=true;restore=false}
  const el=document.getElementById(id);if(!el||visible===!el.classList.contains('hidden'))return;
  const hadFocus=el.contains(document.activeElement),trigger=document.getElementById(triggers[id]);
  const previousPose=el.getAnimations().length?getComputedStyle(el).transform:null;stopPose(el);el.classList.remove('motion-exit');trigger?.setAttribute('aria-expanded',String(visible));
  if(visible){if(id==='settings')document.dispatchEvent(new CustomEvent('reading-settings-open'));if(id==='settings')setPanel('companion',false,{immediate:true,restore:false});if(id==='companion')setPanel('settings',false,{immediate:true,restore:false});origins.set(el,sourceFor(trigger,el));}
+ if(id==='companion'&&visible===el.classList.contains('hidden')){document.dispatchEvent(new Event('reading-companion-layout'));document.body.classList.toggle('companion-docked',visible)}
  el.setAttribute('aria-hidden',String(!visible));el.inert=!visible;
  const instant=immediate||!motionAllowed()||id==='scopePanel'&&!visible;
  if(!visible&&!instant)el.classList.add('motion-exit');el.classList.toggle('hidden',!visible);
@@ -89,8 +90,8 @@ export function setShelfOpen(open){
  const shelf=document.querySelector('.sidebar'),trigger=document.getElementById('mobileShelf');if(open===shelf.classList.contains('open'))return;
  const previousPose=shelf.getAnimations().length?getComputedStyle(shelf).transform:null;stopPose(shelf);shelf.classList.remove('motion-exit');shelf.style.transition='none';if(open)origins.set(shelf,{el:trigger,box:rect(trigger)});else if(motionAllowed()&&mobile.matches)shelf.classList.add('motion-exit');
  shelf.classList.toggle('open',open);document.body.classList.toggle('shelf-open',open);trigger.setAttribute('aria-expanded',String(open));document.dispatchEvent(new CustomEvent('reading-sidebar-change',{detail:{open}}));
- shelf.inert=mobile.matches&&!open;shelf.setAttribute('aria-hidden',String(mobile.matches&&!open));document.querySelector('main').inert=mobile.matches&&open;
- if(motionAllowed()&&mobile.matches){let a=morph(shelf,open,origins.get(shelf)||{el:trigger,box:rect(trigger)},{duration:open?.3:.22});if(a){if(previousPose&&previousPose!=='none'){a.cancel();a=play(shelf,{transform:[previousPose,open?'translate(0px,0px) scale(1,1)':pose(rect(shelf),origins.get(shelf)).transform],opacity:open?[.6,1]:[1,0]},{duration:.22,bounce:0})}animations.set(shelf,a);a.finished.then(()=>{if(animations.get(shelf)===a){stopPose(shelf);shelf.classList.remove('motion-exit');requestAnimationFrame(()=>shelf.style.removeProperty('transition'))}},()=>{});}}
+ shelf.inert=!open;shelf.setAttribute('aria-hidden',String(!open));document.querySelector('main').inert=open;
+ if(motionAllowed()){let a=morph(shelf,open,origins.get(shelf)||{el:trigger,box:rect(trigger)},{duration:open?.3:.22});if(a){if(previousPose&&previousPose!=='none'){a.cancel();a=play(shelf,{transform:[previousPose,open?'translate(0px,0px) scale(1,1)':pose(rect(shelf),origins.get(shelf)).transform],opacity:open?[.6,1]:[1,0]},{duration:.22,bounce:0})}animations.set(shelf,a);a.finished.then(()=>{if(animations.get(shelf)===a){stopPose(shelf);shelf.classList.remove('motion-exit');requestAnimationFrame(()=>shelf.style.removeProperty('transition'))}},()=>{});}}
  else{shelf.classList.remove('motion-exit');shelf.style.removeProperty('transition');}
  if(open)document.getElementById(document.body.classList.contains('is-reading')?'tocClose':'closeShelf').focus({preventScroll:true});else if(mobile.matches)trigger.focus({preventScroll:true});
 }
@@ -111,7 +112,7 @@ function initDialogs(){
  const enter=()=>{source=sourceFor(document.getElementById(defaults[d.id]),d);if(motionAllowed()){const a=morph(d,true,source,{duration:.3});if(a){animations.set(d,a);a.finished.then(()=>{if(animations.get(d)===a)stopPose(d)},()=>{})}}};
  d.showModal=function(){if(closingGhost){removeGhost(closingGhost);closingGhost=null}cancelBookOpening();stopPose(d);const result=show();enter();return result};
  d.close=function(value){const box=d.open?rect(d):null;stopPose(d);const result=close(value);if(box&&motionAllowed()&&!navigating){const g=document.createElement('div');g.className='dialog-return-ghost';closingGhost=g;g.setAttribute('aria-hidden','true');Object.assign(g.style,{left:box.left+'px',top:box.top+'px',width:box.width+'px',height:box.height+'px'});document.body.append(g);ghosts.add(g);const a=morph(g,false,source,{duration:.22});if(a)a.finished.then(()=>removeGhost(g),()=>removeGhost(g));else removeGhost(g)}return result};
- d.addEventListener('cancel',e=>{e.preventDefault();d.close()});if(d.open)enter();
+ d.addEventListener('cancel',e=>{if(e.defaultPrevented)return;e.preventDefault();d.close()});if(d.open)enter();
  };
  document.querySelectorAll('dialog').forEach(wire);new MutationObserver(changes=>{for(const change of changes)for(const node of change.addedNodes){if(node.nodeType!==1)continue;if(node.matches('dialog'))wire(node);node.querySelectorAll('dialog').forEach(wire)}}).observe(document.body,{childList:true});
 }
@@ -132,7 +133,7 @@ export function initMotion() {
     const shelf=document.querySelector('.sidebar');
     stopPose(shelf);shelf.style.removeProperty('transition');shelf.classList.remove('motion-exit');
     if(!mobile.matches){shelf.classList.remove('open');document.body.classList.remove('shelf-open');document.querySelector('main').inert=false;document.getElementById('mobileShelf').setAttribute('aria-expanded','false')}
-    shelf.inert=mobile.matches&&!shelf.classList.contains('open');shelf.setAttribute('aria-hidden',String(shelf.inert));
+    shelf.inert=!shelf.classList.contains('open');shelf.setAttribute('aria-hidden',String(shelf.inert));
   }
   shelfSize();mobile.addEventListener('change',shelfSize);
   document.getElementById('shelfScrim').onclick=()=>setShelfOpen(false);
@@ -143,7 +144,7 @@ export function initMotion() {
       const id=['scopePanel','settings','tocPanel','companion','localNotice'].find(id=>!(id==='tocPanel'&&document.body.classList.contains('is-reading'))&&!document.getElementById(id).classList.contains('hidden'));
       if(id)setPanel(id,false);
     }
-    if(e.key==='Tab'&&mobile.matches&&document.body.classList.contains('shelf-open')) {
+    if(e.key==='Tab'&&document.body.classList.contains('shelf-open')) {
       const controls=[...document.querySelector('.sidebar').querySelectorAll('button:not(:disabled),a[href],input:not([type=hidden])')].filter(el=>el.getClientRects().length);
       const first=controls[0],last=controls.at(-1);
       if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}
@@ -161,8 +162,9 @@ export function initMotion() {
   const status=document.getElementById('status');let statusSignature='';new MutationObserver(()=>{const signature=status.style.display+'|'+status.textContent;if(signature===statusSignature)return;statusSignature=signature;stopPose(status);if(status.style.display!=='none'&&motionAllowed()){const a=play(status,{opacity:[.35,1],transform:['translateY(9px)','translateY(0px)']},{duration:.18,bounce:0});animations.set(status,a);a.finished.then(()=>{if(animations.get(status)===a)stopPose(status)},()=>{})}}).observe(status,{attributes:true,attributeFilter:['style'],childList:true});
   const intro=document.getElementById('initiativeCard');
   new MutationObserver(changes=>{
-    if(changes.some(c=>c.attributeName==='class')&&!intro.classList.contains('hidden')&&motionAllowed())
-      {stopPose(intro);const a=morph(intro,true,{el:document.getElementById('companionToggle'),box:rect(document.getElementById('companionToggle'))},{duration:.22});if(a){animations.set(intro,a);a.finished.then(()=>{if(animations.get(intro)===a)stopPose(intro)},()=>{})}}
+    if(changes.some(c=>c.attributeName==='class')&&!intro.classList.contains('hidden')&&motionAllowed()){
+      stopPose(intro);const a=play(intro,{opacity:[0,1],transform:['translateY(-6px) scale(.98)','translateY(0) scale(1)']},{duration:.2,bounce:0});animations.set(intro,a);a.finished.then(()=>{if(animations.get(intro)===a)stopPose(intro)},()=>{});
+    }
     if(intro.classList.contains('hidden')){stopPose(intro);intro.getAnimations().forEach(a=>a.cancel())}
   }).observe(intro,{attributes:true,attributeFilter:['class']});
 }

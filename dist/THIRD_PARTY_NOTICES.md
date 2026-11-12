@@ -44,3 +44,8 @@ UI 实际调用 Motion 的免费 MIT JavaScript `animate` 弹簧引擎，并在�
 - 官方发布包 `motion@14.12.0`，通过 npm registry SHA512 integrity 校验。运行文件是发布包原始 `dist/motion.js`，在本项目存放于共享 vendor 目录 `foliate/vendor/motion.js`，不修改电子书解析器。
 - 完整 MIT 许可与版权保留在 [licenses/motion-MIT.txt](licenses/motion-MIT.txt)。离线打包，无第三方脚本CDN或遥测接入。
 - 固定下载与校验脚本：项目根目录 `tools/vendor_motion.py`；研究和包原件在本机忽略的 `output/motion-research/`。
+
+
+## 2026-11-12：Anx Windows 实机对照
+
+本轮下载、校验并实际运行官方 Anx Reader 1.14.0 Windows portable，以原创虚构 EPUB 操作书架、导入、目录、样式、划词、笔记、AI和设置。新的 `anx-interface.js/.css` 与 `anx-reader-shell.js` 是本项目独立实现；未复制 Anx 商标、Flutter二进制、Dart UI或第三方解析器代码。参考对象同 tag 为 MIT，完整许可仍保留于 `licenses/anx-reader-MIT.txt`。此前 APK 静态研究的证据边界保持，不能与本轮 Windows 运行混同。详情见项目根目录 `Anx电脑实机对照与改版.md`。

@@ -1,13 +1,13 @@
 # GitHub 上传及旧版本清理（2026-11-12）
 
-本轮按用户要求更新当前公开源码并归档本机旧版本：上传、回读SHA256核对后再删除本地副本。当前开发目录 `reading-room/dist` 与最新 `output/android/一页之间-1.7.1.apk` 保留；签名、服务、真实书籍和浏览器数据不清理。
+本轮已按用户要求更新公开源码并归档旧版本：68个本地旧包／附件已在GitHub归档，全部独立下载回读SHA256一致后，现已删除对应本地文件。当前开发目录 `reading-room/dist` 与最新 `output/android/一页之间-1.7.1.apk` 保留；签名、服务、真实书籍和浏览器数据不清理。
 
 - 当前源码：https://github.com/haycel07/reading-room/tree/main/dist
 - 当前安卓发布：https://github.com/haycel07/reading-room/releases/tag/v1.7.1
 - 历史版本与文件校验清单：https://github.com/haycel07/reading-room/releases/tag/history-2026-11-12
-- 本轮完整审计：`output/version-cleanup-20261112/`（本机忽略目录，不含凭据；完成后会记录独立下载和逐文件删除结果）。
+- 本轮完整审计：`output/version-cleanup-20261112/`（本机忽略目录，不含凭据；verified.json记录远端回读，deleted-files.json记录逐文件删除）。
 
-本轮涉及68个旧包／发布附件，约117MiB；另在推送核对完成后删除临时GitHub源码检出。GitHub已有历史不删、不改写；后续发版遵守同一规则，避免本机重新积累旧版本。当前源码与Sites源码分别维护，不能把Sites推送当作GitHub同步。旧记录如下，仅作为历史。
+本轮已删除68个旧包／发布附件，共122,305,405字节；临时GitHub源码检出在本次文档推送核对完成后删除。GitHub已有历史不删、不改写；后续发版遵守同一规则，避免本机重新积累旧版本。当前源码与Sites源码分别维护，不能把Sites推送当作GitHub同步。旧记录如下，仅作为历史。
 
 ---
 
@@ -24,3 +24,6 @@ GitHub 源码提交以独立仓库 output/github/repository 为准；最初导�
 不含真实书籍、浏览器数据库、个人阅读记录/笔记/对话、API 密钥、签名私钥、DPAPI 文件、companion-work、构建缓存或 Anx 官方研究 APK。原数据与签名仍留在本机。
 
 网页与 APK 功能、运行方法、第三方许可和验证限制见 README 与交接文档。此前设备码过期、网络失败、尚未上传的描述只代表历史；压缩包也是准备阶段快照，GitHub main 才是当前发布源码。
+
+
+当前应用源码已通过GitHub API逐一核对254个网页资源及本机服务，发布代码提交为 `868b7d2d76cad797dce961404ecdb10d13a44815`，v1.7.1标签指向该提交；main另记录本次归档文档。Sites应用版本28及其源码提交 `555b863d6700f05947c71e9a9ae8cb57c804b8c0` 是独立历史。旧安装包请从历史归档页下载，当前安装包SHA256为 `9433e0445ab9605f6c1516f0f731555789882e11fbb775ceb7018023a21e5de3`。

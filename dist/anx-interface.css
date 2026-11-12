@@ -481,13 +481,9 @@ body.anx-layout {
   background: color-mix(in srgb, var(--read) 96%, transparent);
   border: 0;
   box-shadow: 0 1px 0 #1d2e4112;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-100%);
-  transition:
-    transform 0.22s,
-    opacity 0.18s,
-    visibility 0.22s;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
 }
 .anx-layout.is-reading.reader-controls header,
 .anx-layout.is-reading header:focus-within {
@@ -2302,5 +2298,107 @@ body.anx-layout.companion-docked #reading #initiativeCard {
   body.anx-layout.bubble-chat #companion #chatInput {
     min-height: 60px;
     height: auto;
+  }
+}
+
+/* Reading geometry is owned here: the essential navigation is always available. */
+:root {
+  --reader-toolbar-height: 60px;
+}
+
+body.anx-layout.is-reading header {
+  height: var(--reader-toolbar-height);
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+body.anx-layout.is-reading #reading {
+  height: var(--viewport-height,100dvh);
+  padding-top: var(--reader-toolbar-height);
+}
+
+body.anx-layout.is-reading #reading #readerWrap {
+  height: calc(var(--viewport-height,100dvh) - var(--reader-toolbar-height) - var(--safe-bottom,0px) - 28px);
+  margin: 0;
+}
+
+body.anx-layout.is-reading header .read-actions {
+  margin: 0;
+  gap: 3px;
+  flex-wrap: nowrap;
+}
+
+body.anx-layout.is-reading header .crumb {
+  min-width: 0;
+  overflow: hidden;
+}
+
+body.anx-layout.is-reading header .crumb strong {
+  max-width: none;
+}
+
+body.anx-layout.is-reading #backToLibrary,body.anx-layout.is-reading #toggleSettings {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  gap: 5px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-family: inherit;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+body.anx-layout.is-reading #backToLibrary span,body.anx-layout.is-reading #toggleSettings span {
+  margin: 0;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+body.anx-layout.is-reading header #readerToolsToggle,body.anx-layout.is-reading header #companionToggle {
+  display: none;
+}
+
+body.anx-layout.is-reading.reader-controls header #readerToolsToggle,body.anx-layout.is-reading.reader-controls header #companionToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 64px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@media(max-width:750px) {
+  :root {
+    --reader-toolbar-height: calc(56px + var(--safe-top,0px));
+  }
+  body.anx-layout.is-reading header {
+    padding-top: calc(6px + var(--safe-top,0px));
+    padding-bottom: 6px;
+  }
+  body.anx-layout.companion-docked.is-reading:not(.bubble-chat) #reading {
+    height: calc(var(--viewport-height,100dvh)*.52);
+  }
+  body.anx-layout.companion-docked.is-reading:not(.bubble-chat) #reading #readerWrap {
+    height: calc(var(--viewport-height,100dvh)*.52 - var(--reader-toolbar-height) - 28px);
+  }
+  body.anx-layout.is-reading #backToLibrary,body.anx-layout.is-reading #toggleSettings {
+    padding: 7px 8px;
+    gap: 4px;
+  }
+}
+
+@media(orientation:portrait) {
+  body.anx-layout.is-reading #reading #initiativeCard,body.anx-layout.is-reading.reader-controls #reading #initiativeCard {
+    top: calc(var(--viewport-top,0px) + var(--reader-toolbar-height) + 8px);
+  }
+  body.anx-layout.bubble-chat.companion-docked.is-reading #reading #readerWrap {
+    height: calc(var(--viewport-height,100dvh) - var(--reader-toolbar-height) - var(--safe-bottom,0px) - 28px);
   }
 }

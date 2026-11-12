@@ -2,7 +2,7 @@ import { setPanel, setShelfOpen } from "./ui-motion.js";
 import { icon } from "./anx-interface.js";
 const $ = (id) => document.getElementById(id);
 
-// Controls overlay the reading surface: revealing them never moves the text.
+// Back and settings stay visible. Only secondary reading tools are collapsible.
 export function initReaderShell({
   home,
   seek,
@@ -53,14 +53,16 @@ export function initReaderShell({
   back.type = "button";
   back.className = "back-library-button";
   back.setAttribute("aria-label", "返回书架");
-  back.innerHTML = icon("back");
+  back.innerHTML = icon("back") + '<span>书架</span>';
+  back.title = '返回书架';
   back.onclick = home;
   document.querySelector(".crumb").before(back);
   const top = $("reading").querySelector(".reading-top");
   document.querySelector("header").append(top.querySelector(".read-actions"));
   document.querySelector("header .read-actions").append($("toggleSettings"));
-  $("toggleSettings").innerHTML = icon("settings");
+  $("toggleSettings").innerHTML = icon("settings") + '<span>设置</span>';
   $("toggleSettings").setAttribute("aria-label", "阅读设置");
+  $("toggleSettings").title = '阅读设置';
   top.classList.add("hidden");
   const bar = document.createElement("nav");
   bar.id = "readerDock";
@@ -261,7 +263,7 @@ export function initReaderShell({
     if (!visible) {
       quick.classList.add("hidden");
       rail.classList.add("hidden");
-      if(document.activeElement?.closest('header,#readerDock,#quickStyle,#readingProgressRail')){
+      if(document.activeElement?.closest('#readerDock,#quickStyle,#readingProgressRail')){
         $('readerWrap').tabIndex=-1;
         $('readerWrap').focus({preventScroll:true});
       }

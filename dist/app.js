@@ -153,9 +153,11 @@ const selectionToolbar=$('selectionTools');
 function hideSelectionTools(){stopSurfaceMotion(selectionToolbar);selectionToolbar.classList.add('hidden')}
 function selectionAllowed(excerpt,anchor){if(!anchor||!current||excerpt.bookId!==current.id||excerpt.type!==anchor.type)return false;if(excerpt.type==='txt')return excerpt.encoding===anchor.encoding&&excerpt.end<=anchor.offset;if(excerpt.type==='pdf')return excerpt.page<anchor.page||(excerpt.page===anchor.page&&excerpt.bottom<=anchor.bottom+1);return excerpt.section<=ebookSection&&(excerpt.cfi===ebookView?.lastLocation?.cfi||(layoutReadFloor?.book===current&&excerpt.cfi===layoutReadFloor.cfi))}
 function clearReaderSelection(){document.getSelection()?.removeAllRanges();for(const c of ebookView?.renderer?.getContents()||[])c.doc.getSelection()?.removeAllRanges();hideSelectionTools();pendingSelection=null}
+// A delayed selection sampler must not cover settings after the user opens them.
+document.addEventListener('reading-settings-open',clearReaderSelection);
 function readerSelectionActive(){return !!document.getSelection()?.toString().trim()||(ebookView?.renderer?.getContents()||[]).some(c=>c.doc.getSelection()?.toString().trim())}
 function showSelectionFor(doc,type,section){
- if(document.querySelector('dialog[open]'))return;
+ if(document.querySelector('dialog[open]')||!$('settings').classList.contains('hidden')){hideSelectionTools();return}
  const book=current,selection=doc.getSelection();if(!book||!readingReady||!selection||selection.isCollapsed||!selection.rangeCount){hideSelectionTools();return}
  const range=selection.getRangeAt(0),rects=[...range.getClientRects()].filter(r=>r.width&&r.height),rect=rects[0];if(!rect||!selection.toString().trim()){hideSelectionTools();return}
  let root,excerpt={type,text:selection.toString().trim(),bookId:book.id},x=rect.left+rect.width/2,y=rect.top;
@@ -168,7 +170,8 @@ function showSelectionFor(doc,type,section){
  pendingSelection=excerpt;proactive?.cancel();$('underlineSelection').textContent=annotations?.existing(excerpt)?.underline?'取消划线':'划线';
  const opening=selectionToolbar.classList.contains('hidden');selectionToolbar.classList.remove('hidden');const width=selectionToolbar.offsetWidth,height=selectionToolbar.offsetHeight,viewportHeight=window.visualViewport?.height||innerHeight;
  selectionToolbar.style.left=Math.max(8,Math.min(innerWidth-width-8,x-width/2))+'px';
- selectionToolbar.style.top=Math.max(8,Math.min(viewportHeight-height-8,y>=height+12?y-height-8:y+rect.height+8))+'px';if(opening)animateSelectionTools({left:x-rect.width/2,top:y,width:rect.width,height:rect.height});
+ const navigationBottom=document.querySelector('header').getBoundingClientRect().bottom;
+ selectionToolbar.style.top=Math.max(navigationBottom+8,Math.min(viewportHeight-height-8,y>=height+12?y-height-8:y+rect.height+8))+'px';if(opening)animateSelectionTools({left:x-rect.width/2,top:y,width:rect.width,height:rect.height});
 }
 const selectionDocuments=new WeakSet();
 function bindSelectionDocument(doc,type,section){

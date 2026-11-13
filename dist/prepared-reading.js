@@ -2,7 +2,7 @@ import {PREPARED_BUDGET} from './companion-protocol.js';
 import {POLICY} from './reading-context.js';
 import {candidatesIn,annotateCandidates,validCandidate} from './companion-candidates.js';
 export const REGION_VERSION=2;
-export const COMMENT_VERSION=2;
+export const COMMENT_VERSION=3;
 export async function contentKey(value){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
 const heading=/^(?:第[零〇一二三四五六七八九十百千万两0-9]+[章节回卷部篇集].{0,45}|chapter\s+\d+\b.{0,45})$/i;
 
@@ -27,7 +27,7 @@ export function commentPoints(text,region,pace='frequent'){
  for(const line of text.slice(region.start,region.end).split('\n')){const end=at+line.length;if(line.trim().length>=12)paragraphs.push(end);at=end+1}
  const sentences=[...text.slice(region.start,region.end).matchAll(/[。！？!?；;](?:[”’"']?)/g)].map(m=>region.start+m.index+m[0].length);
  const points=[];
- for(const ratio of ratios){const target=region.start+Math.floor(length*ratio);let candidates=paragraphs.filter(n=>n>=region.start+length*.18&&n<region.end-12);let offset=candidates.sort((a,b)=>Math.abs(a-target)-Math.abs(b-target))[0];if(offset===undefined||Math.abs(offset-target)>length*.15)offset=sentences.filter(n=>n>=region.start+length*.18&&n<region.end-12).sort((a,b)=>Math.abs(a-target)-Math.abs(b-target))[0]??target;
+ for(const [i,ratio] of ratios.entries()){const distance=i===0&&pace!=='quiet'?Math.min(length*ratio,pace==='lively'?600:900):length*ratio;const target=region.start+Math.floor(distance),floor=region.start+Math.min(length*.18,distance*.6);let candidates=paragraphs.filter(n=>n>=floor&&n<region.end-12);let offset=candidates.sort((a,b)=>Math.abs(a-target)-Math.abs(b-target))[0];if(offset===undefined||Math.abs(offset-target)>length*.15)offset=sentences.filter(n=>n>=floor&&n<region.end-12).sort((a,b)=>Math.abs(a-target)-Math.abs(b-target))[0]??target;
   if(/[\uD800-\uDBFF]/.test(text[offset-1]))offset--;
   if(!points.some(p=>Math.abs(p.offset-offset)<100))points.push({offset});
  }
@@ -120,10 +120,10 @@ export class PreparedBook{
    rec.summary=result.summary.trim();rec.memory=result.memory.trim();rec.memoryStart=context.start;rec.outputVersion=2;await this.save(rec,'memory');return rec.memory;
   }catch(e){if(e.name!=='AbortError')this.failures.add(key);throw e}
  }
- async prepare(index,signal,check,status){
+ async prepare(index,signal,check,status,continueWork=()=>true){
   const rec=await this.record(index),previous=await this.previousContext(index,check);check();
   const errors=[];
-  for(const point of rec.comments){await this.refreshConsumption();check();if(this.consumed(point))point.shown=true;if(point.shown||point.state)continue;const key=rec.id+':'+point.offset;if(this.failures.has(key)){errors.push(Error('本区评论准备失败，可点重新准备'));continue}status('comment',rec);check();
+  for(const point of rec.comments){if(!continueWork())return;await this.refreshConsumption();check();if(this.consumed(point))point.shown=true;if(point.shown||point.state)continue;const key=rec.id+':'+point.offset;if(this.failures.has(key)){errors.push(Error('本区评论准备失败，可点重新准备'));continue}status('comment',rec);check();
    try{
     if(!point.candidates.length){point.state='skipped';point.text='';point.selectionVersion=2;point.reason='本次范围没有完整可定位的候选';await this.writeConsumption({start:point.windowStart,end:point.offset,status:'skipped',reason:point.reason});await this.save(rec,'comments');continue}
     const conversationContext={...await this.history(point.offset),prepared:rec.comments.filter(p=>p.offset<point.offset&&p.state==='ready'&&!p.shown).slice(-2).map(p=>({quote:p.quote||'',text:p.text}))};check();
@@ -135,6 +135,7 @@ export class PreparedBook{
     if(typeof result.carry==='string'&&result.carry.trim()&&result.carry.length<=PREPARED_BUDGET.carryLimit){point.carry=result.carry.trim();point.carryVersion=PREPARED_BUDGET.version;point.carryStart=rec.start;point.carryEnd=point.offset}await this.save(rec,'comments');status('ready',rec);
    }catch(e){if(e.name==='AbortError')throw e;this.failures.add(key);errors.push(e)}
   }
+  if(!continueWork())return;
   try{await this.summarize(rec,previous,signal,check,status)}catch(e){if(e.name==='AbortError')throw e;errors.push(e)}status('ready',rec);if(errors.length)throw errors[0];
  }
  async take(position,fromIndex){
@@ -160,7 +161,7 @@ export class PreparedBook{
 
 export class PreparedReader{
  constructor(hooks){this.hooks=hooks;this.revision=0;this.timer=null;this.target=null}
- cancel(){clearTimeout(this.timer);this.timer=null;this.revision++;this.controller?.abort();this.controller=null;this.target=null;this.recent=null;this.preparing=null;this.suppressUntil=0;this.hooks.withdraw()}
+ cancel(){clearTimeout(this.timer);this.timer=null;this.revision++;this.controller?.abort();this.controller=null;this.target=null;this.recent=null;this.preparing=null;this.suppressUntil=0;this.hooks.withdraw();this.hooks.paused?.()}
  setPace(){this.cancel();this.schedule()}
  schedule(delay=80){if(this.timer!==null)return;this.timer=setTimeout(()=>{this.timer=null;this.tick()},delay)}
  async tick(){
@@ -171,6 +172,7 @@ export class PreparedReader{
    const region=book.regionAt(position);if(!region)return;
    const until=Math.min(book.regions.length-1,region.index+(position-region.start>=(region.end-region.start)*PREPARED_BUDGET.lookahead?1:0));
    this.target={book,index:region.index,until,snap};
+   if(this.controller&&this.preparing){const abandoned=region.index>this.preparing.rec.index+1||(this.recent?.book===book&&region.index<this.recent.index&&this.preparing.rec.index>region.index),oldSummary=this.preparing.stage==='summary'&&region.index>this.preparing.rec.index;if(abandoned||oldSummary){this.controller.abort();this.controller=null;this.preparing=null;if(abandoned){this.recent=null;this.hooks.withdraw()}}}
    const last=this.recent,forward=last?.book===book&&position>=last.position;
    const now=Date.now();if(last?.book===book&&now-last.time<220&&Math.abs(position-last.position)>1200)this.suppressUntil=now+280;
    const previous=forward?(region.index===last.index?last.previous:region.index===last.index+1?last.index:null):null;
@@ -191,7 +193,7 @@ export class PreparedReader{
     for(let i=region.index;i<=until;i++){
      check();const target=this.target;if(target?.book!==book)break;
      if(i<target.index||i>target.until)break;
-     await book.prepare(i,controller.signal,check,(stage,rec)=>{this.preparing={stage,rec};this.hooks.status(stage,rec,book);this.schedule()});
+     await book.prepare(i,controller.signal,check,(stage,rec)=>{this.preparing={stage,rec};this.hooks.status(stage,rec,book);this.schedule()},()=>this.target?.book===book&&this.target.index<=i);
     }
    }finally{if(this.controller===controller){this.controller=null;this.preparing=null;if(this.target?.book===book&&(this.target.index!==region.index||this.target.until>until))this.schedule()}}
   }catch(e){if(e.name!=='AbortError'&&revision===this.revision)this.hooks.error(e)}

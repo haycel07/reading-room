@@ -2407,3 +2407,12 @@ body.anx-layout.is-reading.reader-controls header #readerToolsToggle {
     height: calc(var(--viewport-height,100dvh) - var(--reader-toolbar-height) - var(--safe-bottom,0px) - 28px);
   }
 }
+
+/* Activity is separate from toolbar visibility and never reserves reading space. */
+body.anx-layout.is-reading #companionToggle[data-companion-state]::after {
+  content: ""; width: 6px; height: 6px; flex-shrink: 0; margin-left: 4px;
+  border-radius: 50%; background: #8a929a;
+}
+body.anx-layout.is-reading #companionToggle[data-companion-state="preparing"]::after { background: #b88431; }
+body.anx-layout.is-reading #companionToggle:is([data-companion-state="ready"],[data-companion-state="speaking"])::after { background: var(--reading-accent, #3b6088); }
+body.anx-layout.is-reading #companionToggle[data-companion-state="error"]::after { background: #bd5454; }

@@ -49,7 +49,7 @@ export function createCatalog({list,search,count}) {
    entries.push(entry);stack=stack.filter(e=>e.depth<depth);stack.push(entry);host.append(button);if(search.value)refresh();else count.textContent=entries.length+' 处';return button;
   },
   activate(i){
-   if(i<0||i>=entries.length)return;const changed=active!==i;active=i;
+   if(i<0||i>=entries.length||i===active)return;const changed=true;active=i;
    entries.forEach((e,j)=>{e.button.classList.toggle('current',j===i);if(j===i)e.button.setAttribute('aria-current','location');else e.button.removeAttribute('aria-current')});
    if(changed&&!search.value&&Date.now()-lastManualScroll>700)requestAnimationFrame(()=>reveal(entries[i],true));
   },

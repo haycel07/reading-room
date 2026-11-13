@@ -12,7 +12,7 @@ export function conversationInstruction(payload){
  return out;
 }
 export function taskInstruction(payload){
- if(payload.task==='prepared-comment'&&payload.selectionVersion===2)return '在标有编号的候选原句中最多选一处愿意和读者聊的话：注意具体动作、措辞、称呼变化、限定条件、证据或例外。小说看细节和语气，非虚构看定义与条件；严肃段落平实回应。只能复述、泛泛评价、重复前评时可以跳过；不因读者没回复而减少下一次选句。只用本次材料，不预告后文。以当前人物口吻说一两句，推测要说明。只输出JSON {"speak":true或false,"candidateId":"候选编号，跳过为null","text":"短评最多180字符，跳过为空串","carry":"仅本区从区起点到本次截止位置的前缀概括，最多320字符"}。无论开口或跳过都更新carry，结合前缀概括与新增原文；不混入前区内容，不复写评论。'+facts;
+ if(payload.task==='prepared-comment'&&payload.selectionVersion===2)return '在标有编号的候选原句中最多选一处愿意和读者聊的话：注意具体动作、措辞、称呼变化、限定条件、证据或例外。小说看细节和语气，非虚构看定义与条件；严肃段落平实回应。有具体动作、措辞或观点且不重复时优先分享一处观察，不因读者没提问或没回复而默认沉默。只能复述、泛泛评价、重复前评时可以跳过；不因读者没回复而减少下一次选句。只用本次材料，不预告后文。以当前人物口吻说一两句，推测要说明。只输出JSON {"speak":true或false,"candidateId":"候选编号，跳过为null","text":"短评最多180字符，跳过为空串","carry":"仅本区从区起点到本次截止位置的前缀概括，最多320字符"}。无论开口或跳过都更新carry，结合前缀概括与新增原文；不混入前区内容，不复写评论。'+facts;
  if(payload.task==='prepared-comment')return '围绕指定句子写一两句自然短评，不复述整段、不催回复、不预告后文。只输出JSON '+(payload.compact===true?'{"text":"短评，最多180字符","carry":"仅本区从区起点到此评论点的概括，最多320字符"}。carry结合本区前缀概括与新增原文更新，保留人物、因果和未解问题；不混入前区内容，不复写短评。'+facts:'{"text":"短评"}，text不超过180字符。');
  if(payload.task==='region-summary')return (payload.compact===true?'只依据前文概括、本区前缀概括与剩余原文，输出JSON {"summary":"本区概述，最多240字符","memory":"合并前文与本区的累计概括，最多900字符"}。保留关键关系、因果、名字、数字及未解问题，合并重复信息，不补全缺失背景。':'只输出JSON {"summary":"本区概述，最多600字符","memory":"合并前文与本区的累计概括，最多2400字符"}。')+facts;
  if(payload.task==='summary')return '只输出中文概括，最多1200字符，保留人物关系、因果、关键观点与未解问题，不补充未提供内容。'+facts;

@@ -1,3 +1,11 @@
+当前优先任务：用户主要使用线上私有阅读器，反馈伴读不弹、非常卡顿。1.7.6修复代码已经完成并通过干净CI的24套及Java策略；本机与GitHub／APK已更新，线上仍是Sites32／1.7.5，尚未完成用户的线上目标。不要重写这批修复。
+
+先读交接文档.md、GitHub上传状态.md、伴读卡顿与弹出修复.md，核对当前Git／服务／站点。GitHub应用提交9903abf0d1ea552c87fae580d41acbebc875d114，已发布v1.7.6；本机应用提交487f5624c82b220c0396050ffc1157813636d1b8，之后只是文档。CI：https://github.com/haycel07/reading-room/actions/runs/43355264143。
+
+阻塞原因：Sites续取源码凭据返回“Sites Git is not yet enabled for this client”。需要在支持Sites Git的会话恢复官方source helper，推送当前已验证代码、从同一精确提交生成归档，然后部署原Site appgprj_6af1187a5f00819189e42bf3474abdb3，保持owner-only。最后成功打开源码结果c40e68ce57d364218e99a168339883936ef02dfc；原线上源码8a200841ddad7eb89af808e8da23e2ff1b03bbd7。不要用旧SHA加新归档冒充来源，不创建替代公开站点。
+
+真实Codex只有一次约33秒并实际显示，收尾隐藏控件超时已单独记录；其余测试替身，不夸大成用户当前线上已验证。保护真实书架、阅读进度、笔记和对话，不操作真实书籍进行测试。
+
 请继续开发“一页之间”。先读C:\Users\13\Downloads\biological\reading-room\交接文档.md、评审处理结果.md、GitHub上传状态.md，再核对实际代码、Git与运行／发布状态。
 
 保留阅读页常驻书架与设置、顶部／右侧小气泡、精确已读边界、连续前文概括与最近原文、用户数据和自定义人物提示词。版本以package.json为准。npm test启动隔离静态服务，真实模型测试另行明确授权；宿主Java通过不等于安卓真机。

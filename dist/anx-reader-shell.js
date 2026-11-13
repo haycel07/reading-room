@@ -2,7 +2,7 @@ import { setPanel, setShelfOpen } from "./ui-motion.js";
 import { icon } from "./anx-interface.js";
 const $ = (id) => document.getElementById(id);
 
-// Back and settings stay visible. Only secondary reading tools are collapsible.
+// Back, settings and companion stay visible. Only secondary reading tools collapse.
 export function initReaderShell({
   home,
   seek,

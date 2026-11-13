@@ -2360,12 +2360,17 @@ body.anx-layout.is-reading #backToLibrary span,body.anx-layout.is-reading #toggl
   font-family: inherit;
 }
 
-body.anx-layout.is-reading header #readerToolsToggle,body.anx-layout.is-reading header #companionToggle {
+body.anx-layout.is-reading header #readerToolsToggle {
   display: none;
 }
 
-body.anx-layout.is-reading.reader-controls header #readerToolsToggle,body.anx-layout.is-reading.reader-controls header #companionToggle {
+/* Companion access stays available when secondary reading tools collapse. */
+body.anx-layout.is-reading header #companionToggle,
+body.anx-layout.is-reading.reader-controls header #readerToolsToggle {
   display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   max-width: 64px;

@@ -4,7 +4,7 @@ const {browserExecutable,ready,readerControls}=require('./reader-helpers.cjs');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const output=path.join(__dirname,'../output/reader-navigation-qa');fs.mkdirSync(output,{recursive:true});
 async function essential(page){
- for(const id of ['backToLibrary','toggleSettings']){
+ for(const id of ['backToLibrary','toggleSettings','companionToggle']){
   const result=await page.locator('#'+id).evaluate(el=>{const r=el.getBoundingClientRect(),hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {visible:checkVisibility(el),hit:el===hit||el.contains(hit),width:r.width,height:r.height,right:r.right};function checkVisibility(el){return el.checkVisibility({checkOpacity:true,checkVisibilityCSS:true})&&!el.closest('[inert]')}});
   assert(result.visible&&result.hit,`${id} must be visible and clickable: ${JSON.stringify(result)}`);
   assert(result.width>=44&&result.height>=44,'44px touch targets');
@@ -19,7 +19,7 @@ async function settings(page){await page.locator('#toggleSettings').click();awai
   await page.goto((process.env.READER_TEST_URL || 'http://127.0.0.1:38749') + '/');await page.locator('#appRail').waitFor();
   const file=format==='txt'?{name:'虚构的很长书名用来验证窄屏导航不会挤掉退出和设置.txt',mimeType:'text/plain',buffer:Buffer.from('第一章 雨天\n'+'她留在虚构的书店看雨，听见雨点落在玻璃上的声音。\n'.repeat(250))}:path.join(__dirname,'fixture.'+format);
   await page.locator('#file').setInputFiles(file);await page.locator('#confirmImport').click();await page.waitForFunction(()=>document.getElementById('confirmImport').textContent==='好');assert((await page.locator('#importStatus').innerText()).startsWith('已导入 1 本书'));await page.locator('#confirmImport').click();await page.locator('.library-book').first().click();await ready(page);
-  await essential(page);assert(!await page.locator('body').evaluate(e=>e.classList.contains('reader-controls')),'entry must not require showing controls');await settings(page);
+  await essential(page);assert(!await page.locator('body').evaluate(e=>e.classList.contains('reader-controls')),'entry must not require showing controls');await page.locator('#companionToggle').click();await page.locator('#companion').waitFor({state:'visible'});await page.locator('#companionClose').click();await page.locator('#companion').waitFor({state:'hidden'});await essential(page);await settings(page);
   const read=await page.locator('#readerWrap').boundingBox();await page.mouse.move(read.x+read.width/2,read.y+read.height/2);await page.mouse.wheel(0,250);await page.keyboard.press('Escape');await essential(page);
   // Leaving an active selection must never be a prerequisite for exiting/settings.
   if(format==='txt')await page.locator('#txt').evaluate(el=>{const node=el.firstChild,r=document.createRange();r.selectNodeContents(node);const s=getSelection();s.removeAllRanges();s.addRange(r)});

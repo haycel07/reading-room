@@ -1,38 +1,37 @@
 # 发布与验证状态
 
-核验日期2026-11-13（Asia/Shanghai），当前应用1.7.6 / code16；Sites33已成功发布，本机、GitHub和APK的应用资源一致。之后交付文档提交不改变这些资源。
+核验：2026-11-18。当前应用1.8.0／Android code17；原私有站点Sites34与原签APK均已发布。冻结版耐久尚待05:29:58最终核对，五小时窗口在05:48:45结束。
 
 | 部分 | 已核验状态 |
 | --- | --- |
-| 正式本机阅读器 | http://127.0.0.1:38749/ ，已更新；确认原服务完整脚本且无活动请求后重启到PID34288，新reading-position.js返回200 |
-| 本机应用提交 | 487f5624c82b220c0396050ffc1157813636d1b8；后续仅交付文档 |
-| GitHub应用提交／v1.7.6 | 9903abf0d1ea552c87fae580d41acbebc875d114，与Sites独立历史；后续仅交付文档 |
-| APK | 原包名原签名，1.7.6 / code16，260项assets/reader与dist逐一一致 |
-| APK SHA256 | 8ee4081f56670cd5af378ce8d84b6a6ebf02ffc019b2a6fa666e944ee69368a5 |
-| GitHub下载 | APK与sha256均独立下载回读一致，latest指向v1.7.6 |
-| 私有线上站点 | https://reading-room-1109.tangqichen2007.chatgpt.site ，Sites33发布成功，源码446130da84e6842231e43573d5502c0e5f95d255，owner-only不变 |
+| 本机正式服务 | http://127.0.0.1:38749/ ，核对完整脚本与无活动请求后重启，当前四个新资源已实际使用；未来操作须重查PID |
+| 本机／Sites应用源码 | 2c391343ba5468630b4b64d02dc0efbfc37f365c |
+| GitHub代码与v1.8.0 | 835dfaed7761bebafb177d15bd1d928ca69ef3c6；与Sites独立历史 |
+| GitHub CI | https://github.com/haycel07/reading-room/actions/runs/44150373455 ，默认31套隔离回归及Java成功 |
+| 本地完整回归 | 38套通过，另宿主Java通过；真实AI不在默认列表 |
+| APK | 原包名chat.tangqichen.onepage，1.8.0／17，263项assets/reader与dist逐一字节一致 |
+| APK SHA256 | 85bd7eef2c972bdad68f897b62897a2e4ea204856c671f1c599a3ce2fd2071b0 |
+| 签名 | v2/v3通过，证书638620ea11f4f1ce0df43d37fb98ec856dfbb5951f065f4fc44771de6fa84d26 |
+| 下载回读 | https://github.com/haycel07/reading-room/releases/tag/v1.8.0 ，APK及SHA文件已独立下载核验；tag固定代码提交835dfae |
+| 私有站点 | https://reading-room-1109.tangqichen2007.chatgpt.site ，Sites34，succeeded；仅owner，零组和外部访客 |
+| 生产资源与界面 | 262项非HTML资源字节一致；HTML有托管包装，核心阅读节点／脚本／样式一致；390与1440隔离交互通过，零模型调用 |
 
-- [公开源码](https://github.com/haycel07/reading-room)、[1.7.6安装包](https://github.com/haycel07/reading-room/releases/tag/v1.7.6)。
-- [本轮完整CI](https://github.com/haycel07/reading-room/actions/runs/43355264143)：已成功；干净Ubuntu检出、默认24套及JDK17真实Java策略全部通过。
+Sites版本ID：appgprj_6af1187a5f00819189e42bf3474abdb3~appgver_939b7b810ad081918ecb777dce184fb1
 
-## 线上发布恢复
+部署ID：appgdep_6afca0570e148191b353a419befb0c92
 
-上一轮客户端源码凭据不可用的阻塞已解除。本次重新取得同一Site的凭据，使用已有本机代理恢复Git连接，官方source helper推送并打包精确提交446130da84e6842231e43573d5502c0e5f95d255；原生私有发布部署appgdep_6af6aa9dfd248191ac33d28278997840成功，保存版本33与该提交一致。
+本地发布归档gzip SHA256：2ffc9a2c95d258d11b537e35678ec8e8938bf51e94d21cf540099eb444f4faf4。后端会重新封装tar，不能拿其存储内容hash冒充本地gzip文件hash。归档含263项阅读资源及托管清单，没有未知用户文件。源码、安装包和归档的应用资源已分别核对；另从GitHub代码提交835dfae独立下载源码tarball，263项dist资源全部字节相等，未依赖换行归一化，下载只在内存中处理。
 
-已逐一核验归档中的260项应用资源与dist、GitHub应用及原签名1.7.6 APK一致，并重新确认只有owner一名允许访问者，无组或外部访客。没有重新调用真实模型，也没有操作用户的线上书架或强制刷新其阅读页。用户需要刷新网页才能加载新脚本；开关仍在“设置→伴读”，保留原选择。
+## 真实调用与设备边界
 
-本次是部署核验，不冒充用户当前浏览器、API配置或Android真机验收。前次24套干净CI仍适用于相同应用资源；之前的真实本机Codex显示与本轮线上发布结果分别报告。回执在output/online-publication。
+本轮3次本机Codex：短评约12.1秒、区间概述13.6秒、追问10.5秒，实际显示气泡并聊天；其他用替身。线上资源回读与浏览器交互通过，不等于用户当前服务商账户或Android真机端到端验收。未读取真实书籍、用户配置或密钥。
 
-## 验证与真实边界
+开发期三小时耐久已通过。冻结源码三小时运行中，最终以output/overnight-20261118/soak-current/result.json为证，不提前填写成功。整个五小时窗口中曾有模型额度中断，后台测试仍持续，交接文档如实记录。
 
-- 本机定向与分组回归通过，新增精确边界／大文本测量次数／隐藏书架不重建、旧任务让路和合法预备、关闭设置恢复；附加后段刷新、跨区迟到、PDF/EPUB及手动对话。首轮默认测试因旧PDF首屏假设失败；将机会放回折线以下后，PDF真实边界回归已通过，不掩盖该次退出码。
-- 54000单位虚构文本靠后位置，定位从约3801.6ms、48619次测量降至约1–3ms、17次，截止偏移相同。只代表该函数该本机样例。
-- 一次真实本机Codex（gpt-6.1-terra）约33152ms返回，390×844实际显示短评且完成后未再滚动；后续任务替身。脚本收尾取消隐藏复选框超时，finally已关闭隔离浏览器，不称整个脚本退出成功、不为收尾重复调用模型。
-- 原签名证书SHA256：638620ea11f4f1ce0df43d37fb98ec856dfbb5951f065f4fc44771de6fa84d26，v2/v3通过。Android仅编译、资源与签名，未做真机／模拟器；其他服务商本轮未做真实请求。
+## 旧版本清理
 
-## 保留与清理
+- 旧主目录APK1.7.6：GitHub资产742025487，独立回读SHA为8ee4081f56670cd5af378ce8d84b6a6ebf02ffc019b2a6fa666e944ee69368a5，核对后已删除主目录副本。
+- Sites33旧临时归档：GitHub历史资产760569184，SHA86ccf13167f568df17144bab35dda88d5b2e854ad041401836cd279bf1e32b6d；独立回读后删除。追加sites33-archive-proof.json，不覆盖旧历史清单。
+- 历史归档：https://github.com/haycel07/reading-room/releases/tag/history-2026-11-12 。本轮不重试此前被拒绝的public checkout旧产物删除；其保留不等于版本历史已物理清空。
 
-旧主目录1.7.5 APK远端独立回读后已删除，保留最新1.7.6。Sites32部署归档已在GitHub历史附件独立回读；本次Sites33发布成功后，该旧归档也按精确路径删除。保留Sites33当前归档。output/github/repository此前物理删除被自动审批拒绝（blocked by policy），不重试或绕过；旧物理副本和Git历史仍在，当前公开树不跟踪output。
-
-真实书架／进度／对话／笔记／原书未动；research/、修改说明.md、商机与功能路线报告.md五份文件SHA256保持，未提交上传，临时Git排除恢复。许可证按用户要求跳过。证据目录output/reading-performance。
-
+后续仅交付文档提交不修改已发布的263项应用资源、APK或Site版本。保留真实用户数据，不强制刷新当前阅读页；用户刷新后载入新版本。

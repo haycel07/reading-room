@@ -22,6 +22,7 @@ async function readerControls(page){
 }
 async function importIntoReader(page,files){
  await page.locator('#appRail').waitFor({state:'attached'});
+ if(await page.locator('#companion').isVisible())await page.locator('#companionClose').click();
  if(await page.locator('#reading').isVisible())await page.locator('#backToLibrary').click();
  await page.locator('#file').setInputFiles(files);
  await page.locator('#confirmImport').click();

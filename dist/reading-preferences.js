@@ -1,3 +1,4 @@
+import {animateUi,applyMotionTokens,currentMotionProfile} from './motion-profile.js';
 // Categorized, persistent reading preferences. Existing controls retain their IDs and handlers.
 // Interaction structure studied from Anx Reader v1.14.0; this implementation is original.
 const STORAGE_KEY = 'reading-interface-prefs';
@@ -154,14 +155,14 @@ export function initReadingPreferences(hooks = {}) {
     if (animate && effectiveMotion() !== 'off') {
       const panel = panels.get(key),direction=CATEGORIES.findIndex(x=>x[0]===key)>=CATEGORIES.findIndex(x=>x[0]===previous)?1:-1;
       panel.getAnimations().forEach(animation => animation.cancel());
-      panelMotion=window.Motion?.animate?Motion.animate(panel,{opacity:[.5,1],transform:[`translateX(${direction*12}px)`,'translateX(0px)']},{type:'spring',duration:.23,bounce:.035}):panel.animate([{opacity:.5,transform:`translateX(${direction*12}px)`},{opacity:1,transform:'none'}],{duration:190,easing:'ease-out'});
+      panelMotion=animateUi(panel,{opacity:[0,1],transform:[`translateX(${direction*currentMotionProfile().shift}px)`,'translateX(0px)']},{kind:'tab'});
     }
   }
   function updatePill(animate=false){
     const button=tabs.get(selected);if(!button?.getClientRects().length)return;
     const prior=pill.getBoundingClientRect(),bounds=nav.getBoundingClientRect(),next=button.getBoundingClientRect();pillMotion?.cancel();
     Object.assign(pill.style,{left:next.left-bounds.left+nav.scrollLeft+'px',top:next.top-bounds.top+'px',width:next.width+'px',height:next.height+'px'});
-    if(animate&&effectiveMotion()!=='off'&&prior.width>0){const from=`translateX(${prior.left-next.left}px) scaleX(${prior.width/next.width})`;pillMotion=window.Motion?.animate?Motion.animate(pill,{transform:[from,'translateX(0px) scaleX(1)']},{type:'spring',duration:.28,bounce:.035}):pill.animate([{transform:from},{transform:'none'}],{duration:220,easing:'ease-out'});}
+    if(animate&&effectiveMotion()!=='off'&&prior.width>0){const from=`translateX(${prior.left-next.left}px) scaleX(${prior.width/next.width})`;pillMotion=animateUi(pill,{transform:[from,'translateX(0px) scaleX(1)']},{kind:'tab'});}
   }
   new ResizeObserver(()=>updatePill()).observe(nav);
   document.addEventListener('reading-settings-open',()=>requestAnimationFrame(()=>updatePill()));
@@ -184,7 +185,7 @@ export function initReadingPreferences(hooks = {}) {
     root.dataset.motionMode = effectiveMotion();
     root.dataset.readerMeta = preferences.showMeta ? 'show' : 'hide';
     root.dataset.readerProgress = preferences.showProgress ? 'show' : 'hide';
-    root.style.setProperty('--motion-duration', effectiveMotion() === 'off' ? '0ms' : effectiveMotion() === 'gentle' ? '320ms' : '220ms');
+    applyMotionTokens(root,effectiveMotion());
     if (effectiveMotion() === 'off') {panelMotion?.cancel();pillMotion?.cancel();document.getAnimations().forEach(animation => animation.cancel());pill.style.removeProperty('transform');updatePill();}
     document.dispatchEvent(new CustomEvent('reading-motion-change', { detail: { mode: effectiveMotion() } }));
     document.dispatchEvent(new CustomEvent('reading-preferences-change', { detail: { ...preferences } }));
@@ -351,7 +352,7 @@ export function initReadingPreferences(hooks = {}) {
     if (ebook && !ebook.classList.contains('hidden')) $(delta > 0 ? 'ebookNext' : 'ebookPrev')?.click();
     else if (pdf && !pdf.classList.contains('hidden')) $(delta > 0 ? 'next' : 'prev')?.click();
     else if (wrap) wrap.scrollBy({ top: delta * Math.max(100, wrap.clientHeight * .85), behavior: effectiveMotion() === 'off' ? 'instant' : 'smooth' });
-    event.preventDefault();
+    document.dispatchEvent(new Event('reader-navigation'));event.preventDefault();
   });
   select('type', { animate: false });apply();
   installed = {

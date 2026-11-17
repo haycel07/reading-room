@@ -16,7 +16,7 @@ const assert=require('node:assert/strict');
  await page.goto((process.env.READER_TEST_URL || 'http://127.0.0.1:38749') + '/');
  const text=Array.from({length:14},(_,i)=>`第${i+1}章 测试${i+1}\n`+(`本章事件${i+1}。小舟经过第${i+1}座桥。\n`.repeat(300))).join('')+'未读秘密结尾';
  async function importBook(name,content){if(await page.locator('#reading').isVisible())await page.reload();await page.waitForFunction(()=>typeof document.querySelector('#file')?.onchange==='function');await require('./reader-helpers.cjs').importIntoReader(page,{name,mimeType:'text/plain',buffer:Buffer.from(content)});await page.waitForFunction(expected=>document.querySelector('#title').textContent===expected&&document.querySelector('#reading').getAttribute('aria-busy')==='false',name);await ready(page);}
- async function mark(n){await scrollNear(page,n)}
+ async function mark(n){const chatting=await page.locator('#companion').isVisible();if(chatting)await page.locator('#companionClose').click();await scrollNear(page,n);if(chatting){await page.waitForTimeout(100);await page.locator('#companionToggle').click()}}
  async function chat(){await page.locator('#chatSend').click();await page.waitForFunction(()=>!document.querySelector('#chatSend').disabled,null,{timeout:30000});}
  await importBook('虚构长书.txt',text);const bookLength=text.length,anchor=bookLength-1000;await mark(anchor);await require('./reader-helpers.cjs').readerControls(page);await page.locator('#companionToggle').click();await chat();
  let summaries=requests.filter(r=>r.task==='summary'),chats=requests.filter(r=>!r.task);

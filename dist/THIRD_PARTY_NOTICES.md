@@ -36,12 +36,12 @@
 
 Anx Reader 为 MIT；对应完整版权与许可保留在 [licenses/anx-reader-MIT.txt](licenses/anx-reader-MIT.txt)。官方发布与源码：https://github.com/Anxcye/anx-reader/releases/tag/v1.14.0 。完整证据边界见项目根目录 `Anx发布包研究与界面改版.md`；未将静态分析宣称为 Dart UI 反编译或 Anx 实机观察。
 
-## Motion 14.12.0：应用共享元素动效
+## Motion 14.12.0：历史动效依赖（1.8.0起已停止使用）
 
-UI 实际调用 Motion 的免费 MIT JavaScript `animate` 弹簧引擎，并在本项目实现按钮到面板、书封到阅读页及返回、书架 FLIP 和目录/标签过渡；没有使用 Motion+ 的收费布局 API，也没有引入 React。
+早期版本使用 Motion 的免费 MIT JavaScript 动画引擎。1.8.0起，应用动效改为独立实现的浏览器原生 Web Animations API，并统一运动偏好与时长；不再加载或打包原 Motion 运行文件。历史许可保留，便于核对旧版本来源。
 
 - GitHub：https://github.com/motiondivision/motion ，固定源码提交 `8f3409c05420e5eff238748e0cb58d0751ce66a1`（已核对版本与许可）。
-- 官方发布包 `motion@14.12.0`，通过 npm registry SHA512 integrity 校验。运行文件是发布包原始 `dist/motion.js`，在本项目存放于共享 vendor 目录 `foliate/vendor/motion.js`，不修改电子书解析器。
+- 官方发布包 `motion@14.12.0`，通过 npm registry SHA512 integrity 校验。旧运行文件为发布包原始 `dist/motion.js`，此前位于共享 vendor 目录 `foliate/vendor/motion.js`；现已移除，不修改电子书解析器。
 - 完整 MIT 许可与版权保留在 [licenses/motion-MIT.txt](licenses/motion-MIT.txt)。离线打包，无第三方脚本CDN或遥测接入。
 - 固定下载与校验脚本：项目根目录 `tools/vendor_motion.py`；研究和包原件在本机忽略的 `output/motion-research/`。
 

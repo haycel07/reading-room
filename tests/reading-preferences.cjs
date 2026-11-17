@@ -16,6 +16,7 @@ const fixture = `<!doctype html><html><head><meta charset="utf-8"><link rel="sty
     await page.route('http://preferences.test/**', route => {
       const pathname = new URL(route.request().url()).pathname;
       if (pathname === '/') return route.fulfill({ contentType: 'text/html', body: fixture });
+      if (pathname === '/motion-profile.js') return route.fulfill({ contentType: 'text/javascript', body: fs.readFileSync(path.join(root, 'dist/motion-profile.js'), 'utf8') });
       if (pathname === '/reading-preferences.js') return route.fulfill({ contentType: 'text/javascript', body: fs.readFileSync(path.join(root, 'dist/reading-preferences.js'), 'utf8') });
       if (pathname === '/reading-preferences.css') return route.fulfill({ contentType: 'text/css', body: fs.readFileSync(path.join(root, 'dist/reading-preferences.css'), 'utf8') });
       return route.fulfill({ status: 404 });
@@ -25,7 +26,7 @@ const fixture = `<!doctype html><html><head><meta charset="utf-8"><link rel="sty
     assert.equal(await page.locator('[role=tab]').count(), 5);
     assert.equal(await page.locator('#fontSize').count(), 1);
     assert.equal(await page.locator('.range-ruler').count(), await page.locator('#settings input[type=range]').count(), '所有设置滑条都有刻度');
-    assert.equal(await page.locator('#readerHeadingScaleValue').innerText(), '1.15', '倍率读数保留实际步长精度');
+    await page.locator('#readerHeadingScale').fill('1.15');assert.equal(await page.locator('#readerHeadingScaleValue').innerText(), '1.15', '倍率读数保留实际步长精度');
     for (const ruler of await page.locator('.range-control').all()) {
       const values = await ruler.evaluate(el => { const input=el.querySelector('input');return {min:input.min,max:input.max,marks:[...el.querySelectorAll('.range-tick.major')].map(x=>x.dataset.value)}; });
       assert(values.marks.some(x => Number(x) === Number(values.min)) && values.marks.some(x => Number(x) === Number(values.max)), '刻度必须包含范围两端');

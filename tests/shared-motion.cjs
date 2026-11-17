@@ -1,4 +1,4 @@
-// Current Anx shell: actual Motion transitions plus reduced-motion behavior.
+// Current shell: native transitions plus reduced-motion behavior and lifecycle cleanup.
 const {chromium}=require('playwright');
 const assert=require('node:assert/strict');
 const {browserExecutable,importIntoReader,readerControls}=require('./reader-helpers.cjs');
@@ -6,7 +6,7 @@ const {browserExecutable,importIntoReader,readerControls}=require('./reader-help
  for(const width of [320,390,844,1440]){
   const p=await browser.newPage({viewport:{width,height:width===844?390:844}}),errors=[];p.on('pageerror',e=>errors.push(e.message));
   await p.goto(process.env.READER_TEST_URL||'http://127.0.0.1:38749/');await p.locator('#appRail').waitFor();
-  await p.evaluate(()=>{window.__motions=0;const animate=Motion.animate;Motion.animate=(...args)=>{window.__motions++;return animate(...args)}});
+  await p.evaluate(()=>{window.__motions=0;const animate=Element.prototype.animate;Element.prototype.animate=function(...args){window.__motions++;return animate.apply(this,args)}});
   await importIntoReader(p,{name:'动效-虚构.txt',mimeType:'text/plain',buffer:Buffer.from('第一章 雨中\n'+'虚构的雨落在书店窗外。\n'.repeat(180))});
   await p.locator('#toggleSettings').click();assert.equal(await p.locator('#settings').getAttribute('data-motion-source'),'toggleSettings');
   await p.waitForFunction(()=>!document.getElementById('settings').dataset.motionState);assert(await p.locator('#settings').isVisible());
@@ -19,5 +19,5 @@ const {browserExecutable,importIntoReader,readerControls}=require('./reader-help
   await p.locator('.library-book').first().click();await p.waitForFunction(()=>document.getElementById('reading').getAttribute('aria-busy')==='false');assert.equal(await p.locator('.book-opening-overlay').count(),0);
   await p.locator('#toggleSettings').click();assert.equal(await p.locator('#settings').evaluate(e=>e.getAnimations().length),0);await p.locator('#closeSettings').click();await p.locator('#backToLibrary').click();assert.equal(errors.length,0,errors.join(';'));await p.close();
  }
- console.log('PASS current-shell Motion panels/dialogs/cover return, four sizes, reduced motion; fictional books');
+ console.log('PASS current-shell native panels/dialogs/cover return, four sizes, reduced motion; fictional books');
 }finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});

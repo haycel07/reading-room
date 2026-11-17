@@ -4,7 +4,7 @@ const out=path.join(__dirname,'../output/mobile-platform');fs.mkdirSync(out,{rec
 const origin='https://reader-fixture.test';
 async function fixture(browser,{width=390,height=844,native=false,legacy=false}={}){
  const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:2});const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.route(origin+'/**',async route=>{const u=new URL(route.request().url());const response=await route.fetch({url:'http://127.0.0.1:38749'+u.pathname+u.search});await route.fulfill({response})});
+ await page.route(origin+'/**',async route=>{const u=new URL(route.request().url());const response=await route.fetch({url:(process.env.READER_TEST_URL||'http://127.0.0.1:38749')+u.pathname+u.search});await route.fulfill({response})});
  await page.addInitScript(({native,legacy})=>{
    window.__apiCalls=[];window.__clipboardReads=0;
    if(legacy)localStorage.setItem('onepage-ai-config',JSON.stringify({mode:'local',endpoint:'https://old.example/v1',model:'user-model',sk:'fictional-old-token'}));
@@ -18,8 +18,8 @@ async function fixture(browser,{width=390,height=844,native=false,legacy=false}=
   assert.equal(await p.locator('#aiMode option[value=local]').count(),0);assert(!/Codex|电脑|启动伴读/.test(await p.locator('#settings').innerText()));assert.equal(await p.locator('#aiKey').getAttribute('type'),'text');assert(await p.locator('#aiKey').evaluate(el=>getComputedStyle(el).webkitTextSecurity==='disc'));
   assert.equal(await p.locator('#aiProvider option').count(),7);assert.equal(await p.locator('#aiProvider').inputValue(),'deepseek');assert.equal(await p.locator('#aiModel').inputValue(),'deepseek-flash');
   await p.locator('#closeSettings').click();await p.locator('#settings').waitFor({state:'hidden'});
-  await require('./reader-helpers.cjs').importIntoReader(p,{name:'配置入口测试.txt',mimeType:'text/plain',buffer:Buffer.from('第一章 初遇\n'+'完全虚构的测试文字。\n'.repeat(50))});await p.waitForFunction(()=>document.getElementById('reading').getAttribute('aria-busy')==='false');await require('./reader-helpers.cjs').readerControls(p);await p.locator('#companionToggle').click();await p.locator('#localNotice').waitFor({state:'visible'});
-  assert(!/Codex|电脑|本机/.test(await p.locator('#localNotice').innerText()));assert.equal(await p.locator('#localNotice a[href*="127.0.0.1"]').count(),0);await p.locator('#localNotice .open-ai-settings').click();await p.locator('#preferences-ai').waitFor({state:'visible'});
+  await require('./reader-helpers.cjs').importIntoReader(p,{name:'配置入口测试.txt',mimeType:'text/plain',buffer:Buffer.from('第一章 初遇\n'+'完全虚构的测试文字。\n'.repeat(50))});await p.waitForFunction(()=>document.getElementById('reading').getAttribute('aria-busy')==='false');await require('./reader-helpers.cjs').readerControls(p);await p.locator('#companionToggle').click();await p.locator('#companionReadiness[data-state=unconfigured]').waitFor({state:'visible'});
+  assert(!/Codex|电脑|本机/.test(await p.locator('#companionReadiness').innerText()));assert.equal(await p.locator('#localNotice a[href*="127.0.0.1"]').count(),0);await p.locator('#companionStateAction').click();await p.locator('#preferences-ai').waitFor({state:'visible'});
   await p.locator('#aiKey').fill('fictional-deepseek-token');await p.locator('#aiProvider').selectOption('openai');assert.equal(await p.locator('#aiKey').inputValue(),'');assert.equal(await p.locator('#aiModel').inputValue(),'gpt-5.4-mini');await p.locator('#aiModelPreset').selectOption('gpt-5.4-nano');assert.equal(await p.locator('#aiModel').inputValue(),'gpt-5.4-nano');
   await p.locator('#aiProvider').selectOption('deepseek');assert.equal(await p.locator('#aiKey').inputValue(),'fictional-deepseek-token','switching providers must retain separate drafts');
   await p.locator('#toggleAIKey').click();assert(await p.locator('#aiKey').evaluate(el=>getComputedStyle(el).webkitTextSecurity==='none'));

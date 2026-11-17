@@ -20,13 +20,19 @@ npm run test:android
 
 阅读导航回归包含常驻伴读入口的可见性、触控尺寸和点击进入聊天；气泡回归包含1440/390/320与横竖平板尺寸，确认工具隐藏期间新短评仍弹出、已有短评不随工具开关隐藏，回退依然收紧短评范围。
 
+## 聊天、取消与动效
+
+`mobile-reader-touch.cjs`用Chromium真实触摸事件模拟连续滑读、惯性期间点气泡、拖动不误触、重复点击抑制与返回位置；不是Android真机验收。`companion-session.cjs`在TXT/PDF/EPUB、390/844横屏/768竖屏/1440桌面中验证统一场景、键盘/旋转不扩大发送范围、返回原句及真实桌面翻页。分页EPUB在侧栏关闭重新排版后，要求原句仍处于可见页内。`companion-feedback.cjs`验证草稿、取消、手动重试、回复指示、静默跳过与小键盘布局；`companion-cancellation.cjs`验证回退撤销、取消长文概括、切书请求隔离。`ebook-chat-selection.cjs`验证当前EPUB选文临时对话跨布局保持且不写入永久历史。
+
+`motion-consistency.cjs`验证三种运动模式共用时长、无面板文字拉伸、快速取消与系统减少动态。`lazy-formats.cjs`用原创DOCX验证解析器按需加载和重复打开复用。
+
 ## 伴读性能与调度
 
 `reading-performance.cjs`校验精确可见边界与测量复杂度，覆盖回退、改宽、结构化文本、关闭设置恢复和延迟完成无额外滚动弹出，防止隐藏书架重建及对话库重复读取。`preparation-scheduling.cjs`覆盖慢请求跨区取消、概述让路和合法预备不被误取消。`preparation-lag.cjs`、`preparation-resume.cjs`为本轮附加回归。
 
 ## 阅读配色与新手流程
 
-默认24套中，配色／引导包括`reading-appearance.cjs`和`onboarding.cjs`。使用1440、390、320宽度隔离上下文，覆盖旧偏好迁移、快捷／完整面板同步、系统／手动主题、自定义对比度及备份恢复、EPUB原字体和PDF非反转；首次试读零自动AI、同名原书保护、多文件导入取消／部分失败／直接打开，以及跳过／重开指南。`style-position.cjs`还验证连续改字号后立即返回和切书不破坏原书的进度及精确锚点。
+默认31套中，配色／引导包括`reading-appearance.cjs`和`onboarding.cjs`。使用1440、390、320宽度隔离上下文，覆盖旧偏好迁移、快捷／完整面板同步、系统／手动主题、自定义对比度及备份恢复、EPUB原字体和PDF非反转；首次试读零自动AI、同名原书保护、多文件导入取消／部分失败／直接打开，以及跳过／重开指南。`style-position.cjs`还验证连续改字号后立即返回和切书不破坏原书的进度及精确锚点。
 
 ## 真实调用不在默认测试中
 
@@ -34,6 +40,6 @@ npm run test:android
 
 ## 历史入口
 
-`material-ui.cjs`、`reader-shell.cjs` 转到当前Anx主旅程；`mobile.cjs` 转到当前阅读导航；`shared-motion.cjs` 已更新为当前壳的真实Motion调用与减少动态验证。旧的 `reader-v2.cjs`、`marker.cjs` 等保留为历史源码，没有列入当前验收。不要为通过旧外观断言恢复手动已读标记或隐藏常驻返回/设置。
+`material-ui.cjs`、`reader-shell.cjs` 转到当前Anx主旅程；`mobile.cjs` 转到当前阅读导航；`shared-motion.cjs` 已更新为当前壳的原生动画调用与减少动态验证。旧的 `reader-v2.cjs`、`marker.cjs` 等保留为历史源码，没有列入当前验收。不要为通过旧外观断言恢复手动已读标记或隐藏常驻返回/设置。
 
 截图、编译输出与诊断保存在忽略的 `output/`，不上传真实书籍、账户配置或密钥。测试通过只证明对应环境；浏览器尺寸模拟、原生编译、Java策略测试和Android真机操作须分别报告。

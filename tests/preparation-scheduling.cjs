@@ -26,5 +26,40 @@ const {commentFixture}=require('./prepared-fixture.cjs');
  assert.equal(await fresh.take(second.offset),null,'a late older comment cannot fill a newer pending batch');
  second.state='skipped';second.text='';assert.equal(await fresh.take(second.offset),null,'a deliberate silent batch cannot be filled by an older comment');
  Object.assign(second,saved);const newest=await fresh.take(second.offset);assert.equal(newest.offset,second.offset);await fresh.acknowledge(newest,true);assert.equal(await fresh.take(rec.comments[0].offset),null,'showing the current batch also consumes bypassed older comments');
+
+ const shortText='她把蓝伞留在门口，并没有催人离开。\n'.repeat(66);
+ const shortCalls=[],shortCache=new Map();
+ let finishShort,shortStarted;
+ const shortGate=new Promise(resolve=>{finishShort=resolve});
+ const startedShort=new Promise(resolve=>{shortStarted=resolve});
+ const shortOptions={bookId:'short-fiction',text:shortText,promptKey:'test',
+  get:k=>shortCache.get(k),put:value=>shortCache.set(value.id,structuredClone(value)),
+  request:async payload=>{
+   shortCalls.push(payload);
+   if(payload.task==='region-summary')return {summary:'店主留下伞。',memory:'读者跟着店主留在书店。'};
+   shortStarted();
+   await shortGate;
+   return commentFixture(payload,{text:'她留了伞，也留了点余地。',carry:'店主留下伞。'});
+  }};
+ const shortBook=await PreparedBook.create(shortOptions);
+ const currentShort=await shortBook.record(0);
+ assert.equal(currentShort.comments.length,1);
+ assert.equal(commentPoints(shortText,currentShort,'lively').length,1);
+ const preparingShort=shortBook.prepare(0,new AbortController().signal,()=>{},()=>{});
+ await startedShort;
+ const pastSecondPoint=Math.floor(currentShort.end*.85);
+ assert.equal(await shortBook.take(pastSecondPoint),null,'slow model has supplied no note yet');
+ finishShort();
+ await preparingShort;
+ const onlyPoint=currentShort.comments[0];
+ assert.equal(await shortBook.take(onlyPoint.offset-1),null,'short-section note still requires its whole window');
+ const shortNote=await shortBook.take(pastSecondPoint);
+ assert.equal(shortNote.offset,onlyPoint.offset,'the only note can appear before leaving the short section');
+ assert.deepEqual(shortCalls.map(p=>p.task),['prepared-comment','region-summary']);
+ await shortBook.acknowledge(shortNote,true);
+ const reopened=await PreparedBook.create(shortOptions);
+ await reopened.prepare(0,new AbortController().signal,()=>{},()=>{});
+ assert.equal(await reopened.take(pastSecondPoint),null,'refresh and forward movement cannot replay the short note');
+ assert.equal(shortCalls.length,2,'valid cached work survives reopening');
  console.log('PASS slow abandoned requests do not block current region, no stale summary/remote old bubble, early first batch with unchanged 5000 limit and two-comment cap; no older backfill over pending or silent newer batches');
 })().catch(e=>{console.error(e);process.exitCode=1});

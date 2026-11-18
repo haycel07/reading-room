@@ -38,5 +38,5 @@ export function candidatesIn(text,start,end){
 }
 export const validCandidate=(text,c,start,end)=>!!c&&typeof c.id==='string'&&Number.isInteger(c.start)&&Number.isInteger(c.end)&&c.start>=start&&c.end>c.start&&c.end<=end&&text.slice(c.start,c.end)===c.quote;
 export function annotateCandidates(text,start,end,candidates){
- let at=start,out='';for(const c of candidates){if(!validCandidate(text,c,start,end))continue;out+=text.slice(at,c.start)+'\n〔候选 '+c.id+'〕'+text.slice(c.start,c.end);at=c.end}return out+text.slice(at,end);
+ let at=start,out='';for(const c of candidates){if(!validCandidate(text,c,start,end))continue;out+=text.slice(at,c.start)+'〔'+c.id+'〕'+text.slice(c.start,c.end);at=c.end}return out+text.slice(at,end);
 }

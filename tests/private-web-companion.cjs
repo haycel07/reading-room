@@ -2,6 +2,7 @@
 // Production resource equality is verified separately; this never contacts a provider account.
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const {browserExecutable,importIntoReader,scrollNear}=require('./reader-helpers.cjs');
+const {candidateId}=require('./prepared-fixture.cjs');
 const origin='https://reading-room-1109.tangqichen2007.chatgpt.site',provider='https://fictional-provider.test',root=path.resolve(__dirname,'../dist');
 const types={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.wasm':'application/wasm'};
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:browserExecutable()});try{for(const width of [390,1440]){
@@ -12,8 +13,8 @@ const types={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript
    const headers={'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization,content-type','Access-Control-Allow-Methods':'POST,OPTIONS'};
    if(r.request().method()==='OPTIONS')return r.fulfill({status:204,headers});
    assert.equal(r.request().headers().authorization,'Bearer fictional-key');const body=r.request().postDataJSON(),system=body.messages[0].content,user=body.messages.at(-1).content;
-   const task=system.includes('candidateId')?'comment':system.includes('"summary"')?'summary':'chat',range=user.match(/本次新增原文｜(\d+)—(\d+)/),candidate=user.match(/〔候选 (s\d+)〕/);calls.push({task,body,end:range?Number(range[2]):null});
-   const content=task==='comment'?JSON.stringify({speak:true,candidateId:candidate?.[1],text:'她把伞留在门口，却没有催来客离开，这个动作挺温柔的。',carry:'来客在书店听雨，店主留下蓝伞。'}):task==='summary'?JSON.stringify({summary:'来客在书店听雨。',memory:'店主把伞留在门口。'}):'我是在接着那条关于蓝伞的短评说，只依据你读到的原句。';
+   const task=system.includes('candidateId')?'comment':system.includes('"summary"')?'summary':'chat',range=user.match(/本次新增原文｜(\d+)—(\d+)/),candidate=candidateId(user);calls.push({task,body,end:range?Number(range[2]):null});
+   const content=task==='comment'?JSON.stringify({speak:true,candidateId:candidate,text:'她把伞留在门口，却没有催来客离开，这个动作挺温柔的。',carry:'来客在书店听雨，店主留下蓝伞。'}):task==='summary'?JSON.stringify({summary:'来客在书店听雨。',memory:'店主把伞留在门口。'}):'我是在接着那条关于蓝伞的短评说，只依据你读到的原句。';
    return r.fulfill({status:200,headers,contentType:'application/json',body:JSON.stringify({choices:[{message:{content},finish_reason:'stop'}]})});
   }
   if(u.origin!==origin)return r.abort();

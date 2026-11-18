@@ -1,5 +1,5 @@
 // Offsets are UTF-16 positions in the extracted, already-read prefix only.
-export const POLICY = {version: 1, threshold: 24000, recent: 12000, chunk: 6000, summary: 1600, budget: 16000};
+export const POLICY = {version: 1, threshold: 24000, recent: 12000, chunk: 6000, shortChapter: 1600, shortGroup: 4000, summary: 1600, budget: 16000};
 const heading = /^(?:第[零〇一二三四五六七八九十百千万两0-9]+[章节回卷部篇集].{0,45}|(?:序章|序言|前言|楔子|引子|后记|尾声|番外|附录)(?:[\s：:·—-].{0,35})?|chapter\s+\d+\b.{0,45})$/i;
 
 export function planContext(text, boundaries = []) {
@@ -18,6 +18,17 @@ export function planContext(text, boundaries = []) {
     while (chapter + 1 < chapters.length && chapters[chapter + 1] <= start) chapter++;
     const next = chapters[chapter + 1] ?? text.length;
     let end = Math.min(start + POLICY.chunk, next);
+    let lastChapter = chapter;
+    // Group complete short chapters into one bounded request. Decide the
+    // group before testing the cutoff, so advancing cannot resize a group.
+    if (start === chapters[chapter] && next - start < POLICY.shortChapter) {
+      while (lastChapter + 2 < chapters.length) {
+        const nextEnd = chapters[lastChapter + 2];
+        if (nextEnd - end >= POLICY.shortChapter || nextEnd - start > POLICY.shortGroup) break;
+        end = nextEnd;
+        lastChapter++;
+      }
+    }
     // Use only complete, stable chunks. The incomplete chunk stays verbatim.
     if (end > cutoff) break;
     if (end < next) {
@@ -25,7 +36,9 @@ export function planContext(text, boundaries = []) {
       if (newline >= start + POLICY.chunk / 2) end = newline + 1;
       else if (end > start && /[\uD800-\uDBFF]/.test(text[end - 1])) end--;
     }
-    segments.push({start, end, label: starts.get(chapters[chapter]) || '段落区间'});
+    const firstLabel = starts.get(chapters[chapter]) || '段落区间';
+    const label = lastChapter === chapter ? firstLabel : firstLabel + ' 至 ' + starts.get(chapters[lastChapter]);
+    segments.push({start, end, label});
     start = end;
   }
   return {segments, rawStart: start};
@@ -63,7 +76,7 @@ export async function composeContext({text, bookId, boundaries, get, put, summar
   // Extremely long books need bounded grouped overviews too. All ranges remain
   // represented; leaf summaries remain cached, and are usable after a rollback.
   const prefix='【较早已读内容的概括｜可能损失细节，不是原文引文】\n';
-  const raw='\n\n【以下为连续原文｜已读字符 '+(plan.rawStart+1)+'—'+text.length+'】\n'+text.slice(plan.rawStart);
+  const raw='\n\n【以下为连续原文｜从已读字符 '+(plan.rawStart+1)+' 起】\n'+text.slice(plan.rawStart);
   const summaryBudget=Math.min(POLICY.budget,POLICY.threshold-prefix.length-raw.length);
   if(summaryBudget<POLICY.summary+240)throw Error('上下文预算不足，本次未发送；请重试。');
   let levels = 0;

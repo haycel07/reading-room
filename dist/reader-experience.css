@@ -68,6 +68,7 @@ body.anx-layout.is-reading #scopePanel .scope-heading b { color:var(--readink); 
 body.anx-layout.is-reading #scopeInfo { color:var(--reading-muted); }
 body.anx-layout.companion-screen #companion :is(.companion-controls,.chat-position,.scope-label) { display:none; }
 body.anx-layout #replyContext { flex-shrink:0; }
+body.anx-layout #companion #chatSend { min-height:44px; }
 body.anx-layout #replyContext blockquote { display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
 /* A reading note belongs to the selected paper palette, including night mode. */
 body.anx-layout #reading #initiativeCard {

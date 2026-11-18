@@ -23,6 +23,9 @@ export function splitRegions(text,boundaries=[],size=5000){
 export function commentPoints(text,region,pace='frequent'){
  const length=region.end-region.start;if(length<80||!text.slice(region.start,region.end).trim())return [];
  const ratios=pace==='quiet'||length<800?[.68]:pace==='lively'?[.32,.72]:[.42,.80];
+ // A second request in a short section often makes its first comment stale.
+ // Keep the original first window so cached comments and receipts still apply.
+ if(length<1600)ratios.length=1;
  const paragraphs=[];let at=region.start;
  for(const line of text.slice(region.start,region.end).split('\n')){const end=at+line.length;if(line.trim().length>=12)paragraphs.push(end);at=end+1}
  const sentences=[...text.slice(region.start,region.end).matchAll(/[。！？!?；;](?:[”’"']?)/g)].map(m=>region.start+m.index+m[0].length);

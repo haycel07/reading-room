@@ -1,10 +1,10 @@
 {
   "name": "onepage-reading-room",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "private": true,
   "type": "module",
   "description": "一页之间：本地优先的网页与 Android 伴读阅读器",
-  "onepageVersionCode": 20,
+  "onepageVersionCode": 21,
   "engines": {
     "node": ">=22"
   },

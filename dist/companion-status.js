@@ -51,6 +51,8 @@ export function createCompanionStatus(hooks) {
     if(button.getAttribute('aria-description')!==message)button.setAttribute('aria-description',message);
     const disabled=hooks.busy()||!hooks.available()||!hooks.readingReady();
     if($('chatSend').disabled!==disabled)$('chatSend').disabled=disabled;
+    const previewDisabled=hooks.busy()||!hooks.readingReady();
+    if($('previewScope').disabled!==previewDisabled)$('previewScope').disabled=previewDisabled;
     return state;
   }
   $('companionStateAction').onclick=()=>{

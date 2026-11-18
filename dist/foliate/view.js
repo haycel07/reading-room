@@ -219,6 +219,7 @@ export class View extends HTMLElement {
     #pageProgress
     #cfiProgress
     #searchResults = new Map()
+    #rendererEvents
     #cursorAutohider = new CursorAutohider(this, () =>
         this.hasAttribute('autohide-cursor'))
     isFixedLayout = false
@@ -252,7 +253,7 @@ export class View extends HTMLElement {
         }
         this.#cfiProgress = new PageProgress(book, this.resolveNavigation.bind(this))
 
-        this.isFixedLayout = this.book.rendition?.layout === 'pre-paginated'
+        this.isFixedLayout = book.rendition?.layout === 'pre-paginated'
         if (this.isFixedLayout) {
             await import('./fixed-layout.js')
             this.renderer = document.createElement('foliate-fxl')
@@ -261,10 +262,12 @@ export class View extends HTMLElement {
             this.renderer = document.createElement('foliate-paginator')
         }
         this.renderer.setAttribute('exportparts', 'head,foot,filter,container')
-        this.renderer.addEventListener('load', e => this.#onLoad(e.detail))
-        this.renderer.addEventListener('relocate', e => this.#onRelocate(e.detail))
+        this.#rendererEvents = new AbortController()
+        const options = { signal: this.#rendererEvents.signal }
+        this.renderer.addEventListener('load', e => this.#onLoad(e.detail), options)
+        this.renderer.addEventListener('relocate', e => this.#onRelocate(e.detail), options)
         this.renderer.addEventListener('create-overlayer', e =>
-            e.detail.attach(this.#createOverlayer(e.detail)))
+            e.detail.attach(this.#createOverlayer(e.detail)), options)
         this.renderer.open(book)
         this.#root.append(this.renderer)
 
@@ -297,6 +300,7 @@ export class View extends HTMLElement {
         }
     }
     close() {
+        this.#rendererEvents?.abort()
         this.renderer?.destroy()
         this.renderer?.remove()
         this.#sectionProgress = null

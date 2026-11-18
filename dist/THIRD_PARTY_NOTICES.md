@@ -26,6 +26,8 @@
 
 `paginator.js`、`fixed-layout.js` 的电子书 iframe sandbox 移除了 `allow-scripts`，保留 `allow-same-origin` 供父阅读器定位与划线。电子书自身脚本不执行，避免它读取用户配置的 AI 密钥或调用安卓桥接；互动脚本型电子书可能因此失去交互。原项目许可与版权文件保持不变。
 
+1.9.1 在 `paginator.js` 和 `view.js` 中补充了阅读实例退出时的清理。关闭分页器会断开尺寸观察器，取消仍在加载的子页面，并撤销阅读器向分页器注册的监听。`foliate/LICENSE` 保留原 MIT 许可与版权声明。
+
 本轮界面按用户指定的白色工业终端方向独立设计，未使用《明日方舟》标识、人物、美术或音频素材。前端设计流程使用已安装的 `frontend-design` 技能（anthropics/skills）；该技能不是应用运行依赖。
 
 ## Anx 发布产物研究与本次交互重建

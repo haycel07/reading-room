@@ -65,7 +65,7 @@ export class Annotations {
       if(!doc.querySelector('style[data-reader-annotations]')){const style=doc.createElement('style');style.dataset.readerAnnotations='';style.textContent=annotationStyles;doc.head.append(style)}
       for(const color of Object.keys(COLORS))for(const stroke of STROKES) {
         const ranges=this.marks.filter(m=>m.underline&&m.color===color&&(m.stroke||'solid')===stroke&&sameScope(m,surface)).map(m=>restoreRange(root,m)).filter(Boolean);
-        win.CSS.highlights.set(highlightName(color,stroke),new win.Highlight(...ranges));
+        if(ranges.length)win.CSS.highlights.set(highlightName(color,stroke),new win.Highlight(...ranges));
       }
       this.docs.add(doc);
     }

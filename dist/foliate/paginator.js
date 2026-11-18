@@ -263,6 +263,8 @@ class View {
     #element = document.createElement('div')
     #iframe = document.createElement('iframe')
     #contentRange = document.createRange()
+    #cancelLoad
+    #destroyed = false
     #overlayer
     #vertical = false
     #rtl = false
@@ -328,8 +330,10 @@ class View {
     }
     async load(src, data, afterLoad, beforeRender) {
         if (typeof src !== 'string') throw new Error(`${src} is not string`)
+        if (this.#destroyed) return false
         return new Promise(resolve => {
-            this.#iframe.addEventListener('load', () => {
+            const loaded = () => {
+                this.#cancelLoad = null
                 const doc = this.document
                 afterLoad?.(doc)
 
@@ -353,10 +357,18 @@ class View {
                 // the resize observer above doesn't work in Firefox
                 // (see https://bugzilla.mozilla.org/show_bug.cgi?id=1832939)
                 // until the bug is fixed we can at least account for font load
-                this.fontReady = doc.fonts.ready.then(() => this.expand())
+                this.fontReady = doc.fonts.ready.then(() => {
+                    if (!this.#destroyed) this.expand()
+                })
 
-                resolve()
-            }, { once: true })
+                resolve(true)
+            }
+            this.#cancelLoad = () => {
+                this.#iframe.removeEventListener('load', loaded)
+                this.#cancelLoad = null
+                resolve(false)
+            }
+            this.#iframe.addEventListener('load', loaded, { once: true })
             if (data) {
                 this.#iframe.srcdoc = data
             } else {
@@ -740,7 +752,10 @@ class View {
             this.#overlayer.clearHole()
     }
     destroy() {
-        if (this.document?.body) this.#observer.unobserve(this.document.body)
+        this.#destroyed = true
+        this.#cancelLoad?.()
+        this.#observer.disconnect()
+        this.#contentRange = document.createRange()
         this.destroyLoupe()
     }
 }
@@ -753,6 +768,8 @@ export class Paginator extends HTMLElement {
     ]
     #root = this.attachShadow({ mode: 'open' })
     #observer = new ResizeObserver(() => this.render())
+    #destroyed = false
+    #events = new AbortController()
     #top
     #background
     #container
@@ -922,6 +939,7 @@ export class Paginator extends HTMLElement {
         this.#header = this.#root.getElementById('header')
         this.#footer = this.#root.getElementById('footer')
 
+        const events = { signal: this.#events.signal }
         this.#observer.observe(this.#container)
         this.#container.addEventListener('scroll', () => {
             // Don't dispatch scroll events during animation to prevent jank
@@ -943,8 +961,9 @@ export class Paginator extends HTMLElement {
                     }
                 }
             }
-        })
+        }, events)
         this.#container.addEventListener('scroll', debounce(() => {
+            if (this.#destroyed) return
             if (this.scrolled && !this.#isAnimating) {
                 // Skip entirely while stabilizing — preserve #justAnchored
                 // so the first post-stabilization fire still sees it.
@@ -968,17 +987,17 @@ export class Paginator extends HTMLElement {
                     }
                 }
             }
-        }, 250))
+        }, 250), events)
 
-        const opts = { passive: false }
+        const opts = { ...events, passive: false }
         this.addEventListener('touchstart', this.#onTouchStart.bind(this), opts)
         this.addEventListener('touchmove', this.#onTouchMove.bind(this), opts)
-        this.addEventListener('touchend', this.#onTouchEnd.bind(this))
+        this.addEventListener('touchend', this.#onTouchEnd.bind(this), events)
         this.addEventListener('load', ({ detail: { doc } }) => {
-            doc.addEventListener('touchstart', this.#onTouchStart.bind(this), opts)
-            doc.addEventListener('touchmove', this.#onTouchMove.bind(this), opts)
+            doc.addEventListener('touchstart', this.#onTouchStart.bind(this), { passive: false })
+            doc.addEventListener('touchmove', this.#onTouchMove.bind(this), { passive: false })
             doc.addEventListener('touchend', this.#onTouchEnd.bind(this))
-        })
+        }, events)
 
         this.addEventListener('relocate', ({ detail }) => {
             if (detail.reason === 'selection') setSelectionTo(this.#anchor, 0)
@@ -988,7 +1007,7 @@ export class Paginator extends HTMLElement {
                     setSelectionTo(detail.range, -1)
                 else setSelectionTo(this.#anchor, -1)
             }
-        })
+        }, events)
         const checkPointerSelection = debounce((range, sel) => {
             if (!sel.rangeCount) return
             const selRange = sel.getRangeAt(0)
@@ -1028,7 +1047,7 @@ export class Paginator extends HTMLElement {
                     requestAnimationFrame(() => this.#scrollToAnchor(e.target))
                 }
             })
-        })
+        }, events)
 
         this.#mediaQueryListener = () => {
             const view = this.#primaryView
@@ -1770,6 +1789,7 @@ export class Paginator extends HTMLElement {
         this.#stabilizing = true
         this.#container.style.opacity = '0'
         const { index, src, data, anchor, onLoad, select } = await promise
+        if (this.#destroyed) return
         this.#primaryIndex = index
         const hasFocus = this.#primaryView?.document?.hasFocus()
         if (src) {
@@ -1787,7 +1807,7 @@ export class Paginator extends HTMLElement {
                 onLoad?.({ doc, index })
             }
             const beforeRender = this.#beforeRender.bind(this)
-            await view.load(src, data, afterLoad, beforeRender)
+            if (!await view.load(src, data, afterLoad, beforeRender) || this.#destroyed) return
             this.dispatchEvent(new CustomEvent('create-overlayer', {
                 detail: {
                     doc: view.document, index,
@@ -1809,6 +1829,7 @@ export class Paginator extends HTMLElement {
                     const prevIdx = this.#adjacentIndex(-1, firstIndex)
                     if (prevIdx != null) {
                         await this.#loadAdjacentSection(prevIdx)
+                        if (this.#destroyed) return
                     }
                 }
             }
@@ -1817,6 +1838,7 @@ export class Paginator extends HTMLElement {
         const resolvedAnchor = (typeof anchor === 'function'
             ? anchor(primaryView.document) : anchor) ?? 0
         await this.scrollToAnchor(resolvedAnchor, select)
+        if (this.#destroyed) return
         if (hasFocus) this.focusView()
         // Reveal content now that primary section is positioned
         this.#container.style.opacity = '1'
@@ -1834,12 +1856,16 @@ export class Paginator extends HTMLElement {
     }
     // Load an adjacent section without changing primary index
     async #loadAdjacentSection(index) {
-        if (this.#views.has(index) || !this.#canGoToIndex(index)) return
+        if (this.#destroyed || this.#views.has(index) || !this.#canGoToIndex(index)) return
         const section = this.sections[index]
         if (!section || section.linear === 'no') return
         try {
             const src = await section.load()
             const data = await section.loadContent?.()
+            if (this.#destroyed) {
+                section.unload?.()
+                return
+            }
             const view = this.#createView(index)
             const afterLoad = doc => {
                 if (doc.head) {
@@ -1855,7 +1881,7 @@ export class Paginator extends HTMLElement {
                 this.dispatchEvent(new CustomEvent('load', { detail: { doc, index } }))
             }
             const beforeRender = this.#beforeRender.bind(this)
-            await view.load(src, data, afterLoad, beforeRender)
+            if (!await view.load(src, data, afterLoad, beforeRender) || this.#destroyed) return
             this.dispatchEvent(new CustomEvent('create-overlayer', {
                 detail: {
                     doc: view.document, index,
@@ -1871,7 +1897,7 @@ export class Paginator extends HTMLElement {
     // When reanchor is false (background pre-loading), skip re-scrolling
     // to avoid fighting with the user's current scroll position.
     async #fillVisibleArea({ reanchor = true } = {}) {
-        if (this.noPreload || this.#filling) return
+        if (this.#destroyed || this.noPreload || this.#filling) return
         this.#filling = true
         try {
             const { size } = this
@@ -1918,6 +1944,7 @@ export class Paginator extends HTMLElement {
             // Do NOT trim views here — removing elements shifts scroll
             // position without re-scrolling, causing visible content jumps.
             // Trimming happens in #goTo when the user explicitly navigates.
+            if (this.#destroyed) return
             this.#updateViewPadding()
             if (reanchor) this.#scrollToAnchor(this.#anchor)
         } finally {
@@ -1964,6 +1991,7 @@ export class Paginator extends HTMLElement {
         return index >= 0 && index <= this.sections.length - 1
     }
     async #goTo({ index, anchor, select }) {
+        if (this.#destroyed) return
         if (this.#views.has(index)) {
             // View already loaded — reuse it without
             // clearing/reloading. Just change primary and scroll.
@@ -2010,11 +2038,18 @@ export class Paginator extends HTMLElement {
                 this.setStyles(this.#styles)
                 this.dispatchEvent(new CustomEvent('load', { detail }))
             }
-            await this.#display(Promise.resolve(this.sections[index].load())
+            const section = this.sections[index]
+            await this.#display(Promise.resolve(section.load())
                 .then(async src => {
-                    const data = await this.sections[index].loadContent?.()
+                    if (this.#destroyed) {
+                        section.unload?.()
+                        return {}
+                    }
+                    const data = await section.loadContent?.()
+                    if (this.#destroyed) section.unload?.()
                     return { index, src, data, anchor, onLoad, select }
                 }).catch(e => {
+                    if (this.#destroyed) return {}
                     console.warn(e)
                     console.warn(new Error(`Failed to load section ${index}`))
                     return {}
@@ -2160,8 +2195,13 @@ export class Paginator extends HTMLElement {
         this.#primaryView?.destroyLoupe()
     }
     destroy() {
-        this.#observer.unobserve(this)
+        this.#destroyed = true
+        this.#events.abort()
+        this.#observer.disconnect()
         this.#destroyAllViews()
+        this.sections = []
+        this.#anchor = 0
+        this.#lastVisibleRange = null
         this.#mediaQuery.removeEventListener('change', this.#mediaQueryListener)
     }
 }

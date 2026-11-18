@@ -20,3 +20,32 @@ export function recallReadText(text,rawStart,question,reference){
  }
  return out;
 }
+
+// Append against the current row in one transaction. A stale tab never replaces it.
+export function readConversationRecord(db,id) {
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction('conversations'),q=tx.objectStore('conversations').get(id);
+  tx.oncomplete=()=>resolve(q.result||{id,entries:[],revision:0});
+  tx.onerror=tx.onabort=()=>reject(tx.error||new Error('对话记录读取失败'));
+ });
+}
+function write(db,id,mutate) {
+ return new Promise((resolve,reject)=>{
+  const tx=db.transaction('conversations','readwrite'),store=tx.objectStore('conversations'),q=store.get(id);let result,error;
+  q.onsuccess=()=>{try{const row=q.result||{id,entries:[],revision:0};result=mutate(row);if(result.accepted)store.put(result.record)}catch(e){error=e;tx.abort()}};
+  tx.oncomplete=()=>resolve(result);
+  tx.onerror=tx.onabort=()=>reject(error||tx.error||new Error('对话记录保存失败'));
+ });
+}
+export function appendConversation(db,id,entry,expectedRevision=0) {
+ return write(db,id,row=>{
+  const revision=row.revision||0;
+  if(revision!==expectedRevision)return {accepted:false,record:row};
+  const entries=entry.id&&row.entries.some(e=>e.id===entry.id)?row.entries:[...row.entries,entry];
+  return {accepted:true,record:{...row,entries,revision}};
+ });
+}
+// Clearing advances the revision so a late reply from another tab cannot revive it.
+export function replaceConversation(db,id,entries) {
+ return write(db,id,row=>({accepted:true,record:{...row,entries,revision:(row.revision||0)+1}}));
+}

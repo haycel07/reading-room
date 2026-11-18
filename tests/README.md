@@ -26,13 +26,15 @@ npm run test:android
 
 `motion-consistency.cjs`验证三种运动模式共用时长、无面板文字拉伸、快速取消与系统减少动态。`lazy-formats.cjs`用原创DOCX验证解析器按需加载和重复打开复用。
 
+新增 `companion-concurrency.cjs` 用两个同源窗口和真实 IndexedDB 事务验证追加、清空和迟到写入；`ebook-request-boundary.cjs` 检查选文及临时追问离开来源页后取消；`companion-presentation.cjs` 检查配色、44像素关闭与后台预备继续；`companion-timeline.cjs` 检查1000条记录分批绘制、加载不跳、回退过滤和6条模型历史上限。
+
 ## 伴读性能与调度
 
 `reading-performance.cjs`校验精确可见边界与测量复杂度，覆盖回退、改宽、结构化文本、关闭设置恢复和延迟完成无额外滚动弹出，防止隐藏书架重建及对话库重复读取。`preparation-scheduling.cjs`覆盖慢请求跨区取消、概述让路和合法预备不被误取消。`preparation-lag.cjs`、`preparation-resume.cjs`为本轮附加回归。
 
 ## 阅读配色与新手流程
 
-默认31套中，配色／引导包括`reading-appearance.cjs`和`onboarding.cjs`。使用1440、390、320宽度隔离上下文，覆盖旧偏好迁移、快捷／完整面板同步、系统／手动主题、自定义对比度及备份恢复、EPUB原字体和PDF非反转；首次试读零自动AI、同名原书保护、多文件导入取消／部分失败／直接打开，以及跳过／重开指南。`style-position.cjs`还验证连续改字号后立即返回和切书不破坏原书的进度及精确锚点。
+默认35套中，配色／引导包括`reading-appearance.cjs`和`onboarding.cjs`。使用1440、390、320宽度隔离上下文，覆盖旧偏好迁移、快捷／完整面板同步、系统／手动主题、自定义对比度及备份恢复、EPUB原字体和PDF非反转；首次试读零自动AI、同名原书保护、多文件导入取消／部分失败／直接打开，以及跳过／重开指南。`style-position.cjs`还验证连续改字号后立即返回和切书不破坏原书的进度及精确锚点。
 
 ## 真实调用不在默认测试中
 

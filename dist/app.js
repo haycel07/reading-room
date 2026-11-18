@@ -14,7 +14,7 @@ import {Annotations,captureRange,restoreRange,annotationStyles} from './annotati
 import {DEFAULT_PROMPT,loadCompanionSettings} from './companion-settings.js';
 import {setPanel,togglePanel,setShelfOpen,initMotion,beginBookOpening,cancelBookOpening,beginBookReturn,captureLibraryLayout,animateSelectionTools,stopSurfaceMotion} from './ui-motion.js';
 import {PreparedBook,PreparedReader,contentKey} from './prepared-reading.js';
-import {manualHistory,preparationHistory,recallReadText} from './companion-history.js';
+import {manualHistory,preparationHistory,recallReadText,readConversationRecord,appendConversation,replaceConversation} from './companion-history.js';
 import {composeContext,POLICY} from './reading-context.js';
 const $ = id => document.getElementById(id);
 const catalog=createCatalog({list:$('tocList'),search:$('tocSearch'),count:$('tocCount')});
@@ -22,7 +22,7 @@ const db = await new Promise((resolve,reject)=>{const r=indexedDB.open('between-
 const all=()=>new Promise((resolve,reject)=>{let r=db.transaction('books').objectStore('books').getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
 const put=book=>new Promise((resolve,reject)=>{let tx=db.transaction('books','readwrite');tx.objectStore('books').put(book);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
 const del=id=>new Promise((resolve,reject)=>{let tx=db.transaction('books','readwrite');tx.objectStore('books').delete(id);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
-var proactive,initiativeCardEntry=null,annotations;let companionStatus=null,failedChat=null,chatRendered=null;let features=null,readingPreferences=null,readerShell=null;
+var proactive,initiativeCardEntry=null,annotations;let companionStatus=null,failedChat=null,chatRendered=null,chatLimit=80;let features=null,readingPreferences=null,readerShell=null;
 let layoutReadFloor=null,companionSession=null,restoringReaderPosition=false,readingReturn=null,readerRestoreSerial=0;
 let settingsAnchor=null,restoringTextStyle=false,textRestoreToken=0,lastReaderInput=0;
 let ebookStyleTimer=null,restylingView=null,ebookStyleSerial=0,ebookStyleAnchor=null,wakeLock=null,awakeRevision=0;
@@ -92,16 +92,36 @@ function summaryStore(mode,action){return new Promise((resolve,reject)=>{const t
 function deleteSummaries(bookId){return summaryStore('readwrite',store=>{const q=store.openCursor();q.onsuccess=()=>{const cursor=q.result;if(cursor){if(cursor.value.bookId===bookId)cursor.delete();cursor.continue()}};return q})}
 function checkContextPosition(book,anchor,revision){if(current!==book||chatRevision!==revision||!isVisibleAt({anchor},currentAnchor()))throw Error('书籍、编码或已读位置已改变，请在当前位置重新发送。')}
 async function requestSummary(text,kind,options={}){const response=await companionFetch({task:'summary',kind,text,background:!!options.silent,question:'概括这段已读内容'},{signal:options.signal});const data=await response.json();if(!response.ok)throw Error(data.error||'前文概括失败，请重试');if(typeof data.reply!=='string')throw Error('前文概括格式有误，请重试');return data.reply}
-let conversationReady=Promise.resolve(),conversation=[], chatRevision=0, refreshTimer, requestBusy=false,replyingTo=null,chatController=null,chatRequestAnchor=null,scopeController=null;
+let conversationReady=Promise.resolve(),conversation=[],conversationVersion=0,conversationSync=0, chatRevision=0, refreshTimer, requestBusy=false,replyingTo=null,chatController=null,chatRequestValid=null,scopeController=null;
 let companionSettings=loadCompanionSettings();
 const personaNames={witty:'嘴欠但温柔',gentle:'安静倾听',curious:'好奇爱讨论'};
 $('persona').value=localStorage.getItem('companion-persona')||'witty';
 $('persona').onchange=()=>localStorage.setItem('companion-persona',$('persona').value);
-function readConversation(id){return new Promise((resolve,reject)=>{let q=db.transaction('conversations').objectStore('conversations').get(id);q.onsuccess=()=>resolve(q.result?.entries||[]);q.onerror=()=>reject(q.error)})}
-function saveConversation(id,entries){return new Promise((resolve,reject)=>{let tx=db.transaction('conversations','readwrite');tx.objectStore('conversations').put({id,entries});tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)})}
-function resetCompanion(){chatController?.abort();scopeController?.abort();chatController=null;chatRequestAnchor=null;scopeController=null;requestBusy=false;$('previewScope').disabled=false;failedChat=null;chatRendered=null;companionStatus?.reset();annotations?.reset();proactive?.cancel();$('retryPreparation').classList.add('hidden');conversation=[];replyingTo=null;updateReplyContext();ephemeralEntry=null;selectedExcerpt=null;pendingSelection=null;hideSelectionTools();chatRevision++;$('chatLog').replaceChildren();$('chatInput').value='';setPanel('companion',false,{immediate:true});setPanel('scopePanel',false,{immediate:true})}
-async function loadConversation(book){try{let entries=await readConversation(book.id);if(current!==book)return;conversation=entries;await refreshChat()}catch(e){console.error(e);notify('对话记录读取失败')}}
-function addBubble(kind,text,container=$('chatLog')){const div=document.createElement('div');div.className='bubble '+kind;div.textContent=text;container.append(div);container.scrollTop=container.scrollHeight;return div}
+const conversationChannel=typeof BroadcastChannel==='function'?new BroadcastChannel('reading-companion-conversations'):null;
+function publishConversation(id,kind){conversationChannel?.postMessage({id,kind})}
+async function saveConversation(id,entries){const {record}=await replaceConversation(db,id,entries);if(current?.id===id)conversationVersion=record.revision;publishConversation(id,'replace')}
+async function appendReply(book,entry,expectedRevision){
+ const result=await appendConversation(db,book.id,entry,expectedRevision);
+ if(current===book){conversation=result.record.entries;conversationVersion=result.record.revision||0;chatRendered=null;if(!result.accepted){chatRevision++;failedChat=null;ephemeralEntry=null;replyingTo=null;updateReplyContext();companionStatus?.reset();refreshChat()}}
+ if(result.accepted)publishConversation(book.id,'append');
+ return result.accepted;
+}
+async function syncConversation(){
+ const book=current;if(!book)return;const serial=++conversationSync,record=await readConversationRecord(db,book.id);
+ if(current!==book||serial!==conversationSync)return;
+ if((record.revision||0)!==conversationVersion){
+  chatController?.abort();scopeController?.abort();chatController=null;chatRequestValid=null;scopeController=null;requestBusy=false;chatRevision++;
+  failedChat=null;ephemeralEntry=null;replyingTo=null;updateReplyContext();proactive?.cancel();companionStatus?.reset();$('previewScope').disabled=false;
+ }
+ conversation=record.entries;conversationVersion=record.revision||0;chatRendered=null;
+ if(!requestBusy)refreshChat();
+}
+conversationChannel?.addEventListener('message',event=>{if(event.data?.id===current?.id)syncConversation().catch(()=>notify('其他窗口的对话暂时同步失败，可刷新重试。'))});
+addEventListener('focus',()=>{if(current)syncConversation().catch(()=>{})});
+
+function resetCompanion(){chatController?.abort();scopeController?.abort();chatController=null;chatRequestValid=null;scopeController=null;requestBusy=false;$('previewScope').disabled=false;failedChat=null;chatRendered=null;chatLimit=80;companionStatus?.reset();annotations?.reset();proactive?.cancel();$('retryPreparation').classList.add('hidden');conversation=[];conversationVersion=0;conversationSync++;replyingTo=null;updateReplyContext();ephemeralEntry=null;selectedExcerpt=null;pendingSelection=null;hideSelectionTools();chatRevision++;$('chatLog').replaceChildren();$('chatInput').value='';setPanel('companion',false,{immediate:true});setPanel('scopePanel',false,{immediate:true})}
+async function loadConversation(book){try{const record=await readConversationRecord(db,book.id);if(current!==book)return;conversation=record.entries;conversationVersion=record.revision||0;await refreshChat()}catch(e){console.error(e);notify('对话记录读取失败')}}
+function addBubble(kind,text,container=$('chatLog')){const div=document.createElement('div');div.className='bubble '+kind;div.textContent=text;container.append(div);if(container.nodeType===1)container.scrollTop=container.scrollHeight;return div}
 $('companionToggle').onclick=()=>{if(!readingReady){notify('正文仍在打开，请稍后进入伴读。');return}togglePanel('companion');if(!$('companion').classList.contains('hidden'))refreshChat()};$('companionClose').onclick=()=>setPanel('companion',false);
 // Capture the largest rendered text prefix entirely above the reader's bottom edge.
 function readTxtOffset(){return visibleTextOffset($('txt'),$('readerWrap').getBoundingClientRect().bottom)}
@@ -144,26 +164,101 @@ document.addEventListener('reader-navigation',()=>{layoutReadFloor=null;companio
 document.addEventListener('reading-companion-layout',()=>{const anchor=currentAnchor();layoutReadFloor=anchor?{book:current,anchor,cfi:ebookView?.lastLocation?.cfi}:null});
 
 function isVisibleAt(entry,anchor){let a=entry.anchor;if(!a||!anchor||a.type!==anchor.type)return false;if(a.type==='txt')return a.encoding===anchor.encoding&&a.offset<=anchor.offset;if(a.type==='ebook')return a.sections<anchor.sections||(a.sections===anchor.sections&&(a.offset||0)<=(anchor.offset||0));return a.page<anchor.page||(a.page===anchor.page&&a.bottom<=anchor.bottom+1)}
-function scheduleChatRefresh(){if(failedChat&&!isVisibleAt({anchor:failedChat.anchor},currentAnchor())){failedChat=null;companionStatus?.forgetManualFailure()}if(chatController&&chatRequestAnchor&&!isVisibleAt({anchor:chatRequestAnchor},currentAnchor()))chatController.abort();if(!$('scopePanel').classList.contains('hidden'))setPanel('scopePanel',false);if(initiativeCardEntry&&!isVisibleAt(initiativeCardEntry,currentAnchor()))withdrawInitiative();if(replyingTo&&!isVisibleAt(replyingTo,currentAnchor())){replyingTo=null;updateReplyContext()}proactive?.schedule();if($('companion').classList.contains('hidden'))return;clearTimeout(refreshTimer);refreshTimer=setTimeout(refreshChat,250)}
-async function refreshChat(){
+function scheduleChatRefresh(){if(failedChat&&(!isVisibleAt({anchor:failedChat.anchor},currentAnchor())||(failedChat.excerpt&&!selectionAllowed(failedChat.excerpt,currentAnchor())))){failedChat=null;companionStatus?.forgetManualFailure()}if(chatController&&chatRequestValid&&!chatRequestValid())chatController.abort();if(!$('scopePanel').classList.contains('hidden'))setPanel('scopePanel',false);if(initiativeCardEntry&&!isVisibleAt(initiativeCardEntry,currentAnchor()))withdrawInitiative();if(replyingTo&&!isVisibleAt(replyingTo,currentAnchor())){replyingTo=null;updateReplyContext()}proactive?.schedule();if($('companion').classList.contains('hidden'))return;clearTimeout(refreshTimer);refreshTimer=setTimeout(refreshChat,250)}
+async function refreshChat({loadOlder=false}={}){
  if(!current||requestBusy)return;const anchor=currentAnchor();if(!anchor)return;
  const visible=conversation.filter(e=>isVisibleAt(e,anchor)),hidden=conversation.length-visible.length,active=ephemeralEntry&&current.type==='ebook'&&currentEbookLocation()===ephemeralEntry.cfi?ephemeralEntry:null;
+ const log=$('chatLog'),covered=log.getClientRects().length===0;
  const position=hidden?'已隐藏 '+hidden+' 条较后位置的对话，继续读到原位置即可恢复。':'对话按书保存在本机；只使用当前位置之前的记录。';
  if($('chatPosition').textContent!==position)$('chatPosition').textContent=position;
- if(chatRendered?.book===current&&chatRendered.name===assistantName()&&chatRendered.ephemeral===active&&visible.length===chatRendered.entries.length&&visible.every((e,i)=>e===chatRendered.entries[i])&&![...$('chatLog').children].some(e=>e._anchor&&!isVisibleAt({anchor:e._anchor},anchor)))return;
- const log=$('chatLog'),scroll=log.scrollTop,atBottom=log.scrollHeight-log.clientHeight-scroll<80;
- log.replaceChildren();if(!visible.length&&!active)addBubble('assistant','我是'+assistantName()+'。你先读，想聊哪句，随时叫我。');
- for(const e of visible){if(!e.initiated)addBubble('user',e.question);const bubble=addBubble('assistant',e.reply);if(e.initiated)attachCommentActions(bubble,e)}
- if(active){addBubble('user',active.question);addBubble('assistant',active.reply)}
- if(!atBottom)log.scrollTop=scroll;
- chatRendered={book:current,name:assistantName(),ephemeral:active,entries:visible};
+ if(chatRendered?.book===current&&chatRendered.name===assistantName()&&chatRendered.ephemeral===active&&chatRendered.limit===chatLimit&&visible.length===chatRendered.entries.length&&visible.every((e,i)=>e===chatRendered.entries[i])&&![...log.children].some(e=>e._anchor&&!isVisibleAt({anchor:e._anchor},anchor))){
+  if(chatRendered.covered&&!covered){log.scrollTop=log.scrollHeight;chatRendered.covered=false}
+  return;
+ }
+ const scroll=log.scrollTop,atBottom=log.scrollHeight-log.clientHeight-scroll<80,oldHeight=log.scrollHeight;
+ const box=!covered&&!atBottom?log.getBoundingClientRect():null;
+ const first=box?[...log.children].find(e=>e._entryKey&&e.getBoundingClientRect().bottom>box.top):null;
+ const previous=first?{key:first._entryKey,top:first.getBoundingClientRect().top}:null;
+ const fragment=document.createDocumentFragment(),entries=visible.slice(-chatLimit),remaining=visible.length-entries.length;
+ let more;
+ if(remaining){
+  more=document.createElement('button');more.type='button';more.className='chat-history-more';more.textContent='查看更早的对话（还有 '+remaining+' 条）';
+  more.onclick=async()=>{chatLimit+=80;await refreshChat({loadOlder:true})};fragment.append(more);
+ }
+ if(!visible.length&&!active)addBubble('assistant','我是'+assistantName()+'。你先读，想聊哪句，随时叫我。',fragment);
+ for(const entry of entries){
+  const key=entry.id||JSON.stringify([entry.created,entry.question,entry.reply]);
+  if(!entry.initiated)addBubble('user',entry.question,fragment)._entryKey=key+':user';
+  const bubble=addBubble('assistant',entry.reply,fragment);bubble._entryKey=key+':assistant';if(entry.initiated)attachCommentActions(bubble,entry);
+ }
+ if(active){addBubble('user',active.question,fragment);addBubble('assistant',active.reply,fragment)}
+ log.replaceChildren(fragment);
+ if(loadOlder){log.scrollTop=scroll+log.scrollHeight-oldHeight;(more||log).focus({preventScroll:true})}
+ else if(atBottom||chatRendered?.covered)log.scrollTop=log.scrollHeight;
+ else{
+  const same=previous?[...log.children].find(e=>e._entryKey===previous.key):null;
+  if(same){log.scrollTop=scroll;log.scrollTop+=same.getBoundingClientRect().top-previous.top}else log.scrollTop=scroll;
+ }
+ chatRendered={book:current,name:assistantName(),ephemeral:active,entries:visible,limit:chatLimit,covered};
 }
-$('clearChat').onclick=async()=>{if(!current||!conversation.length)return;if(!confirm('清空这本书与阅读助手的全部对话？此操作无法撤销。'))return;let book=current;chatController?.abort();scopeController?.abort();chatController=null;chatRequestAnchor=null;scopeController=null;requestBusy=false;const clearedRevision=++chatRevision,previousEntries=conversation,previousEphemeral=ephemeralEntry;conversation=[];ephemeralEntry=null;failedChat=null;chatRendered=null;replyingTo=null;updateReplyContext();preparedPlanPromise=null;preparedPlanKey=null;proactive.cancel();setPanel('scopePanel',false,{immediate:true});$('previewScope').disabled=false;$('chatLog').replaceChildren();companionStatus?.reset();try{await saveConversation(book.id,[])}catch{if(current===book&&chatRevision===clearedRevision){conversation=previousEntries;ephemeralEntry=previousEphemeral;chatRendered=null}notify('对话记录清除失败，请重试。')}if(current===book)refreshChat()};
+
+$('clearChat').onclick=async()=>{if(!current||!conversation.length)return;if(!confirm('清空这本书与阅读助手的全部对话？此操作无法撤销。'))return;let book=current;chatController?.abort();scopeController?.abort();chatController=null;chatRequestValid=null;scopeController=null;requestBusy=false;const clearedRevision=++chatRevision,previousEntries=conversation,previousEphemeral=ephemeralEntry;conversation=[];ephemeralEntry=null;failedChat=null;chatRendered=null;replyingTo=null;updateReplyContext();preparedPlanPromise=null;preparedPlanKey=null;proactive.cancel();setPanel('scopePanel',false,{immediate:true});$('previewScope').disabled=false;$('chatLog').replaceChildren();companionStatus?.reset();try{await saveConversation(book.id,[])}catch{if(current===book&&chatRevision===clearedRevision){conversation=previousEntries;ephemeralEntry=previousEphemeral;chatRendered=null}notify('对话记录清除失败，请重试。')}if(current===book)refreshChat()};
 async function readPdfToViewport(book,doc,pageNumber,bottom){let parts=[];for(let n=1;n<=pageNumber;n++){if(current!==book||pdfDoc!==doc)throw Error('书籍已切换，请重试');const page=await doc.getPage(n),content=await page.getTextContent(),vp=page.getViewport({scale:1.5});for(const item of content.items){if(!item.str)continue;if(n===pageNumber){let point=vp.convertToViewportPoint(item.transform[4],item.transform[5]);if(point[1]+Math.abs(item.height||0)*1.5>bottom)break}parts.push(item.str+(item.hasEOL?'\n':' '))}parts.push('\n')}return parts.join('')}
 async function readContext(book,anchor,allowEmpty=false,options={}){let text,boundaries=[],revision=chatRevision;if(!anchor)throw Error('正文正在加载，请稍后再试。');if(book.type==='txt')text=$('txt').textContent.slice(0,anchor.offset);else if(book.type==='ebook'){text=await readEbookContext(book,anchor.sections,boundaries);const prefix=ebookVisiblePrefix();if(anchor.offset&&prefix.length>=anchor.offset)text+=(text?'\n\n':'')+prefix.slice(0,anchor.offset);}else text=await readPdfToViewport(book,pdfDoc,anchor.page,anchor.bottom);if(!text.trim()&&!allowEmpty)throw Error('当前位置没有可提取的已读文字。扫描件和漫画图片暂不支持文字识别；电子书需有可提取的文字层。');if(/[\uD800-\uDBFF]$/.test(text))text=text.slice(0,-1);checkContextPosition(book,anchor,revision);options.onTextReady?.(text.length);if(text.length>POLICY.threshold&&preparedSourcePromise&&preparedSourceKey===sourceIdentity(book)){const {plan,source}=await getPreparedPlan(book);checkContextPosition(book,anchor,revision);let end=source.position(anchor);if(/[\uDC00-\uDFFF]/.test(source.text[end]))end--;if(source.text.slice(0,end)===text){const memory=await plan.contextAt(end);checkContextPosition(book,anchor,revision);if(memory.summarized&&end-memory.rawStart>=POLICY.recent&&memory.text.length<=POLICY.threshold)return {...memory,sourceText:text};}}const context=await composeContext({text,bookId:book.id,boundaries,get:id=>summaryStore('readonly',s=>s.get(id)),put:value=>summaryStore('readwrite',s=>s.put(value)),summarize:(text,kind)=>requestSummary(text,kind,options),check:()=>{options.check?.();checkContextPosition(book,anchor,revision)},progress:p=>{if(options.silent)return;$('chatScope').textContent='正在整理较早的已读内容，首次可能需要一些时间…';$('scopeInfo').textContent='正在生成前文概括…';}});return {...context,sourceText:text}}
 function scopeDescription(context,anchor,count){const position=anchor.type==='ebook'?'前 '+anchor.sections+' 个完整分段及本页可见文字':anchor.type==='pdf'?'第 '+anchor.page+' 页当前可见位置':'当前可见文字位置';return position+'；已读约 '+context.originalLength+' 字，'+(context.summarized?'前文概括＋最近连续原文':'从开头完整提供')+'；附带 '+count+' 条当前位置以前的对话，使用已保存的阅读助手提示词。PDF 复杂排版的文本顺序可能不准确。'}
 $('previewScope').onclick=async()=>{if(!current||requestBusy)return;proactive.cancel();let book=current,revision=chatRevision;const controller=new AbortController();scopeController=controller;requestBusy=true;companionStatus?.refresh();$('chatSend').disabled=true;$('previewScope').disabled=true;$('scopeInfo').textContent='正在准备已读内容；长书首次会生成概括…';$('scopeText').textContent='';setPanel('scopePanel',true);try{let anchor=currentAnchor(),context=await readContext(book,anchor,false,{signal:controller.signal,check:()=>{if(controller.signal.aborted)throw new DOMException('Aborted','AbortError')}});checkContextPosition(book,anchor,revision);const {history:eligible,reference,evidence}=await chatParts(book,anchor,replyingTo,context,$('chatInput').value);checkContextPosition(book,anchor,revision);if(controller.signal.aborted)throw new DOMException('Aborted','AbortError');$('scopeInfo').textContent=scopeDescription(context,anchor,eligible.length);$('scopeText').textContent=context.text+(eligible.length?'\n\n—— 将附带的近期对话 ——\n'+eligible.map(e=>'你：'+e.question+'\n阅读助手：'+e.reply).join('\n\n'):'')+(reference?'\n\n—— 本轮回复的短评 ——\n原句：'+reference.quote+'\n阅读助手：'+reference.text:'')+(evidence.length?'\n\n—— 已读原文回查 ——\n'+evidence.map(e=>'['+e.start+','+e.end+') '+e.quote).join('\n\n'):'');setPanel('scopePanel',true)}catch(e){if(scopeController===controller){$('scopeText').textContent='';$('scopeInfo').textContent=e.name==='AbortError'?'已取消整理':e.message;if(e.name!=='AbortError')notify(e.message)}}finally{if(scopeController===controller){scopeController=null;requestBusy=!!chatController;$('previewScope').disabled=false;companionStatus?.refresh();if(current===book){refreshChat();proactive.schedule()}}}};$('scopeClose').onclick=()=>{scopeController?.abort();setPanel('scopePanel',false)};document.addEventListener('reading-scope-closed',()=>scopeController?.abort());
-$('chatForm').onsubmit=async e=>{e.preventDefault();if(!current||requestBusy)return;if(!apiEnabled()){readingPreferences?.open('ai');return}proactive.cancel();const rawInput=$('chatInput').value.trim();let book=current,anchor=currentAnchor(),revision=chatRevision,excerpt=selectedExcerpt,replyEntry=replyingTo,question=$('chatInput').value.trim()||'你先说说，读到这里有什么想吐槽的？';$('chatInput').value='';selectedExcerpt=null;let selectionOnly=!!(book.type==='ebook'&&((excerpt&&excerpt.section===ebookSection)||(ephemeralEntry&&currentEbookLocation()===ephemeralEntry.cfi)));if(excerpt)question+='\n\n【选中文字】\n'+excerpt.text;const userBubble=addBubble('user',question);userBubble._anchor=anchor;const pending=addBubble('assistant','让我看看读到哪儿了……');pending._anchor=anchor;let succeeded=false,aborted=false;requestBusy=true;$('chatSend').disabled=true;const controller=new AbortController();chatController=controller;chatRequestAnchor=anchor;companionStatus?.manualStart();try{if(excerpt&&!selectionAllowed(excerpt,anchor))throw Error('选中的文字超出已读范围，请回到选中文字的阅读位置后重试。');const context=await readContext(book,anchor,!!excerpt||selectionOnly,{signal:controller.signal,check:()=>{if(controller.signal.aborted)throw new DOMException('Aborted','AbortError')}});checkContextPosition(book,anchor,revision);if(excerpt&&!selectionAllowed(excerpt,currentAnchor()))throw Error('选中文字的位置已改变，请重新划选。');const {history:eligible,reference,evidence}=await chatParts(book,anchor,replyEntry,context,question);checkContextPosition(book,anchor,revision);$('chatScope').textContent=context.summarized?'已发送前文章节／区间概括与最近的连续原文':'已发送从开头到当前位置的文本';const resp=await companionFetch({text:context.text,question,summarized:context.summarized,history:eligible,reference,evidence,persona:$('persona').value,customPrompt:companionSettings.prompt},{signal:controller.signal});let data=await resp.json();if(!resp.ok)throw Error(data.error||'伴读暂时不可用，请稍后重试');if(current===book&&revision===chatRevision&&isVisibleAt({anchor},currentAnchor())&&(!excerpt||selectionAllowed(excerpt,currentAnchor()))){let entry={anchor,question,reply:data.reply,created:Date.now(),...(reference?{reference}:{})};if(selectionOnly){ephemeralEntry={...entry,cfi:currentEbookLocation()};$('chatScope').textContent='当前分段的划词对话仅在当前位置临时保留'}else{conversation.push(entry);try{await saveConversation(book.id,conversation)}catch(err){notify('阅读助手回复了，但对话保存失败')}}if(current!==book||revision!==chatRevision)return;if(replyingTo===replyEntry){replyingTo=null;updateReplyContext()}preparedPlanPromise=null;preparedPlanKey=null;pending.textContent=data.reply;succeeded=true;failedChat=null}}catch(err){aborted=err.name==='AbortError';if(current===book&&revision===chatRevision&&isVisibleAt({anchor},currentAnchor())){failedChat={book,anchor,input:rawInput,excerpt,replyEntry};if(aborted&&!$('chatInput').value.trim()&&isVisibleAt({anchor},currentAnchor())){$('chatInput').value=rawInput;selectedExcerpt=excerpt;replyingTo=replyEntry;updateReplyContext()}}if(current===book&&revision===chatRevision)$('chatScope').textContent='本次未完成，请重试；概括失败时不会省略正文继续发送。';pending.className='bubble error';pending.textContent=err.name==='AbortError'?'本次请求已取消，可重新发送。':err instanceof TypeError?'无法连接AI服务，请检查网络与AI设置。':(err.message||'连接失败，请稍后重试')}finally{if(chatController===controller){chatController=null;chatRequestAnchor=null;requestBusy=!!scopeController;if(current===book&&revision===chatRevision){companionStatus?.manualComplete({success:succeeded,aborted});refreshChatAfterRequest(succeeded,pending);proactive.schedule()}else companionStatus?.refresh()}}};
+$('chatForm').onsubmit=async e=>{
+ e.preventDefault();if(!current||requestBusy)return;
+ if(!apiEnabled()){readingPreferences?.open('ai');return}
+ proactive.cancel();
+ const rawInput=$('chatInput').value.trim(),book=current,anchor=currentAnchor(),revision=chatRevision;
+ const excerpt=selectedExcerpt,replyEntry=replyingTo;
+ const selectionOnly=!!(book.type==='ebook'&&((excerpt&&excerpt.section===ebookSection)||(ephemeralEntry&&currentEbookLocation()===ephemeralEntry.cfi)));
+ const selectionLocation=selectionOnly?currentEbookLocation():null;
+ const samePosition=()=>current===book&&revision===chatRevision&&isVisibleAt({anchor},currentAnchor())&&(!excerpt||selectionAllowed(excerpt,currentAnchor()))&&(!selectionLocation||selectionLocation===currentEbookLocation());
+ let question=rawInput||'你先说说，读到这里有什么想吐槽的？';
+ if(excerpt)question+='\n\n【选中文字】\n'+excerpt.text;
+ $('chatInput').value='';selectedExcerpt=null;
+ const userBubble=addBubble('user',question);userBubble._anchor=anchor;
+ const pending=addBubble('assistant','让我看看读到哪儿了……');pending._anchor=anchor;
+ let succeeded=false,aborted=false,positionChanged=false,storageVersion;
+ const controller=new AbortController();
+ const check=()=>{if(controller.signal.aborted)throw new DOMException('Aborted','AbortError');if(!samePosition()){positionChanged=true;throw new DOMException('Reading position changed','AbortError')}};
+ requestBusy=true;$('chatSend').disabled=true;chatController=controller;chatRequestValid=samePosition;companionStatus?.manualStart();
+ try{
+  await conversationReady;check();await syncConversation();check();storageVersion=conversationVersion;
+  const context=await readContext(book,anchor,!!excerpt||selectionOnly,{signal:controller.signal,check});check();
+  const {history:eligible,reference,evidence}=await chatParts(book,anchor,replyEntry,context,question);check();
+  $('chatScope').textContent=context.summarized?'已发送前文章节／区间概括与最近的连续原文':'已发送从开头到当前位置的文本';
+  const resp=await companionFetch({text:context.text,question,summarized:context.summarized,history:eligible,reference,evidence,persona:$('persona').value,customPrompt:companionSettings.prompt},{signal:controller.signal});
+  const data=await resp.json();check();
+  if(!resp.ok)throw Error(data.error||'伴读暂时不可用，请稍后重试');
+  if(typeof data.reply!=='string'||!data.reply.trim())throw Error('AI没有返回可用回复，可以重试。');
+  const entry={id:crypto.randomUUID(),anchor,question,reply:data.reply,created:Date.now(),...(reference?{reference}:{})};
+  if(selectionOnly){
+   ephemeralEntry={...entry,cfi:selectionLocation};$('chatScope').textContent='当前分段的划词对话仅在当前位置临时保留';
+  }else{
+   try{if(!await appendReply(book,entry,storageVersion)){positionChanged=true;throw new DOMException('Conversation cleared','AbortError')}}catch(error){if(error.name==='AbortError')throw error;if(current===book&&revision===chatRevision)conversation.push(entry);notify('阅读助手回复了，但对话保存失败')}
+  }
+  if(current!==book||revision!==chatRevision)return;
+  if(replyingTo===replyEntry){replyingTo=null;updateReplyContext()}
+  preparedPlanPromise=null;preparedPlanKey=null;pending.textContent=data.reply;succeeded=true;failedChat=null;
+ }catch(err){
+  aborted=err.name==='AbortError';positionChanged=positionChanged||!samePosition();
+  if(samePosition()){
+   failedChat={book,anchor,input:rawInput,excerpt,replyEntry};
+   if(aborted&&!$('chatInput').value.trim()){$('chatInput').value=rawInput;selectedExcerpt=excerpt;replyingTo=replyEntry;updateReplyContext()}
+  }
+  if(current===book&&revision===chatRevision)$('chatScope').textContent=positionChanged?'阅读位置已改变，本次请求已取消；请在当前位置重新提问。':aborted?'本次请求已取消，可重新发送。':'本次未完成，请重试；概括失败时不会省略正文继续发送。';
+  pending.className='bubble error';pending.textContent=aborted?'本次请求已取消，可重新发送。':err instanceof TypeError?'无法连接AI服务，请检查网络与AI设置。':(err.message||'连接失败，请稍后重试');
+ }finally{
+  if(chatController===controller){
+   chatController=null;chatRequestValid=null;requestBusy=!!scopeController;
+   if(current===book&&revision===chatRevision){companionStatus?.manualComplete({success:succeeded,aborted});refreshChatAfterRequest(succeeded||positionChanged,pending);proactive.schedule()}
+   else companionStatus?.refresh();
+  }
+ }
+};
 function updateReplyContext(){const panel=$('replyContext');if(!panel)return;panel.classList.toggle('hidden',!replyingTo);$('replyContextText').textContent=replyingTo?'正在回复：'+(replyingTo.prepared?.quote||replyingTo.reply):''}
 function beginCommentReply(entry,{focus=false}={}){if(!entry||!current||!isVisibleAt(entry,currentAnchor()))return;replyingTo=entry;proactive.cancel();setPanel('companion',true);updateReplyContext();refreshChat();if(focus)$('chatInput').focus()}
 $('cancelCommentReply').onclick=()=>{replyingTo=null;updateReplyContext()};
@@ -309,11 +404,11 @@ function retryManualChat(){
 function withdrawInitiative(){$('initiativeCard').classList.add('hidden');initiativeCardEntry=null}
 proactive=new PreparedReader({snapshot:initiativeSnapshot,valid:initiativeValid,withdraw:withdrawInitiative,paused:()=>companionState($('proactiveEnabled').checked&&apiEnabled()?'paused':'off',$('proactiveEnabled').checked&&apiEnabled()?'伴读暂时暂停，返回正文后继续。':'自动伴读未开启；在设置的伴读页开启。'),
  resolve:async s=>{const {plan,source}=await getPreparedPlan(s.book),anchor=currentAnchor();if(current!==s.book||!anchor)throw new DOMException('Book changed','AbortError');return{book:plan,position:source.position(anchor)}},
- status:(stage,rec,book)=>{const count=rec.comments.filter(c=>c.state||c.shown).length,spoken=rec.comments.filter(c=>c.text).length;const ready=rec.comments.some(c=>c.state==='ready'&&!c.shown);companionState(!$('initiativeCard').classList.contains('hidden')?'speaking':stage==='comment'||stage==='summary'?'preparing':ready?'ready':count===rec.comments.length&&spoken===0?'quiet':'waiting',stage==='comment'?'正在提前准备短评，读到对应范围后弹出。':stage==='summary'?'短评准备后，正在整理本区概述。':ready?'已备好短评，读到对应范围后自动弹出。':'本区已处理，继续阅读会衔接下一区。');$('proactiveStatus').textContent='第 '+(rec.index+1)+' / '+book.regions.length+' 区 · '+(stage==='summary'?'正在准备概述':stage==='comment'?'正在生成评论，完成后自动出现':count+' / '+rec.comments.length+' 处已看过，选出 '+spoken+' 条评论')+' · 约 '+Math.max(1,Math.ceil((rec.end-rec.start)/450))+' 分钟阅读量';},
+ status:(stage,rec,book)=>{const count=rec.comments.filter(c=>c.state||c.shown).length,spoken=rec.comments.filter(c=>c.text).length;const ready=rec.comments.some(c=>c.state==='ready'&&!c.shown);companionState(!$('initiativeCard').classList.contains('hidden')?'speaking':stage==='comment'||stage==='summary'?'preparing':ready?'ready':count===rec.comments.length&&spoken===0?'quiet':'waiting',stage==='comment'?'正在提前准备短评，读到对应范围后弹出。':stage==='summary'?'短评准备后，正在整理本区概述。':ready?'已备好短评，读到对应范围后自动弹出。':'本区已处理，继续阅读会衔接下一区。');$('proactiveStatus').textContent='第 '+(rec.index+1)+' / '+book.regions.length+' 区 · '+(stage==='summary'?'正在准备概述':stage==='comment'?'正在生成评论，完成后自动出现':count+' / '+rec.comments.length+' 处已处理，选出 '+spoken+' 条评论')+' · 约 '+Math.max(1,Math.ceil((rec.end-rec.start)/450))+' 分钟阅读量';},
  error:e=>{companionState('error','伴读准备失败，点击进入后可重新准备。');$('proactiveStatus').textContent=(e.message||'本区准备失败')+'；可点重新准备。';$('retryPreparation').classList.remove('hidden')},
  deliver:async(s,note)=>{
   if(!initiativeValid(s))return false;
-  const {plan,source}=await getPreparedPlan(s.book),anchor=currentAnchor();
+  const {plan,source}=await getPreparedPlan(s.book),anchor=currentAnchor(),storageVersion=conversationVersion;
   if(!anchor||!initiativeValid(s))return false;
   const position=source.position(anchor);
   if(position<note.offset||position>(note.validThrough??note.end))return false;
@@ -323,10 +418,10 @@ proactive=new PreparedReader({snapshot:initiativeSnapshot,valid:initiativeValid,
   const entry={id,anchor,question:'',reply:note.text,initiated:true,created:Date.now(),prepared:{region:note.regionIndex,offset:note.offset,allowedEnd:note.offset,displayOffset:position,source:plan.source,bookId:s.book.id,selectionVersion:note.selectionVersion,quote:note.quote,quoteStart:note.quoteStart,quoteEnd:note.quoteEnd}};
   // No await between the final boundary check and actual display.
   initiativeCardEntry=entry;note.displayOffset=position;
-  $('initiativeText').textContent=note.text;$('initiativeReply').setAttribute('aria-label',assistantName()+'：'+note.text+'。点击接着聊');$('initiativeCard').classList.remove('hidden');
-  conversation=[...conversation,entry];const entries=conversation;
+  $('initiativeText').textContent=note.text;$('initiativeQuote').textContent=note.quote?'“'+note.quote+'”':'';$('initiativeQuote').hidden=!note.quote;$('initiativeReply').setAttribute('aria-label',assistantName()+'：'+(note.quote?'读到“'+note.quote.slice(0,48)+'”。':'')+note.text+'。点击接着聊');$('initiativeCard').classList.remove('hidden');
+  conversation=[...conversation,entry];
   if(!$('companion').classList.contains('hidden'))refreshChat();
-  try{await saveConversation(s.book.id,entries)}catch{notify('短评已显示，但记录保存失败。')}
+  try{if(!await appendReply(s.book,entry,storageVersion)){withdrawInitiative();return false}}catch{notify('短评已显示，但记录保存失败。')}
   return true;
  }
 
@@ -343,7 +438,7 @@ companionStatus=createCompanionStatus({name:assistantName,available:apiEnabled,e
 function updateInitiativeStatus(){companionState($('proactiveEnabled').checked&&apiEnabled()?'waiting':'off',!apiEnabled()?'尚未配置AI服务，点击设置。':$('proactiveEnabled').checked?'伴读已开启，正在衔接当前位置。':'自动伴读未开启；在设置的伴读页开启。');if(!apiEnabled()){$('proactiveStatus').textContent='请先在阅读设置中配置AI服务';return}$('proactiveStatus').textContent=$('proactiveEnabled').checked?'先在原句里挑值得聊的地方；读过一半预备下一区，无合适内容可跳过。':'按内容选句，最多一两条；读到允许范围后出现，也可安静跳过。'}
 updateInitiativeStatus();
 $('proactiveEnabled').onchange=()=>{if(!apiEnabled()){$('proactiveEnabled').checked=false;setPanel('localNotice',true);return}localStorage.setItem('reading-initiative-enabled',String($('proactiveEnabled').checked));updateInitiativeStatus();proactive.schedule()};
-$('initiativeDismiss').onclick=()=>proactive.cancel();
+$('initiativeDismiss').onclick=()=>{withdrawInitiative();companionState('waiting','继续阅读，有合适的细节再说。');proactive.schedule()};
 $('initiativeReply').onclick=()=>{const entry=initiativeCardEntry;if(!entry||!isVisibleAt(entry,currentAnchor()))return;beginCommentReply(entry)};
 document.addEventListener('visibilitychange',()=>{if(document.hidden)proactive.cancel();else proactive.schedule()});
 $('chatInput').addEventListener('input',()=>proactive.cancel());

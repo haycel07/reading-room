@@ -85,7 +85,7 @@ export class PreparedBook{
    this.records.set(index,rec);return rec;
   })();this.loaded.set(index,promise);promise.catch(()=>this.loaded.delete(index));return promise;
  }
- async save(rec,type){await this.put({id:type==='memory'?rec.memoryId+(rec.memoryStart>0?':local':''):rec.id,bookId:this.bookId,source:this.source,start:rec.start,end:rec.end,...(type==='memory'?{summary:rec.summary,memory:rec.memory,memoryStart:rec.memoryStart,outputVersion:rec.outputVersion}:{comments:rec.comments.map(({candidates,...p})=>p)})})}
+ async save(rec,type){await this.put({id:type==='memory'?rec.memoryId+(rec.memoryStart>0?':local':''):rec.id,bookId:this.bookId,source:this.source,start:rec.start,end:rec.end,...(type==='memory'?{summary:rec.summary,memory:rec.memory,memoryStart:rec.memoryStart,outputVersion:rec.outputVersion}:{comments:rec.comments.map(({candidates,pending,...p})=>p)})})}
  async previousContext(index,check){
   if(!index)return {text:'',start:0};
   const previous=await this.record(index-1);check();
@@ -123,7 +123,7 @@ export class PreparedBook{
  async prepare(index,signal,check,status,continueWork=()=>true){
   const rec=await this.record(index),previous=await this.previousContext(index,check);check();
   const errors=[];
-  for(const point of rec.comments){if(!continueWork())return;await this.refreshConsumption();check();if(this.consumed(point))point.shown=true;if(point.shown||point.state)continue;const key=rec.id+':'+point.offset;if(this.failures.has(key)){errors.push(Error('本区评论准备失败，可点重新准备'));continue}status('comment',rec);check();
+  for(const point of rec.comments){if(!continueWork())return;await this.refreshConsumption();check();if(this.consumed(point))point.shown=true;if(point.shown||point.state)continue;const key=rec.id+':'+point.offset;if(this.failures.has(key)){errors.push(Error('本区评论准备失败，可点重新准备'));continue}status('comment',rec);check();point.pending=true;
    try{
     if(!point.candidates.length){point.state='skipped';point.text='';point.selectionVersion=2;point.reason='本次范围没有完整可定位的候选';await this.writeConsumption({start:point.windowStart,end:point.offset,status:'skipped',reason:point.reason});await this.save(rec,'comments');continue}
     const conversationContext={...await this.history(point.offset),prepared:rec.comments.filter(p=>p.offset<point.offset&&p.state==='ready'&&!p.shown).slice(-2).map(p=>({quote:p.quote||'',text:p.text}))};check();
@@ -133,7 +133,7 @@ export class PreparedBook{
     else{if(result.candidateId!==null||result.text!=='')throw Error('跳过格式有误');point.text='';point.state='skipped';await this.writeConsumption({start:point.windowStart,end:point.offset,status:'skipped'})}
     point.selectionVersion=2;
     if(typeof result.carry==='string'&&result.carry.trim()&&result.carry.length<=PREPARED_BUDGET.carryLimit){point.carry=result.carry.trim();point.carryVersion=PREPARED_BUDGET.version;point.carryStart=rec.start;point.carryEnd=point.offset}await this.save(rec,'comments');status('ready',rec);
-   }catch(e){if(e.name==='AbortError')throw e;this.failures.add(key);errors.push(e)}
+   }catch(e){if(e.name==='AbortError')throw e;this.failures.add(key);errors.push(e)}finally{delete point.pending}
   }
   if(!continueWork())return;
   try{await this.summarize(rec,previous,signal,check,status)}catch(e){if(e.name==='AbortError')throw e;errors.push(e)}status('ready',rec);if(errors.length)throw errors[0];
@@ -142,8 +142,14 @@ export class PreparedBook{
   await this.refreshConsumption();
   const r=this.regionAt(position);if(!r)return null;
   const first=Math.max(0,r.index-1,fromIndex??r.index);
-  for(let i=r.index;i>=first;i--){const rec=await this.record(i),eligible=rec.comments.filter(p=>!p.shown&&!this.consumed(p)&&!p.claimed&&p.state==='ready'&&p.text&&p.offset<=position);if(!eligible.length)continue;
-   const note={...eligible.at(-1),regionIndex:i,start:rec.start,end:rec.end,validThrough:r.end,consumeFrom:first};
+  for(let i=r.index;i>=first;i--){const rec=await this.record(i),reached=rec.comments.filter(p=>p.offset<=position);let point=reached.at(-1);if(!point)continue;
+   // Once a newer batch has been reached, do not fill its wait/skip with an
+   // older observation. Keep late completion useful without replaying a queue.
+   // Preserve one just-completed observation across an adjacent boundary when
+   // leaving the old region prevented its later batch from ever starting.
+   if(i<r.index&&!point.state&&!point.shown&&!point.pending)point=reached.filter(p=>p.state==='ready'&&p.text&&!p.shown&&!this.consumed(p)).at(-1);
+   if(!point||point.shown||this.consumed(point)||point.claimed||point.state!=='ready'||!point.text)return null;
+   const note={...point,regionIndex:i,start:rec.start,end:rec.end,validThrough:r.end,consumeFrom:first};
    for(let j=first;j<=i;j++)for(const p of (await this.record(j)).comments)if(p.offset<=note.offset&&!p.shown)p.claimed=true;
    return note;
   }

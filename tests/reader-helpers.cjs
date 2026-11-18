@@ -1,8 +1,11 @@
-const ready=page=>page.waitForFunction(()=>{
- if(document.querySelector('#reading')?.getAttribute('aria-busy')==='true')return false;
- const text=document.querySelector('#txt'),view=document.querySelector('foliate-view');
- return text&&!text.classList.contains('hidden')&&text.textContent.length>0||view?.renderer||document.querySelector('#pdfTextLayer span');
-});
+async function ready(page){
+ const handle=await page.waitForFunction(()=>{
+  if(document.querySelector('#reading')?.getAttribute('aria-busy')==='true')return false;
+  const text=document.querySelector('#txt'),view=document.querySelector('foliate-view');
+  return Boolean(text&&!text.classList.contains('hidden')&&text.textContent.length>0||view?.renderer||document.querySelector('#pdfTextLayer span'));
+ });
+ await handle.dispose();
+}
 // Move the real reading viewport near an offset. No hidden manual-marker API.
 async function scrollNear(page,offset){
  await page.locator('#readerWrap').evaluate((wrap,offset)=>{

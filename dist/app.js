@@ -482,11 +482,36 @@ for(const id of ['closeSettings','companionClose','tocClose','scopeClose'])$(id)
 
 $('companionPrompt').value=companionSettings.prompt;$('companionPace').value=companionSettings.pace;
 proactive.setPace(companionSettings.pace);
-function saveCompanionSettings(){const name=$('assistantName').value.trim();if(!name||name.length>12){notify('请填写1—12字的助手名称');return}localStorage.setItem('companion-display-name',name);applyAssistantIdentity();proactive?.cancel();preparedPlanPromise=null;preparedPlanKey=null;const prompt=$('companionPrompt').value.trim();if(!prompt||prompt.length>6000){notify('请填写 1—6000 字符的阅读助手提示词');return}companionSettings={prompt,pace:$('companionPace').value};localStorage.setItem('companion-custom-prompt',prompt);localStorage.setItem('companion-pace',companionSettings.pace);proactive.setPace(companionSettings.pace);updateInitiativeStatus();$('promptSaved').textContent='已保存，下次聊天和主动伴读都会使用。';}
+function saveCompanionName(){
+ const field=$('assistantName'),name=field.value.trim(),status=$('assistantNameSaved');
+ if(!name||name.length>field.maxLength){status.textContent='请输入 1—12 个字符的助手名称。';field.focus();return false}
+ if(name!==assistantName()){
+  localStorage.setItem('companion-display-name',name);
+  applyAssistantIdentity();
+  proactive.cancel();preparedPlanPromise=null;preparedPlanKey=null;
+  if(!$('companion').classList.contains('hidden'))refreshChat();
+  proactive.schedule();
+ }
+ field.value=name;
+ status.textContent='名称已保存。';
+ return true;
+}
+function saveCompanionSettings(){
+ const prompt=$('companionPrompt').value.trim();
+ if(!prompt||prompt.length>6000){notify('请填写 1—6000 字符的阅读助手提示词');return}
+ if(!saveCompanionName())return;
+ companionSettings={prompt,pace:$('companionPace').value};
+ localStorage.setItem('companion-custom-prompt',prompt);
+ localStorage.setItem('companion-pace',companionSettings.pace);
+ proactive.setPace(companionSettings.pace);updateInitiativeStatus();
+ $('promptSaved').textContent='已保存，下次聊天和主动伴读都会使用。';
+}
+$('saveAssistantName').onclick=saveCompanionName;
+$('assistantName').addEventListener('input',()=>{$('assistantNameSaved').textContent=''});
 $('saveCompanionSettings').onclick=saveCompanionSettings;
 $('resetCompanionPrompt').onclick=()=>{$('companionPrompt').value=DEFAULT_PROMPT;saveCompanionSettings()};
 $('copyCompanionPrompt').onclick=async()=>{try{await navigator.clipboard.writeText($('companionPrompt').value);$('promptSaved').textContent='提示词已复制。'}catch{$('companionPrompt').focus();$('companionPrompt').select();$('promptSaved').textContent='已选中，请复制。'}};
-$('editCompanion').onclick=()=>{proactive.cancel();setPanel('settings',true);$('companionPreferences').open=true;$('settings').scrollTop=Math.max(0,$('companionPreferences').offsetTop-$('settings').querySelector('.settings-head').offsetHeight-24);$('companionPrompt').focus({preventScroll:true})};
+$('editCompanion').onclick=()=>{proactive.cancel();setPanel('settings',true);$('companionPreferences').open=true;$('settings').scrollTop=Math.max(0,$('companionPreferences').offsetTop-$('settings').querySelector('.settings-head').offsetHeight-24);requestAnimationFrame(()=>$('assistantName').focus({preventScroll:true}))};
 $('companionPrompt').addEventListener('input',()=>{$('promptSaved').textContent='尚未保存'});
 initMotion();
 companionSession=createCompanionSession({capture:captureReaderCheckpoint,restore:restoreReaderCheckpoint,

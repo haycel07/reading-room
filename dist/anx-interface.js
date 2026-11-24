@@ -187,7 +187,7 @@ export function initAnxInterface(h) {
     list.className = "settings-list";
     for (const [name, category, glyph, hint] of [
       ["阅读与排版", "type", "palette", "字体、留白、配色与翻页"],
-      ["阅读伙伴", "companion", "ai", "栞的个性、选句与评论安排"],
+      ["阅读伙伴", "companion", "ai", "助手名称、个性与评论安排"],
       ["AI 服务", "ai", "ai", "服务商、模型与 API 密钥"],
       ["听书", "voice", "headphones", "本地音色、语速与定时"],
       ["备份与恢复", null, "folder", "书籍、阅读进度与笔记"],
@@ -246,7 +246,7 @@ export function initAnxInterface(h) {
       list.append(b);
     }
     if (!list.children.length)
-      hint.textContent = "先从书架导入一本书，再让栞陪你一起读。";
+      hint.textContent = "先从书架导入一本书，再开始伴读。";
     section.append(welcomeTitle, hint, list);
     page.append(section);
   }

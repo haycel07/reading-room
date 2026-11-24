@@ -5,6 +5,7 @@ const {spawn} = require('child_process');
 const HOST='127.0.0.1', PORT=Number(process.env.READING_ROOM_PORT)||38749, ROOT=__dirname;
 const runtime=require(path.join(ROOT,'companion-runtime.cjs'));
 const {taskInstruction,conversationInstruction,PERSONAS,facts}=require(path.join(ROOT,'dist','companion-protocol.js'));
+const {DEFAULT_NAME}=require(path.join(ROOT,'dist','assistant-identity.js'));
 let lastMeasurement=null;
 const allowed=new Set(['https://reading-room-1109.tangqichen2007.chatgpt.site',`http://${HOST}:${PORT}`]);
 const appBin=process.env.LOCALAPPDATA?path.join(process.env.LOCALAPPDATA,'OpenAI','Codex','bin'):null;
@@ -30,7 +31,8 @@ http.createServer((req,res)=>{
    if(busy)return response(res,429,{error:'阅读伙伴正在思考，请稍等片刻。'},origin);
    const history=Array.isArray(body.history)?body.history.slice(-6).filter(x=>typeof x.question==='string'&&typeof x.reply==='string').map(x=>({question:x.question.slice(0,2000),reply:x.reply.slice(0,4000)})):[];
    const personas=PERSONAS;
-   const displayName=typeof body.assistantName==='string'&&body.assistantName.trim().length<=12?body.assistantName.trim():'栞';
+   const requestedName=typeof body.assistantName==='string'?body.assistantName.trim():'';
+   const displayName=requestedName&&requestedName.length<=12?requestedName:DEFAULT_NAME;
    const voice=system+'\n当前称呼：'+displayName+'，保存设定中的旧名字不作为当前称呼。\n当前口吻：'+(personas[body.persona]||personas.witty)+'\n<读者保存的人物设定>\n'+(body.customPrompt||'自然、机灵、温柔，像一起读书的朋友。')+'\n</读者保存的人物设定>\n当前称呼为'+displayName+'，保存设定中的旧名字不作为当前称呼。';
    const summaryMode=body.task==='summary';
    if(summaryMode&&(body.text.length>12000||!['original','overview'].includes(body.kind)))return response(res,400,{error:'概括区间过长或格式不正确'},origin);
